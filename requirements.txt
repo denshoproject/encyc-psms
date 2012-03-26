@@ -1,0 +1,51 @@
+# Third-party libs and Django apps used by psms
+# Install using pip: http://pip.openplans.org/
+# File format: http://pip.openplans.org/requirement-format.html
+
+celery
+Django
+iPython
+django-celery
+django-debug-toolbar
+django-pagination
+django-tastypie
+gunicorn
+psycopg2
+python-memcached
+sorl-thumbnail
+South
+
+wikitools
+poster
+
+# USE THESE?
+
+#django-celery-transactions
+#django-compress     # compresses css and js files
+#django_compressor   # compresses css and js files into single cached files
+#django-extensions   # manage.py commands
+#django-registration
+#django-reversion    # versioned models in admin
+#django-storages     # S3, MogileFS, etc
+#django-tagging
+#johnny-cache        # caches all read queries (requires memcached)
+#typogrify
+
+#django-redis-cache
+#django-redis-sessions
+#redis
+
+#django-haystack
+#celery-haystack
+
+#https://github.com/poswald/microformats.git  # maybe make similar project for RDF,OAI?
+
+# CSS frameworks
+#django-css          # works with HSS, Sass, CleverCSS, LESS
+#django-less
+#django-scss
+#scss
+#CleverCSS2
+
+# python-geohash     # lightweight coordinate system
+# http://blog.adamfast.com/2011/11/faking-it-geospatial-search-without-the-prereqs-or-infrastructure/

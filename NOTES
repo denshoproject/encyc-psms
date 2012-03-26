@@ -1,0 +1,49 @@
+WIKITOOLS ==================================================
+
+
+import wikitools
+api = 'http://10.0.4.15:9000/mediawiki/api.php'
+wiki = wikitools.wiki.Wiki(api)
+wiki.login(username='gjostbot', password='debian')
+fn = '/home/gjost/img/6a00e55055.jpg'
+
+
+UPLOAD A FILE ----------------------------------------------
+
+f = open(fn, 'r')
+wf = wikitools.wikifile.File(wiki, '6a00e55055.jpg')
+wf.upload(f, comment='not much to say about this file...')
+
+
+REPLACING EXISTING FILE
+
+>>> wf = wikitools.wikifile.File(w, '6a00e55055.jpg')
+>>> wf.getToken('edit')
+u'2c0a809d3e558b6c4fdd1f7e103889dc+\\'
+>>> fn = '/home/gjost/img/trash80a.jpg'
+>>> f = open(fn, 'r')
+>>> wf.upload(f)
+{u'upload': {u'filekey': u'10g2k5frt2mg.ta25z9.2.jpg',
+             u'result': u'Warning',
+             u'sessionkey': u'10g2k5frt2mg.ta25z9.2.jpg',
+             u'warnings': {u'exists': u'6a00e55055.jpg'}}}
+>>> wf.upload(f, ignorewarnings=True)
+...hangs...
+
+
+MODIFYING EXISTING FILE TEXT -------------------------------
+
+>>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
+>>> p.edit(text='new description for this file!!!')
+{u'edit': {u'newrevid': 178,
+           u'newtimestamp': u'2012-03-23T21:20:30Z',
+           u'oldrevid': 177,
+           u'pageid': 126,
+           u'result': u'Success',
+           u'title': u'File:6a00e55055.jpg'}}
+
+
+DELETE FILE ------------------------------------------------
+
+>>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
+>>> p.delete(reason='that is all')
