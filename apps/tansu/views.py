@@ -1,32 +1,26 @@
-from django.db import models
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.views.decorators.http import require_http_methods
 
-from core.models import BaseModel
-
-
-
-class MediaBase(BaseModel):
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    
-    class Meta:
-        abstract = True
-
-    def mimetype(self):
-        return 'unknown'
+from tansu.models import ImageFile
 
 
+@require_http_methods(['GET',])
+def index(request, template_name='tansu/index.html'):
+    imagefiles = ImageFile.objects.all()
+    return render_to_response(
+        template_name, 
+        {'imagefiles': imagefiles,},
+        context_instance=RequestContext(request)
+    )
 
-IMAGEFILE_PATH = 'tansu/'
-
-class ImageFile(MediaBase):
-    image = models.ImageField(upload_to=IMAGEFILE_PATH)
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('tansu-detail', (), {'filename': self.filename() })
-    
-    def __unicode__(self):
-        return self.image.name
-
-    def filename(self):
-        return self.image.name.replace(IMAGEFILE_PATH,'')
+@require_http_methods(['GET',])
+def detail(request, filename, template_name='tansu/detail.html'):
+    imagefile = get_object_or_404(ImageFile, image='tansu/%s' % filename)
+    return render_to_response(
+        template_name, 
+        {'imagefile': imagefile,},
+        context_instance=RequestContext(request)
+    )
