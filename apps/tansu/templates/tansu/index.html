@@ -1,0 +1,20 @@
+{% extends "tansu/base.html" %}
+{% load thumbnail %}
+
+{% block title %}
+index.html
+{% endblock title %}
+
+{% block contents %}
+
+<h1>Filez</h1>
+
+{% for imagefile in imagefiles %}
+<a href="{{ imagefile.get_absolute_url }}">
+<img src="{{ imagefile.image.url }}" width="200"/>
+{{ imagefile.title }}
+</a>
+<br/>
+{% endfor %}
+
+{% endblock contents %}

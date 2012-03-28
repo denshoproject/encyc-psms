@@ -1,0 +1,31 @@
+{% extends "tansu/base.html" %}
+{% load thumbnail %}
+
+{% block title %}
+{{ imagefile.title }}
+{% endblock title %}
+
+{% block contents %}
+
+<h1>File:{{ imagefile.filename }}</h1>
+
+<p>
+<a href="{{ imagefile.get_absolute_url }}">
+<img src="{{ imagefile.image.url }}" width="500"/>
+</a>
+</p>
+
+<p>
+No higher resolution available.
+<br />
+{{ imagefile.filename }}‎
+({{ imagefile.image.width }} × {{ imagefile.image.height }} pixels,
+file size: {{ imagefile.image.size }},
+MIME type: {{ imagefile.mimetype }}])
+</p>
+
+<p>
+{{ imagefile.description|linebreaks }}
+</p>
+
+{% endblock contents %}
