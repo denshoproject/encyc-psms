@@ -1,3 +1,5 @@
+import os
+
 import wikitools
 
 from django.conf import settings
@@ -20,6 +22,8 @@ def upload_file(abspath, comment='Uploaded by Tansu'):
     >>> page_name = '6a00e55055.jpg'
     >>> wf = wikitools.wikifile.File(wiki, page_name)
     >>> wf.upload(f, comment='not much to say about this file...')
+
+    //TODO What to do with previously deleted files?
     """
     page_name = os.path.basename(abspath)
     f = open(abspath, 'r')
@@ -27,7 +31,7 @@ def upload_file(abspath, comment='Uploaded by Tansu'):
     wf = wikitools.wikifile.File(wiki, page_name)
     response = wf.upload(f, comment=comment)
     f.close()
-    assert False
+    return response
 
 
 def update_file(page_name, text):
@@ -45,7 +49,7 @@ def update_file(page_name, text):
     wiki = _login()
     p = wikitools.page.Page(wiki, page_name)
     response = p.edit(text=text)
-    assert False
+    return response
 
 
 def delete_file(page_name, reason):
@@ -53,11 +57,12 @@ def delete_file(page_name, reason):
     
     >>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
     >>> p.delete(reason='that is all')
+    NOTE: requires user with sysop perms
     """
     wiki = _login()
     p = wikitools.page.Page(wiki, page_name)
     response = p.delete(reason=reason)
-    assert False
+    return response
 
 
 def replace_file():
@@ -77,3 +82,4 @@ def replace_file():
     ...hangs...
     """
     wiki = _login()
+    assert False
