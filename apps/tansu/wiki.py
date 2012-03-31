@@ -14,6 +14,14 @@ def _login():
     return wiki
 
 
+def exists(page_name):
+    """Page exists in the wiki.
+    """
+    wiki = _login()
+    p = wikitools.page.Page(wiki, page_name)
+    print p.exists
+
+
 def upload_file(abspath, comment='Uploaded by Tansu'):
     """Upload a file
     
