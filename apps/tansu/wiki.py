@@ -19,7 +19,7 @@ def exists(page_name):
     """
     wiki = _login()
     p = wikitools.page.Page(wiki, page_name)
-    print p.exists
+    return p.exists
 
 
 def upload_file(abspath, comment='Uploaded by Tansu'):

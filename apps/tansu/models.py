@@ -33,14 +33,12 @@ class ImageFile(MediaBase):
         """
         super(ImageFile, self).save()
         if self.image:
-            page_name = 'File:%s' % self.image.name.capitalize()
-            response = None
+            page_name = 'File:%s' % self.image.name.replace(IMAGEFILE_PATH,'').capitalize()
             if not wiki.exists(page_name):
-                assert False
-                response = wiki.upload_file(abspath, self.description)
+                path = '/'.join([settings.MEDIA_ROOT, self.image.name]).replace('//', '/')
+                response = wiki.upload_file(path, self.description)
             else:
                 response = wiki.update_file(page_name, self.description)
-            assert False
     
     def delete(self):
         """Deletes image from mediawiki.
