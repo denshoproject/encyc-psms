@@ -3,16 +3,16 @@
 # File format: http://pip.openplans.org/requirement-format.html
 
 Django
-South
-celery
-django-celery
-django-debug-toolbar
+#South
+#celery
+#django-celery
+#django-debug-toolbar
 django-extensions
-django-pagination
-django-tastypie
+#django-pagination
+#django-tastypie
 gunicorn
-iPython
-PIL                  # NOTE: depends on libjpeg8, libjpeg8-dev
+#iPython
+#PIL                  # NOTE: depends on libjpeg8, libjpeg8-dev
 poster
 #psycopg2
 python-memcached
