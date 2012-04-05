@@ -9,13 +9,15 @@ Django
 django-debug-toolbar
 django-extensions
 #django-pagination
-#django-tastypie
+django-tastypie
 gunicorn
 iPython
+lxml
 PIL                  # NOTE: depends on libjpeg8, libjpeg8-dev
 poster
 #psycopg2
 python-memcached
+pyyaml
 sorl-thumbnail
 wikitools
 
