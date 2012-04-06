@@ -1,31 +1,41 @@
 {% extends "tansu/base.html" %}
 {% load thumbnail %}
 
-{% block title %}
-{{ imagefile.title }}
-{% endblock title %}
+
+{% block title_head %}{{ imagefile.title }}{% endblock %}
+{% block title_page %}{{ imagefile.title }}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url tansu-index %}">Home</a>
+&raquo; {{ imagefile.title }}
+{% endblock breadcrumbs %}
+
 
 {% block contents %}
 
-<h1>File:{{ imagefile.filename }}</h1>
-
 <p>
-<a href="{{ imagefile.get_absolute_url }}">
-<img src="{{ imagefile.image.url }}" width="500"/>
-</a>
+<a href="{{ imagefile.get_absolute_url }}"><img src="{{ imagefile.image.url }}" width="500"/></a>
 </p>
 
+<h4>File Metadata</h4>
 <p>
-No higher resolution available.
-<br />
-{{ imagefile.filename }}‎
-({{ imagefile.image.width }} × {{ imagefile.image.height }} pixels,
-file size: {{ imagefile.image.size }},
-MIME type: {{ imagefile.mimetype }}])
+{{ imagefile.uri }}<br/>
+{{ imagefile.image.width }} × {{ imagefile.image.height }} pixels<br/>
+file size: {{ imagefile.size|filesizeformat }}<br/>
+MIME type: {{ imagefile.mimetype }}
 </p>
 
+<h4>Description</h4>
 <p>
 {{ imagefile.description|linebreaks }}
 </p>
+
+<h4>API URLs</h4>
+<p>
+(by id) {{ imagefile.api_url }}<br/>
+(filename) {{ imagefile.api_filename_url }}<br/>
+</p>
+
+<a href="{{ imagefile.edit_url }}">edit</a>
 
 {% endblock contents %}

@@ -17,8 +17,8 @@ def index(request, template_name='tansu/index.html'):
     )
 
 @require_http_methods(['GET',])
-def detail(request, filename, template_name='tansu/detail.html'):
-    imagefile = get_object_or_404(ImageFile, image='tansu/%s' % filename)
+def detail(request, id, template_name='tansu/detail.html'):
+    imagefile = get_object_or_404(ImageFile, pk=id)
     return render_to_response(
         template_name, 
         {'imagefile': imagefile,},

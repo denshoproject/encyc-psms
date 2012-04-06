@@ -1,13 +1,16 @@
 {% extends "tansu/base.html" %}
 {% load thumbnail %}
 
-{% block title %}
-index.html
-{% endblock title %}
+
+{% block title_head %}Home{% endblock title_head %}
+{% block title_page %}Home{% endblock title_page %}
+
+{% block breadcrumbs %}
+Home
+{% endblock breadcrumbs %}
+
 
 {% block contents %}
-
-<h1>Filez</h1>
 
 {% for imagefile in imagefiles %}
 <a href="{{ imagefile.get_absolute_url }}">

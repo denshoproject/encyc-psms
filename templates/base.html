@@ -1,38 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet" />
-  <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet" />
-  <style>
-    .navbar {
-      background: #333;
-      padding-left: 10px;
-    }
-  </style>
+  <title>{% block title_head %}{% endblock %} | Tansu</title>
 </head>
 <body>
 
-<div class="navbar">
-  <div class="navbar=inner">
-    <div class="container">
+{% block breadcrumbs %}{% endblock breadcrumbs %}
 
-<a class="brand" href="/">Densho Test Wiki</a>
-<ul class="nav">
-  <li><a href="/">Home</a>
-  <li class="active"><a href="#">{% block title %}{% endblock %}</a></li>
-</li>
-</ul>
-
-    </div><!-- .container -->
-  </div><!-- .navbar-inner -->
-</div><!-- .navbar -->
-
-
-<div class="container">
+<h1>{% block title_page %}{% endblock %}</h1>
 
 {% block contents %}{% endblock contents %}
-
-</div><!-- .container -->
 
 </body>
 </html>

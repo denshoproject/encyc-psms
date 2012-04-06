@@ -1,4 +1,5 @@
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
+
 from tansu.models import ImageFile
 
 class ImageFileResource(ModelResource):
@@ -7,3 +8,4 @@ class ImageFileResource(ModelResource):
         resource_name = 'imagefile'
         #excludes = []
         allowed_methods = ['get']
+        filtering = {'uri':ALL,}

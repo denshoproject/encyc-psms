@@ -5,11 +5,14 @@ from tansu.models import ImageFile
 class ImageFileAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': (
-            'image', 
+            'image',
             'title', 
             'description', 
 #            'created', 
 #            'modified', 
+        )}),
+        (None, {'fields': (
+            'size','uri',
         )}),
     )
     list_display = ['image', 'title',]
