@@ -34,7 +34,7 @@ class ImageFile(MediaBase):
         """
         super(ImageFile, self).save()
         if self.image:
-            page_name = 'File:%s' % self.image.name.replace(IMAGEFILE_PATH,'').capitalize()
+            page_name = 'File:%s' % self.image.name.replace(IMAGEFILE_PATH,'')
             if not wiki.exists(page_name):
                 path = '/'.join([settings.MEDIA_ROOT, self.image.name]).replace('//', '/')
                 response = wiki.upload_file(path, self.description)
@@ -46,7 +46,7 @@ class ImageFile(MediaBase):
         """
         super(ImageFile, self).delete()
         if self.image:
-            page_name = 'File:%s' % self.image.name.capitalize()
+            page_name = 'File:%s' % self.image.name
             response = wiki.update_file(page_name, self.description)
             assert False
 
