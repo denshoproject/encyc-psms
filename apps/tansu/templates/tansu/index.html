@@ -12,10 +12,10 @@ Home
 
 {% block contents %}
 
-{% for imagefile in imagefiles %}
-<a href="{{ imagefile.get_absolute_url }}">
-<img src="{{ imagefile.image.url }}" width="200"/>
-{{ imagefile.title }}
+{% for entity in entities %}
+<a href="{{ entity.get_absolute_url }}">
+<img src="{{ entity.image.url }}" width="200"/>
+{{ entity.title }}
 </a>
 <br/>
 {% endfor %}

@@ -1,6 +1,6 @@
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 
-from tansu.models import ImageFile
+from tansu.models import Entity, AudioFile, ImageFile
 
 class ImageFileResource(ModelResource):
     class Meta:
