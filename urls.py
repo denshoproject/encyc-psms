@@ -25,3 +25,5 @@ urlpatterns = patterns(
     url(r'^tansu/', include('tansu.urls')),
     url(r'^$', lambda x: HttpResponseRedirect('/tansu/')),
 )
+# serve /media/ in development
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
