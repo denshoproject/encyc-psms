@@ -48,25 +48,27 @@ class Entity(BaseModel):
     def edit_url(self):
         return '/admin/tansu/entity/%s/' % self.id
     
-    def instances_all(self):
+    def instances_all(self, reload=False):
         """All instances including originals
         """
-        instances = []
-        for t in FILE_OBJECT_TYPES:
-            object_type = ContentType.objects.get(app_label='tansu', model=t.lower())
-            model_class = object_type.model_class()
-            for instance in model_class.objects.filter(entity=self):
-                instances.append(instance)
-        return instances
+        if reload or (not hasattr(self, '_instances_all')):
+            self._instances_all = []
+            for t in FILE_OBJECT_TYPES:
+                object_type = ContentType.objects.get(app_label='tansu', model=t.lower())
+                model_class = object_type.model_class()
+                for instance in model_class.objects.filter(entity=self):
+                    self._instances_all.append(instance)
+        return self._instances_all
     
-    def instances(self):
+    def instances(self, reload=False):
         """Non-original instances
         """
-        instances = []
-        for instance in self.instances_all():
-            if not instance.is_master:
-                instances.append(instance)
-        return instances
+        if reload or (not hasattr(self, '_instances')):
+            self._instances = []
+            for instance in self.instances():
+                if not instance.is_master:
+                    self._instances.append(instance)
+        return self._instances
     
     def originals(self):
         originals = []
@@ -74,6 +76,14 @@ class Entity(BaseModel):
             if instance.is_master:
                 originals.append(instance)
         return originals
+    
+    def original(self, reload=False):
+        if reload or (not hasattr(self, '_original')):
+            self._original = None
+            originals = self.originals()
+            if originals and (len(originals) >= 1):
+                self._original = originals[0]
+        return self._original
 
 
 def get_object_upload_path(file_object, filename):
