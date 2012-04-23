@@ -119,8 +119,8 @@ class FileObject(BaseModel):
     entity = models.ForeignKey(Entity)
     is_master = models.BooleanField()
     description = models.TextField(blank=True)
-    size = models.IntegerField()
-    uri = models.CharField(max_length=255)
+    size = models.IntegerField(blank=True)
+    uri = models.CharField(max_length=255, blank=True)
     
     class Meta:
         abstract = True
