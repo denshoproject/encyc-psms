@@ -68,7 +68,7 @@ class Entity(BaseModel):
         """
         if reload or (not hasattr(self, '_instances')):
             self._instances = []
-            for instance in self.instances():
+            for instance in self.instances_all():
                 if not instance.is_master:
                     self._instances.append(instance)
         return self._instances
@@ -115,14 +115,6 @@ def get_object_upload_path(file_object, filename):
     return '%s%s/%s' % (MEDIA_PATH, subdirs, filename)
 
 
-class Instance(models.Model):
-    entity = models.ForeignKey(Entity)
-    model = models.CharField(max_length=32)
-    object_id = models.IntegerField()
-    
-    class Meta:
-        unique_together = (('model', 'object_id'),)
-
 class FileObject(BaseModel):
     entity = models.ForeignKey(Entity)
     is_master = models.BooleanField()
@@ -145,7 +137,9 @@ class FileObject(BaseModel):
             self.size = self.media.size
             self.uri = self.media.name
         super(FileObject, self).save()
-        instance = self.instance()
+    
+    def delete(self):
+        super(FileObject, self).delete()
     
     def instance(self):
         """Gets connection between Entity and various FileObject subclasses.
@@ -153,11 +147,11 @@ class FileObject(BaseModel):
         if (not hasattr(self, '_instance')) or self._instance:
             content_type = ContentType.objects.get_for_model(self)
             try:
-                self._instance = Instance.objects.get(self.entity.id, 'imagefile', self.id)
+                self._instance = Instance.objects.get(
+                    entity_id=self.entity.id, model=content_type.model, object_id=self.id)
             except:
-                self._instance = Instance(entity=self.entity,
-                                          model=content_type.model,
-                                          object_id=self.id)
+                self._instance = Instance(
+                    entity=self.entity, model=content_type.model, object_id=self.id)
                 self._instance.save()
         return self._instance
     
