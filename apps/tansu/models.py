@@ -16,6 +16,7 @@ Audio / Document / Image / Video
 
 """
 import os
+import logging
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
@@ -24,6 +25,8 @@ from django.db import models
 from core.models import BaseModel
 from tansu import wiki
 
+
+logger = logging.getLogger(__name__)
 
 MEDIA_PATH = 'tansu/'
 FILE_OBJECT_TYPES = ['AudioFile', 'ImageFile', 'DocumentFile', 'VideoFile',]

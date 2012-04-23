@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
@@ -5,6 +7,9 @@ from django.template import RequestContext
 from django.views.decorators.http import require_http_methods
 
 from tansu.models import Entity, AudioFile, DocumentFile, ImageFile, VideoFile
+
+
+logger = logging.getLogger(__name__)
 
 
 def app_context(request):
