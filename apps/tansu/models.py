@@ -87,6 +87,13 @@ class Entity(BaseModel):
             if originals and (len(originals) >= 1):
                 self._original = originals[0]
         return self._original
+    
+    def instance(self, model, object_id):
+        object_id = int(object_id)
+        for instance in self.instances_all():
+            if (instance.model() == model) and (instance.id == object_id):
+                return instance
+        return None
 
 
 def get_object_upload_path(file_object, filename):
@@ -130,7 +137,8 @@ class FileObject(BaseModel):
     
     @models.permalink
     def get_absolute_url(self):
-        return ('tansu-detail', (), {'id': self.id })
+        return ('tansu-instance-detail', (), {
+            'uid':self.entity.uid, 'model':self.model(), 'object_id':self.id })
     
     def save(self):
         if hasattr(self, 'media'):
@@ -174,6 +182,9 @@ class AudioFile(FileObject):
     
     def mimetype(self):
         return 'audio'
+    
+    def model(self):
+        return 'audio'
 
 
 class DocumentFile(FileObject):
@@ -190,6 +201,9 @@ class DocumentFile(FileObject):
         return '/admin/tansu/documentfile/%s/' % self.id
     
     def mimetype(self):
+        return 'document'
+    
+    def model(self):
         return 'document'
 
 
@@ -226,6 +240,9 @@ class ImageFile(FileObject):
     
     def mimetype(self):
         return 'image'
+    
+    def model(self):
+        return 'image'
 
 
 class VideoFile(FileObject):
@@ -242,4 +259,7 @@ class VideoFile(FileObject):
         return '/admin/tansu/videofile/%s/' % self.id
     
     def mimetype(self):
+        return 'video'
+    
+    def model(self):
         return 'video'

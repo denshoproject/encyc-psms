@@ -1,7 +1,7 @@
 import logging
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.views.decorators.http import require_http_methods
@@ -31,9 +31,8 @@ def index(request, template_name='tansu/index.html'):
     )
 
 @require_http_methods(['GET',])
-def instance_detail(request, model, id, template_name='tansu/instance-detail.html'):
-    app_label = 'tansu'
-    entity = get_object_or_404(Entity, pk=id)
+def entity_detail(request, uid, template_name='tansu/entity-detail.html'):
+    entity = get_object_or_404(Entity, uid=uid)
     return render_to_response(
         template_name, 
         {'entity': entity,},
@@ -41,10 +40,14 @@ def instance_detail(request, model, id, template_name='tansu/instance-detail.htm
     )
 
 @require_http_methods(['GET',])
-def entity_detail(request, uid, template_name='tansu/detail.html'):
+def instance_detail(request, uid, model, object_id, template_name='tansu/instance-detail.html'):
     entity = get_object_or_404(Entity, uid=uid)
+    instance = entity.instance(model, object_id)
+    if not instance:
+        raise Http404
     return render_to_response(
         template_name, 
-        {'entity': entity,},
+        {'entity': entity,
+         'instance':instance,},
         context_instance=RequestContext(request, processors=[app_context])
     )
