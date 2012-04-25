@@ -1,0 +1,108 @@
+{% load thumbnail %}
+<div class="entity"><!-- uid:{{ entity.uid }} -->
+{% if entity.originals %}
+  {% for original in entity.originals %}
+    <p>
+    {% thumbnail original.media "500x500" as img %}
+      <a href="{{ original.media.url }}"
+      ><img
+        src="{{ img.url }}"
+        alt="{{ entity.title }} ({{ original.size|filesizeformat }})"
+        title="{{ entity.title }} ({{ original.size|filesizeformat }})"
+      /></a>
+    {% empty %}
+      <a href="{{ original.media.url }}"><img src="{{ STATIC_URL }}tansu/icons/{{ original.model }}.png" width="200" height="200" /></a>
+    {% endthumbnail %}
+    <br />
+    ({{ original.media.size|filesizeformat }},
+    {{ original.mimetype }},
+    {{ original.media.width }}x{{ original.media.height }} pixels)
+    <br/>
+    {{ original.description }}
+    </p>
+  {% endfor %}{# original in entity.originals #}
+{% endif %}{# entity.originals #}
+
+{% if request.user.is_staff %}
+  <script type="text/javascript"> 
+    $(document).ready(function() {
+    
+      // click edit
+      $("div#edit-{{ entity.uid }} div.link").click(function() {
+        // hide edit link, show form
+        $("div#edit-{{ entity.uid }} form"  ).removeClass('invisible').addClass('visible');
+        $("div#edit-{{ entity.uid }} div.link").removeClass('visible').addClass('invisible');
+        $("div#edit-{{ entity.uid }} div.link span.result").text('');
+        return false;
+      });
+      
+      // click cancel
+      $("div#edit-{{ entity.uid }} form a.cancel").click(function() {
+        // hide form, show edit link
+        $("div#edit-{{ entity.uid }} form"  ).removeClass('visible').addClass('invisible');
+        $("div#edit-{{ entity.uid }} div.link").removeClass('invisible').addClass('visible');
+        $("div#edit-{{ entity.uid }} div.link span.result").text('');
+        return false;
+      });
+      
+      // click OK
+      $("div#edit-{{ entity.uid }} form a.submit").click(function() {
+        // Extract form data
+        var form_data = {
+            'uid': $('div#edit-{{ entity.uid }} form #id_uid').val(),
+            'title': $('div#edit-{{ entity.uid }} form #id_title').val(),
+            'description': $('div#edit-{{ entity.uid }} form #id_description').val()
+        };
+        // GET entity info and display in .results
+        $('div#edit-{{ entity.uid }} div.link span.result').load(
+            "/api/v0.1/entity/{{ entity.uid }}/?format=json",
+            form_data
+            );
+        // make form disappear
+        $("div#edit-{{ entity.uid }} form"  ).removeClass('visible').addClass('invisible');
+        $("div#edit-{{ entity.uid }} div.link").removeClass('invisible').addClass('visible');
+        return false;
+      });
+      
+    });
+  </script>
+
+  <div id="edit-{{ entity.uid }}" class="edit">
+    <div class="link">
+      <a class="edit visible" href="#">edit</a>
+      <span class="result" style="background:yellow;"></span>
+    </div>
+    <form class="invisible" method="post" action="">{% csrf_token %}
+      <table border="0">
+        <tr>
+          <td>
+            <table border="0">
+{# Include the hidden fields #}
+{% for hidden in form.hidden_fields %}
+{{ hidden }}
+{% endfor %}
+{# Include the visible fields #}
+{% for field in form.visible_fields %}
+              <tr>
+                <th>
+{{ field.label_tag }}
+                </th>
+                <td>
+{% if field.errors %}{{ field.errors }}<br/>{% endif %}
+{{ field }}
+                </td>
+              </tr>
+{% endfor %}
+            </table>
+          </td>
+          <td valign="bottom">
+            <a class="submit" href="">OK</a>
+            / <a class="cancel" href="">cancel</a>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div><!-- .edit -->
+
+{% endif %}
+</div><!-- .entity -->

@@ -1,5 +1,7 @@
 from django.conf.urls.defaults import url
 
+from tastypie.authentication import Authentication
+from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 
 from tansu.models import Entity, AudioFile, DocumentFile, ImageFile, VideoFile
@@ -10,8 +12,10 @@ class EntityResource(ModelResource):
         queryset = Entity.objects.all()
         resource_name = 'entity'
         #excludes = []
-        allowed_methods = ['get']
+        #allowed_methods = ['get']
         filtering = {'uri':ALL,}
+        authentication = Authentication()
+        authorization = DjangoAuthorization()
     
     def override_urls(self):
         """Use Densho UID in URL instead of entity.id.
