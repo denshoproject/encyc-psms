@@ -15,8 +15,9 @@ Audio / Document / Image / Video
 
 
 """
-import os
 import logging
+import os
+import mimetypes
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
@@ -149,6 +150,9 @@ class FileObject(BaseModel):
     def delete(self):
         super(FileObject, self).delete()
     
+    def filename(self):
+        return self.media.name.replace(MEDIA_PATH,'')
+    
     def instance(self):
         """Gets connection between Entity and various FileObject subclasses.
         """
@@ -163,8 +167,11 @@ class FileObject(BaseModel):
                 self._instance.save()
         return self._instance
     
-    def filename(self):
-        return self.media.name.replace(MEDIA_PATH,'')
+    def mimetype(self):
+        if not mimetypes.inited:
+            mimetypes.init()
+        return mimetypes.guess_type(self.media.file.name)[0]
+    
 
 
 class AudioFile(FileObject):
@@ -179,9 +186,6 @@ class AudioFile(FileObject):
     
     def edit_url(self):
         return '/admin/tansu/audiofile/%s/' % self.id
-    
-    def mimetype(self):
-        return 'audio'
     
     def model(self):
         return 'audio'
@@ -199,9 +203,6 @@ class DocumentFile(FileObject):
     
     def edit_url(self):
         return '/admin/tansu/documentfile/%s/' % self.id
-    
-    def mimetype(self):
-        return 'document'
     
     def model(self):
         return 'document'
@@ -238,9 +239,6 @@ class ImageFile(FileObject):
     def edit_url(self):
         return '/admin/tansu/imagefile/%s/' % self.id
     
-    def mimetype(self):
-        return 'image'
-    
     def model(self):
         return 'image'
 
@@ -257,9 +255,6 @@ class VideoFile(FileObject):
     
     def edit_url(self):
         return '/admin/tansu/videofile/%s/' % self.id
-    
-    def mimetype(self):
-        return 'video'
     
     def model(self):
         return 'video'
