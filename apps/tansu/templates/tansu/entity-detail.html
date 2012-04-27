@@ -1,0 +1,71 @@
+{% extends "tansu/base.html" %}
+{% load thumbnail %}
+
+
+{% block title_head %}{{ entity.title }}{% endblock %}
+{% block title_page %}{{ entity.title }}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url tansu-index %}">Home</a>
+&raquo; {{ entity.title }}
+{% endblock breadcrumbs %}
+
+
+{% block contents %}
+
+
+{% if request.user.is_staff %}<a href="{{ entity.edit_url }}">edit</a>{% endif %}
+
+
+{% if entity.originals %}
+{% for original in entity.originals %}
+<p>
+{% thumbnail original.media "500x500" as img %}
+<a href="{{ original.media.url }}"
+><img
+  src="{{ img.url }}"
+  alt="{{ entity.title }} ({{ original.size|filesizeformat }})"
+  title="{{ entity.title }} ({{ original.size|filesizeformat }})"
+/></a>
+{% empty %}
+<a href="{{ original.media.url }}"><img src="{{ STATIC_URL }}tansu/icons/{{ original.mimetype }}.png" width="200" height="200" /></a>
+{% endthumbnail %}
+<br />
+{% if request.user.is_staff %}[ <a href="{{ original.edit_url }}">edit</a> ]{% endif %}
+({{ original.media.size|filesizeformat }},
+{{ original.media.width }}x{{ original.media.height }} pixels)
+<br/>
+{{ original.description }}
+</p>
+{% endfor %}{# original in entity.originals #}
+{% endif %}{# entity.originals #}
+
+
+{% if entity.instances %}
+<h4>Instances</h4>
+{% for instance in entity.instances %}
+{% if not instance.is_master %}
+<p>
+{% thumbnail instance.media "50x50" crop="center" as img %}
+<a href="{{ instance.media.url }}"><img src="{{ img.url }}" /></a>
+{% empty %}
+<a href="{{ instance.media.url }}"><img src="{{ STATIC_URL }}tansu/icons/{{ instance.mimetype }}.png" width="50" height="50" /></a>
+{% endthumbnail %}
+{% if request.user.is_staff %}[ <a href="{{ instance.edit_url }}">edit</a> ]{% endif %}
+({{ instance.media.size|filesizeformat }})
+{{ instance.description }}
+<br/>
+</p>
+{% endif %}{# not instance.is_master #}
+{% endfor %}{# instance in entity.instances #}
+{% endif %}{# entity.instances #}
+
+
+<h4>API URLs</h4>
+<p>
+(by id) {{ entity.api_url }}<br/>
+(filename) {{ entity.api_filename_url }}<br/>
+</p>
+
+
+{% endblock contents %}
