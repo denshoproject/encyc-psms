@@ -1,0 +1,27 @@
+{% load thumbnail %}
+<div class="entity"><!-- uid:{{ entity.uid }} -->
+{{ entity.description|linebreaks }}
+{% if request.user.is_staff %}<a href="{{ entity.edit_url }}">edit</a>{% endif %}
+{% if entity.originals %}
+  {% for original in entity.originals %}
+    <p>
+    {% thumbnail original.media "500x500" as img %}
+      <a href="{{ original.media.url }}"
+      ><img
+        src="{{ img.url }}"
+        alt="{{ entity.title }} ({{ original.size|filesizeformat }})"
+        title="{{ entity.title }} ({{ original.size|filesizeformat }})"
+      /></a>
+    {% empty %}
+      <a href="{{ original.media.url }}"><img src="{{ STATIC_URL }}tansu/icons/{{ original.model }}.png" width="200" height="200" /></a>
+    {% endthumbnail %}
+    <br />
+    ({{ original.media.size|filesizeformat }},
+    {{ original.mimetype }},
+    {{ original.media.width }}x{{ original.media.height }} pixels)
+    <br/>
+    {{ original.description }}
+    </p>
+  {% endfor %}{# original in entity.originals #}
+{% endif %}{# entity.originals #}
+</div><!-- .entity -->
