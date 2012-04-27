@@ -17,6 +17,7 @@ def app_context(request):
     """
     context = {
         'request': request,
+        'JQUERY_VERSION': settings.JQUERY_VERSION,
     }
     return context
 
