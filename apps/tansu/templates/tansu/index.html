@@ -1,5 +1,5 @@
 {% extends "tansu/base.html" %}
-{% load tansu_tags %}
+{% load thumbnail %}
 
 
 {% block title_head %}Home{% endblock title_head %}
@@ -12,10 +12,18 @@ Home
 
 {% block contents %}
 
-<div id="entities">
 {% for entity in entities %}
-{% list_entity entity request %}
+<a href="{{ entity.get_absolute_url }}">
+
+{% thumbnail entity.original.media "100x100" as img %}
+<img src="{{ img.url }}" alt="{{ entity.title }}" title="{{ entity.title }}" />
+{% empty %}
+<img src="{{ STATIC_URL }}tansu/icons/{{ entity.original.mimetype }}.png" width="100" height="100"  alt="{{ entity.title }}" title="{{ entity.title }}" />
+{% endthumbnail %}
+
+{{ entity.title }}
+</a>
+<br/>
 {% endfor %}
-</div><!-- #entities -->
 
 {% endblock contents %}
