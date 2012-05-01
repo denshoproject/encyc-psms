@@ -32,6 +32,27 @@ Collection Name
 varchar Name of collection
 """
 
+MEDIA_PATH = 'sources/'
+
+def get_object_upload_path(file_object, filename):
+    """Callable FileField.upload_to - see model field reference.
+    
+    Files for each id are kept in a directory named after the id.
+    
+    >>> img = Source()
+    >>> img.id = 1
+    >>> get_item_files_path(img, 'img.jpg')
+    'sources/1/img.jpg'
+    >>> img.id = 56
+    >>> get_item_files_path(img, 'img.jpg')
+    'sources/56/img.jpg'
+    >>> img.id = 2501
+    >>> get_item_files_path(img, 'img.jpg')
+    'sources/2501/img.jpg'
+    """
+    return '%s%s/%s' % (MEDIA_PATH, str(file_object.id), filename)
+
+
 class Source(BaseModel):
     #created
     #modified
@@ -44,6 +65,8 @@ class Source(BaseModel):
     collection_name = models.CharField(max_length=255, blank=True, null=True)
     external_url = models.URLField(blank=True, null=True)
     creative_commons = models.BooleanField(default=False)
+    media = models.FileField(upload_to=get_object_upload_path, blank=True, null=True)
+    display = models.ImageField(upload_to=get_object_upload_path, blank=True, null=True)
     MEDIA_FORMATS = (
         ('image', 'photo'),
         ('document', 'document'),

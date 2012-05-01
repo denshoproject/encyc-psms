@@ -5,19 +5,23 @@ from sources.models import Source
 
 class SourceAdmin(admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': (
             #'created',
             #'modified',
+        (None, {'fields': (
             'headword',
-            'densho_id',
-            'encyclopedia_id',
+            ('densho_id','encyclopedia_id',),
+            ('institution_id','collection_name',),
+        )}),
+        (None, {'fields': (
             'caption',
             'courtesy',
-            'institution_id',
-            'collection_name',
+        )}),
+        (None, {'fields': (
+            ('media','display',),
             'external_url',
-            'creative_commons',
-            'media_format',
+            ('media_format','creative_commons',),
+        )}),
+        (None, {'fields': (
             'notes',
         )}),
     )
@@ -31,16 +35,13 @@ class SourceAdmin(admin.ModelAdmin):
     ordering = ['headword', 'densho_id',]
     list_filter = ['media_format','creative_commons','institution_id',]
     search_fields = [
-        'densho_id',
-        'encyclopedia_id',
         'headword',
-        'caption',
-        'courtesy',
-        'institution_id',
-        'collection_name',
-        'external_url',
-        'creative_commons',
+        'densho_id', 'encyclopedia_id',
+        'caption', 'courtesy',
+        'institution_id', 'collection_name',
+        'media', 'display', 'external_url',
         'media_format',
+        'creative_commons',
         'notes',
         ]
 
