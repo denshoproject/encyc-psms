@@ -23,6 +23,7 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(v01_api.urls)),
     url(r'^tansu/', include('tansu.urls')),
+    url(r'^mw/$', 'sources.views.links', name='sources-links'),
     url(r'^$', lambda x: HttpResponseRedirect('/tansu/')),
 )
 # serve /media/ in development
