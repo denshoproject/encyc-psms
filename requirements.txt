@@ -18,6 +18,8 @@ poster
 #psycopg2
 python-memcached
 pyyaml
+requests
+simplejson
 sorl-thumbnail
 wikitools
 
