@@ -34,7 +34,7 @@ class SourceAdmin(admin.ModelAdmin):
         ]
     list_display_links = ['densho_id',]
     ordering = ['headword', 'densho_id',]
-    list_filter = ['creative_commons','media_format','headword',]
+    list_filter = ['media_format','headword',]
     search_fields = [
         'headword',
         'densho_id', 'encyclopedia_id',
