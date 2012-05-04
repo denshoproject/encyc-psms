@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 
 from sources.models import Source
@@ -44,5 +45,17 @@ class SourceAdmin(admin.ModelAdmin):
         'creative_commons',
         'notes',
         ]
+    
+    def render_change_form(self, request, context, *args, **kwargs):
+        """If Source has been saved, insert link to MediaWiki article (using headword).
+        """
+        if context.get('original', None):
+            txt = 'Title of wiki article this primary source is connected to. ' \
+                  '<strong><a href="%s/%s">Back to article</a></strong>' % (settings.EDITORS_MEDIAWIKI_URL,
+                                                                            context['original'].headword)
+        else:
+            txt = 'Title of wiki article this primary source is connected to.'
+        context['adminform'].form.fields['headword'].help_text = txt
+        return super(SourceAdmin, self).render_change_form(request, context, args, kwargs)
 
 admin.site.register(Source, SourceAdmin)
