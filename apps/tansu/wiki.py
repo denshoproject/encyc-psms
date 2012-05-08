@@ -37,7 +37,7 @@ def upload_file(abspath, comment='Uploaded by Tansu'):
     f = open(abspath, 'r')
     wiki = _login()
     wf = wikitools.wikifile.File(wiki, page_name)
-    response = wf.upload(f, comment=comment)
+    response = wf.upload(f, comment=comment, ignorewarnings=True)
     f.close()
     return response
 
