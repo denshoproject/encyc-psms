@@ -103,16 +103,17 @@ def get_object_upload_path(file_object, filename):
     To conserve inodes and have fewer directories inside tansu (we
     hope we get enough files to have this problem!), add subdirectories
     composed of initial digits of file_object.id.
-    
-    >>> img = ImageObject
+
+    >>> from tansu.models import ImageFile
+    >>> img = ImageFile()
     >>> img.id = 1
-    >>> get_item_files_path(img, 'img.jpg')
+    >>> get_object_upload_path(img, 'img.jpg')
     'tansu/1/1/img.jpg'
     >>> img.id = 56
-    >>> get_item_files_path(img, 'img.jpg')
+    >>> get_object_upload_path(img, 'img.jpg')
     'tansu/5/56/img.jpg'
     >>> img.id = 2501
-    >>> get_item_files_path(img, 'img.jpg')
+    >>> get_object_upload_path(img, 'img.jpg')
     'tansu/2/2501/img.jpg'
     """
     entity_id = str(file_object.entity.id)

@@ -42,7 +42,7 @@ def upload_file(abspath, comment='Uploaded by Tansu'):
     return response
 
 
-def update_file(page_name, text):
+def update_text(page_name, text):
     """Update existing file text
 
     >>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
