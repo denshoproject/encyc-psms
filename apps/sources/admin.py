@@ -18,7 +18,7 @@ class SourceAdmin(admin.ModelAdmin):
             'courtesy',
         )}),
         (None, {'fields': (
-            ('media','display',),
+            ('media','display','update_display'),
             'external_url',
             ('media_format','creative_commons',),
         )}),

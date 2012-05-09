@@ -24,7 +24,6 @@ from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.db import models
 
 from core.models import BaseModel
-from tansu import wiki
 
 
 logger = logging.getLogger(__name__)
@@ -217,25 +216,10 @@ class ImageFile(FileObject):
         verbose_name_plural = 'Images'
     
     def save(self):
-        """Uploads image to mediawiki, or updates description for existing file.
-        """
         super(ImageFile, self).save()
-        #if self.media:
-        #    page_name = 'File:%s' % self.media.name.replace(IMAGEFILE_PATH,'')
-        #    if not wiki.exists(page_name):
-        #        path = '/'.join([settings.MEDIA_ROOT, self.media.name]).replace('//', '/')
-        #        response = wiki.upload_file(path, self.description)
-        #    else:
-        #        response = wiki.update_file(page_name, self.description)
     
     def delete(self):
-        """Deletes image from mediawiki.
-        """
         super(ImageFile, self).delete()
-        if self.media:
-            page_name = 'File:%s' % self.media.name
-            response = wiki.update_file(page_name, self.description)
-            assert False
     
     def edit_url(self):
         return '/admin/tansu/imagefile/%s/' % self.id
