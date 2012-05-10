@@ -131,11 +131,16 @@ class Source(BaseModel):
         >>> s1 = Source(id=123)
         >>> s1.get_absolute_url()
         '/admin/sources/source/123/'
-        >>> s2 = Source()
+        >>> s2 = Source(external_url='http://research.archives.gov/description/538182')
         >>> s2.get_absolute_url()
+        'http://research.archives.gov/description/538182'
+        >>> s3 = Source()
+        >>> s3.get_absolute_url()
         '/admin/sources/source/'
         """
-        if self.wikititle():
+        if self.external_url:
+            return self.external_url
+        elif self.wikititle():
             return '/'.join([http_host, self.wikititle()])
         elif self.id:
             return '/admin/sources/source/%s/' % self.id
