@@ -121,20 +121,41 @@ class Source(BaseModel):
     def __unicode__(self):
         return '(%s) %s' % (self.densho_id, self.caption)
     
-    @models.permalink
-    def get_absolute_url(self):
-        return ('sources-source-detail', (), {'uid': self.uid })
+    #@models.permalink
+    def get_absolute_url(self, http_host=settings.EDITORS_MEDIAWIKI_URL):
+        """Returns link to editors' MediaWiki page for this Densho UID
+        
+        >>> s0 = Source(densho_id='densho-i337-01', display='asdf.jpg')
+        >>> s0.get_absolute_url(http_host='http://10.0.4.15:9000/mediawiki/index.php')
+        'http://10.0.4.15:9000/mediawiki/index.php/File:densho-i337-01.jpg'
+        >>> s1 = Source(id=123)
+        >>> s1.get_absolute_url()
+        '/admin/sources/source/123/'
+        >>> s2 = Source()
+        >>> s2.get_absolute_url()
+        '/admin/sources/source/'
+        """
+        if self.wikititle():
+            return '/'.join([http_host, self.wikititle()])
+        elif self.id:
+            return '/admin/sources/source/%s/' % self.id
+        return '/admin/sources/source/'
     
     def admin_url(self, http_host=settings.SOURCES_HTTP_HOST):
         """Get a link to the admin interface.
         
         @param http_host IP address or domain name (for testing).
         
-        >>> s = Source(id=123)
-        >>> s.admin_url(http_host='http://10.0.4.15:8001')
+        >>> s0 = Source(id=123)
+        >>> s0.admin_url(http_host='http://10.0.4.15:8001')
         'http://10.0.4.15:8001/admin/sources/source/123/'
+        >>> s1 = Source()
+        >>> s1.get_absolute_url()
+        '/admin/sources/source/'
         """
-        return '%s/admin/sources/source/%s/' % (http_host, self.id)
+        if self.id:
+            return '%s/admin/sources/source/%s/' % (http_host, self.id)
+        return '/admin/sources/source/'
     
     def select_upload_file(self):
         """Display if present, media if not.
