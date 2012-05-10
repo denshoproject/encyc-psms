@@ -125,13 +125,13 @@ class Source(BaseModel):
     def get_absolute_url(self):
         return ('sources-source-detail', (), {'uid': self.uid })
     
-    def edit_url(self, http_host=settings.SOURCES_HTTP_HOST):
+    def admin_url(self, http_host=settings.SOURCES_HTTP_HOST):
         """Get a link to the admin interface.
         
         @param http_host IP address or domain name (for testing).
         
         >>> s = Source(id=123)
-        >>> s.edit_url(http_host='http://10.0.4.15:8001')
+        >>> s.admin_url(http_host='http://10.0.4.15:8001')
         'http://10.0.4.15:8001/admin/sources/source/123/'
         """
         return '%s/admin/sources/source/%s/' % (http_host, self.id)
@@ -230,7 +230,9 @@ class Source(BaseModel):
         #>>> s.wikitext(http_host='http://123.456.78.9:8001')
         #"\n===== Caption =====\nBadda bing badda boom.\n\n===== Courtesy =====\nBob's yer uncle.\n\n===== Edit =====\nhttp://123.456.78.9:8001/admin/sources/source/123/\n"
         """
-        return WIKI_TEXT_TEMPLATE % (self.caption, self.courtesy, self.edit_url(http_host=http_host))
+        return WIKI_TEXT_TEMPLATE % (self.caption,
+                                     self.courtesy,
+                                     self.admin_url(http_host=http_host))
 
     def wiki_delete(self):
         assert False
