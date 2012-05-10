@@ -34,7 +34,10 @@ def links(request, template_name='sources/links.html'):
     # get list of headwords
     args = '?action=query&list=categorymembers&cmtitle=Category:Pages_Needing_Primary_Sources&cmlimit=500&format=json'
     url = '%s%s' % (settings.EDITORS_MEDIAWIKI_API, args)
-    r = requests.get(url, auth=(settings.EDITORS_MEDIAWIKI_USER, settings.EDITORS_MEDIAWIKI_PASS))
+    if settings.EDITORS_MEDIAWIKI_USER and settings.EDITORS_MEDIAWIKI_PASS:
+        r = requests.get(url, (settings.EDITORS_MEDIAWIKI_USER, settings.EDITORS_MEDIAWIKI_PASS))
+    else:
+        r = requests.get(url)
     if r.status_code != 200:
         assert False
     data = json.loads(r.text)
