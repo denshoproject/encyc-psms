@@ -74,15 +74,17 @@ class Source(BaseModel):
     #modified
     densho_id = models.CharField(max_length=255)
     headword = models.CharField(max_length=255)
-    encyclopedia_id = models.CharField(max_length=255, blank=True, null=True)
+    encyclopedia_id = models.CharField(max_length=255, unique=True)
     caption = models.TextField(blank=True, null=True)
     courtesy = models.TextField(blank=True, null=True)
     institution_id = models.CharField(max_length=255, blank=True, null=True)
     collection_name = models.CharField(max_length=255, blank=True, null=True)
     external_url = models.URLField(blank=True, null=True,)
     creative_commons = models.BooleanField(default=False)
-    media = models.FileField(upload_to=get_object_upload_path, blank=True, null=True,
+    media = models.FileField('Original', upload_to=get_object_upload_path, blank=True, null=True,
         help_text='full-size file')
+    streaming_url = models.URLField(blank=True, null=True,)
+    transcript = models.FileField(upload_to=get_object_upload_path, blank=True, null=True)
     display = models.ImageField(upload_to=get_object_upload_path, blank=True, null=True,
         help_text='display/keyframe image')
     update_display = models.BooleanField(default=False,
@@ -92,7 +94,7 @@ class Source(BaseModel):
         ('document', 'document'),
         ('video', 'VH'),
         )
-    media_format = models.CharField(max_length=32, choices=MEDIA_FORMATS, blank=True, null=True)
+    media_format = models.CharField(max_length=32, choices=MEDIA_FORMATS)
     notes = models.TextField(blank=True, null=True)
     
     class Meta:
