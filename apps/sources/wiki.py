@@ -1,5 +1,6 @@
 import os
 
+from bs4 import UnicodeDammit
 import wikitools
 
 from django.conf import settings
@@ -58,6 +59,17 @@ def prepend_text(page_name, prependtext):
     p = wikitools.page.Page(wiki, page_name)
     response = p.edit(prependtext=prependtext)
     return response
+
+
+def link_exists(page_name, target):
+    """Check that link exists in page
+    """
+    wiki = _login()
+    p = wikitools.page.Page(wiki, page_name)
+    text = UnicodeDammit(p.getWikiText(), smart_quotes_to="html").unicode_markup
+    if target in text:
+        return True
+    return False
 
 
 def update_text(page_name, text):

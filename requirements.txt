@@ -2,6 +2,7 @@
 # Install using pip: http://pip.openplans.org/
 # File format: http://pip.openplans.org/requirement-format.html
 
+beautifulsoup4
 Django
 #South
 #celery

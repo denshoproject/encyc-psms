@@ -48,7 +48,7 @@ WIKI_TEXT_TEMPLATE = """
 %s
 """
 
-WIKI_IMG_LINK = "[[%s|right|200px]]"
+WIKI_IMG_LINK = "[[%s|right|200px]]\n"
 
 
 def get_object_upload_path(file_object, filename):
@@ -273,14 +273,20 @@ class Source(BaseModel):
         logging.debug('wiki_sync(): %s' % self)
         # assemble the variables
         keys = []
-        if self.select_upload_file():     keys.append('file') # uploadable file exists
-        else:                             keys.append('----')
-        if wiki.exists(self.wikititle()): keys.append('page') # File:* page exists
-        else:                             keys.append('----')
-        if update_display:                keys.append('updt') # update_display checked
-        else:                             keys.append('----')
-        if self._wiki_link_exists():      keys.append('link') # link present on page
-        else:                             keys.append('----')
+        upload_file = self.select_upload_file()
+        page_exists = wiki.exists(self.wikititle())
+        if page_exists:
+            link_exists = self._wiki_link_exists()
+        else:
+            link_exists = False
+        if upload_file:    keys.append('file') # uploadable file exists
+        else:              keys.append('----')
+        if page_exists:    keys.append('page') # File:* page exists
+        else:              keys.append('----')
+        if update_display: keys.append('updt') # update_display checked
+        else:              keys.append('----')
+        if link_exists:    keys.append('link') # link present on page
+        else:              keys.append('----')
         keys = ':'.join(keys)
         logging.debug('    keys: %s' % keys)
         # consult table, get names of functions to execute, and run them on self
@@ -313,8 +319,8 @@ class Source(BaseModel):
             functions = []
         logging.debug('    functions: %s' % functions)
         for f in functions:
-            fname = '_wiki_%s' % f
-            response = self.__getattribute__(f)()
+            function_name = '_wiki_%s' % f
+            response = self.__getattribute__(function_name)()
         # done!
         logging.debug(response)
         return response
@@ -353,14 +359,16 @@ class Source(BaseModel):
         logging.debug('    OK')
         return response
     
+    def _wiki_linktext(self):
+        return "[[%s|right|200px]]" % self.wikititle()
+    
+    def _wiki_link_exists(self):
+        return wiki.link_exists(self.headword, self.wikititle())
+    
     def _wiki_link(self):
-        """Add a link to the File:* page to the article page
-        """
         logging.debug('Source._wiki_link')
+        response = wiki.prepend_text(self.headword, self._wiki_linktext())
         logging.debug('    OK')
-        link = "[[%s|right|200px]]" % self.wikititle()
-        assert False
-        response = wiki.prepend_text(self.wikititle(), link)
         return response
 
     def wiki_delete(self):
