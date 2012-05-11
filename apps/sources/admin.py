@@ -11,15 +11,18 @@ class SourceAdmin(admin.ModelAdmin):
         (None, {'fields': (
             'headword',
             ('densho_id','encyclopedia_id',),
+        )}),
+        (None, {'fields': (
             ('institution_id','collection_name',),
+            'external_url',
         )}),
         (None, {'fields': (
             'caption',
             'courtesy',
         )}),
         (None, {'fields': (
-            ('media','display','update_display'),
-            'external_url',
+            'media',
+            ('display','update_display'),
             ('media_format','creative_commons',),
         )}),
         (None, {'fields': (

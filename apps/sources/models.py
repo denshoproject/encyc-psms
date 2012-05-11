@@ -76,10 +76,12 @@ class Source(BaseModel):
     courtesy = models.TextField(blank=True, null=True)
     institution_id = models.CharField(max_length=255, blank=True, null=True)
     collection_name = models.CharField(max_length=255, blank=True, null=True)
-    external_url = models.URLField(blank=True, null=True)
+    external_url = models.URLField(blank=True, null=True,)
     creative_commons = models.BooleanField(default=False)
-    media = models.FileField(upload_to=get_object_upload_path, blank=True, null=True)
-    display = models.ImageField(upload_to=get_object_upload_path, blank=True, null=True)
+    media = models.FileField(upload_to=get_object_upload_path, blank=True, null=True,
+        help_text='full-size file')
+    display = models.ImageField(upload_to=get_object_upload_path, blank=True, null=True,
+        help_text='display/keyframe image')
     update_display = models.BooleanField(default=False,
         help_text='Upload file again.')
     MEDIA_FORMATS = (
