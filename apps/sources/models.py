@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 
 from core.models import BaseModel
-from tansu import wiki
+from sources import wiki
 
 logger = logging.getLogger(__name__)
 
