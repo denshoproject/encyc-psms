@@ -42,6 +42,24 @@ def upload_file(abspath, comment='Uploaded by Tansu'):
     return response
 
 
+def prepend_text(page_name, prependtext):
+    """Prepends a string to the existing file text
+    
+    >>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
+    >>> p.edit(prepend='[prepended]')
+    {u'edit': {u'newrevid': 178,
+               u'newtimestamp': u'2012-03-23T21:20:30Z',
+               u'oldrevid': 177,
+               u'pageid': 126,
+               u'result': u'Success',
+               u'title': u'File:6a00e55055.jpg'}}
+    """
+    wiki = _login()
+    p = wikitools.page.Page(wiki, page_name)
+    response = p.edit(prependtext=prependtext)
+    return response
+
+
 def update_text(page_name, text):
     """Update existing file text
 

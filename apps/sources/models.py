@@ -48,6 +48,9 @@ WIKI_TEXT_TEMPLATE = """
 %s
 """
 
+WIKI_IMG_LINK = "[[%s|right|200px]]"
+
+
 def get_object_upload_path(file_object, filename):
     """Callable FileField.upload_to - see model field reference.
     
@@ -259,50 +262,65 @@ class Source(BaseModel):
         return WIKI_TEXT_TEMPLATE % (self.caption,
                                      self.courtesy,
                                      self.admin_url(http_host=http_host))
-
-    def wiki_delete(self):
-        assert False
     
     def wiki_sync(self, update_display):
         """Decide whether to upload a new file or update existing info.
         """
         logging.debug('wiki_sync(): %s' % self)
-        DECISION_TABLE = {'file:exists:update':      ['_wiki_upload_file', '_wiki_update_text'],
-                          'file:exists:noupdate':    ['_wiki_update_text'],
-                          'file:noexist:update':     ['_wiki_upload_file'],
-                          'file:noexist:noupdate':   ['_wiki_upload_file'],
-                          'nofile:exists:update':    ['_wiki_update_text'],
-                          'nofile:exists:noupdate':  ['_wiki_update_text'],
-                          'nofile:noexist:update':   None,
-                          'nofile:noexist:noupdate': None,}
         # assemble the variables
         keys = []
-        if self.select_upload_file(): keys.append('file')
-        else: keys.append('nofile')
-        if wiki.exists(self.wikititle()): keys.append('exists')
-        else: keys.append('noexist')
-        if update_display: keys.append('update')
-        else: keys.append('noupdate')
+        if self.select_upload_file():     keys.append('file') # uploadable file exists
+        else:                             keys.append('----')
+        if wiki.exists(self.wikititle()): keys.append('page') # File:* page exists
+        else:                             keys.append('----')
+        if update_display:                keys.append('updt') # update_display checked
+        else:                             keys.append('----')
+        if self._wiki_link_exists():      keys.append('link') # link present on page
+        else:                             keys.append('----')
         keys = ':'.join(keys)
         logging.debug('    keys: %s' % keys)
         # consult table, get names of functions to execute, and run them on self
+        DECISION_TABLE = {
+            #uploadable file exists
+            #|    File:* page exists
+            #|    |    update_display checked
+            #|    |    |    link present on page
+            #|    |    |    |
+            'file:page:updt:link': ['upload','update',                ],
+            'file:page:updt:----': ['upload','update','link',         ],
+            'file:page:----:link': [         'update',                ],
+            'file:page:----:----': [         'update','link',         ],
+            'file:----:updt:link': ['upload','update',                ],
+            'file:----:updt:----': ['upload','update','link',         ],
+            'file:----:----:link': ['upload','update',                ],
+            'file:----:----:----': ['upload','update','link',         ],
+            '----:page:updt:link': [                         'delete',],
+            '----:page:updt:----': [                         'delete',],
+            '----:page:----:link': [                         'delete',],
+            '----:page:----:----': [                         'delete',],
+            '----:----:updt:link': [                                  ],
+            '----:----:updt:----': [                                  ],
+            '----:----:----:link': [                                  ],
+            '----:----:----:----': [                                  ],
+            }
         try:
             functions = DECISION_TABLE[keys]
         except:
             functions = []
         logging.debug('    functions: %s' % functions)
         for f in functions:
+            fname = '_wiki_%s' % f
             response = self.__getattribute__(f)()
         # done!
         logging.debug(response)
         return response
 
-    def _wiki_upload_file(self):
+    def _wiki_upload(self):
         """Upload display file to wiki.
         
         symlink the wiki file, upload, rm symlink
         """
-        logging.debug('    wiki_upload_file')
+        logging.debug('Source._wiki_upload_file')
         # upload initial file
         responses = []
         src = self.select_upload_file().path
@@ -319,25 +337,28 @@ class Source(BaseModel):
         if symlinked:
             os.remove(dest)
             logging.debug('        symlinking DONE')
-        # update text
-        response = self._wiki_update_text()
-        responses.append(response)
         # done
         logging.debug('    OK')
         return responses
     
-    def _wiki_update_text(self):
+    def _wiki_update(self):
         """Just update the text of the File: page.
         """
-        logging.debug('wiki_upload_text')
+        logging.debug('Source._wiki_update')
         response = wiki.update_text(self.wikititle(), self.wikitext())
         logging.debug('    OK')
         return response
-
-    def _wiki_update_file_and_text(self):
-        """Update the text of the File: page and replace the file.
+    
+    def _wiki_link(self):
+        """Add a link to the File:* page to the article page
         """
-        logging.debug('wiki_update_file_and_text')
+        logging.debug('Source._wiki_link')
+        logging.debug('    OK')
+        link = "[[%s|right|200px]]" % self.wikititle()
         assert False
-        #logging.debug('    OK')
-        #return response
+        response = wiki.prepend_text(self.wikititle(), link)
+        return response
+
+    def wiki_delete(self):
+        logging.debug('Source._wiki_delete')
+        logging.debug('    NOT IMPLEMENTED')
