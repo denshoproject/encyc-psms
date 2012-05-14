@@ -50,6 +50,31 @@ WIKI_TEXT_TEMPLATE = """
 
 WIKI_IMG_LINK = "[[%s|right|200px]]\n"
 
+MEDIA_FORMATS = (
+    ('image', 'photo'),
+    ('document', 'document'),
+    ('video', 'VH'),
+    )
+VALID_MEDIA = {
+    'image':    ['orig:----:----:----',
+                 '----:----:keyf:----',
+                 'orig:----:keyf:----',
+                 'orig:----:keyf:tran',
+                 '----:----:keyf:tran',
+                 ],
+    'document': ['orig:----:----:----',
+                 'orig:----:keyf:----',
+                 'orig:----:keyf:tran',],
+    'video':    ['orig:----:keyf:----',
+                 'orig:----:keyf:tran',
+                 '----:strm:keyf:----',
+                 '----:strm:keyf:tran'],
+    } #           |    |    |    |
+#                 |    |    |    + transcript
+#                 |    |    + keyframe
+#                 |    + streaming url
+#                 + original file
+
 
 def get_object_upload_path(file_object, filename):
     """Callable FileField.upload_to - see model field reference.
@@ -89,11 +114,6 @@ class Source(BaseModel):
         help_text='display/keyframe image')
     update_display = models.BooleanField(default=False,
         help_text='Upload file again.')
-    MEDIA_FORMATS = (
-        ('image', 'photo'),
-        ('document', 'document'),
-        ('video', 'VH'),
-        )
     media_format = models.CharField(max_length=32, choices=MEDIA_FORMATS)
     notes = models.TextField(blank=True, null=True)
     
@@ -170,6 +190,22 @@ class Source(BaseModel):
         return '/admin/sources/source/'
     
     def is_valid(self):
+        """Tells if record is well-formed according to its media type.
+        
+        """
+        keys = []
+        if self.media:         keys.append('orig')
+        else:                  keys.append('----')
+        if self.streaming_url: keys.append('strm')
+        else:                  keys.append('----')
+        if self.display:       keys.append('keyf')
+        else:                  keys.append('----')
+        if self.transcript:    keys.append('tran')
+        else:                  keys.append('----')
+        keys = ':'.join(keys)
+        if hasattr(self,'media_format') and self.media_format:
+            if keys in VALID_MEDIA[self.media_format]:
+                return True
         return False
     is_valid.short_description = 'Valid'
     is_valid.boolean = True
