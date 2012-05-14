@@ -32,12 +32,13 @@ class SourceAdmin(admin.ModelAdmin):
             'notes',
         )}),
     )
-    list_display = [
+    list_display = (
+        'is_valid',
         'densho_id',
         'encyclopedia_id',
         'headword',
         'caption',
-        ]
+        )
     list_display_links = ['densho_id',]
     ordering = ['headword', 'densho_id',]
     list_filter = ['media_format','headword',]

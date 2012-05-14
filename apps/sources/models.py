@@ -169,6 +169,11 @@ class Source(BaseModel):
             return '%s/admin/sources/source/%s/' % (http_host, self.id)
         return '/admin/sources/source/'
     
+    def is_valid(self):
+        return False
+    is_valid.short_description = 'Valid'
+    is_valid.boolean = True
+    
     def select_upload_file(self):
         """Display if present, media if not.
         
