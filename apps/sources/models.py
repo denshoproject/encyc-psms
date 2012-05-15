@@ -151,23 +151,23 @@ class Source(BaseModel):
     
     #@models.permalink
     def get_absolute_url(self, http_host=settings.EDITORS_MEDIAWIKI_URL):
-        """Returns link to editors' MediaWiki page for this Densho UID
+        """Returns link to editors' MediaWiki page or streaming URL for this Densho UID
         
         >>> s0 = Source(densho_id='densho-i337-01', display='asdf.jpg')
         >>> s0.get_absolute_url(http_host='http://10.0.4.15:9000/mediawiki/index.php')
         'http://10.0.4.15:9000/mediawiki/index.php/File:densho-i337-01.jpg'
-        >>> s1 = Source(id=123)
+        >>> s1 = Source(streaming_url='http://youtu.be/vf9wHkkNGUU')
         >>> s1.get_absolute_url()
-        '/admin/sources/source/123/'
-        >>> s2 = Source(external_url='http://research.archives.gov/description/538182')
+        'http://youtu.be/vf9wHkkNGUU'
+        >>> s2 = Source(id=123)
         >>> s2.get_absolute_url()
-        'http://research.archives.gov/description/538182'
+        '/admin/sources/source/123/'
         >>> s3 = Source()
         >>> s3.get_absolute_url()
         '/admin/sources/source/'
         """
-        if self.external_url:
-            return self.external_url
+        if self.streaming_url:
+            return self.streaming_url
         elif self.wikititle():
             return '/'.join([http_host, self.wikititle()])
         elif self.id:
