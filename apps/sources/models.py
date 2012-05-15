@@ -106,14 +106,15 @@ class Source(BaseModel):
     collection_name = models.CharField(max_length=255, blank=True, null=True)
     external_url = models.URLField(blank=True, null=True,)
     creative_commons = models.BooleanField(default=False)
-    media = models.FileField('Original', upload_to=get_object_upload_path, blank=True, null=True,
-        help_text='full-size file')
-    streaming_url = models.URLField(blank=True, null=True,)
+    original = models.FileField('Original', upload_to=get_object_upload_path, blank=True, null=True,
+        help_text='Full-size file from which thumbnails, keyframes, etc are derived')
+    streaming_url = models.URLField('Streaming URL', blank=True, null=True,
+        help_text='URL for streaming media (video, audio). Must be a full URL, including domain name.')
     transcript = models.FileField(upload_to=get_object_upload_path, blank=True, null=True)
     display = models.ImageField(upload_to=get_object_upload_path, blank=True, null=True,
-        help_text='display/keyframe image')
-    update_display = models.BooleanField(default=False,
-        help_text='Upload file again.')
+        help_text='Image file used in lists and other interstitial pages')
+    update_display = models.BooleanField('Refresh display', default=False,
+        help_text='Refresh copy of display file in MediaWiki.')
     media_format = models.CharField(max_length=32, choices=MEDIA_FORMATS)
     notes = models.TextField(blank=True, null=True)
     
@@ -191,10 +192,9 @@ class Source(BaseModel):
     
     def is_valid(self):
         """Tells if record is well-formed according to its media type.
-        
         """
         keys = []
-        if self.media:         keys.append('orig')
+        if self.original:      keys.append('orig')
         else:                  keys.append('----')
         if self.streaming_url: keys.append('strm')
         else:                  keys.append('----')
@@ -227,8 +227,8 @@ class Source(BaseModel):
         """
         if self.display:
             return self.display
-        elif self.media:
-            return self.media
+        elif self.original:
+            return self.original
         return None
     
     def upload_filename(self):

@@ -14,7 +14,7 @@ class SourceAdmin(admin.ModelAdmin):
         )}),
         (None, {'fields': (
             'media_format',
-            ('media', 'streaming_url', 'transcript'),
+            ('original', 'streaming_url', 'transcript'),
             ('display','update_display'),
         )}),
         (None, {'fields': (
@@ -47,7 +47,7 @@ class SourceAdmin(admin.ModelAdmin):
         'densho_id', 'encyclopedia_id',
         'caption', 'courtesy',
         'institution_id', 'collection_name',
-        'media', 'display', 'external_url',
+        'original', 'display', 'external_url',
         'media_format',
         'creative_commons',
         'notes',
