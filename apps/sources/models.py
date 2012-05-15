@@ -232,26 +232,27 @@ class Source(BaseModel):
         return None
     
     def upload_filename(self):
-        """Returns filename to be uploaded to wiki (DENSHOUID.DISPLAY_EXT)
+        """Returns filename to be uploaded to wiki (ENCYCLOPEDIA_ID.DISPLAY_EXT)
         
         Upload a file that represents this entity, which is identified by its
-        Densho UID.  Rename the file, keeping the file extension.
+        Encyclopedia ID.  Rename the file, keeping the file extension.
         
-        >>> s0 = Source(densho_id='denshopd-1337-1', display='123.png')
+        >>> s0 = Source(encyclopedia_id='en-denshopd-1337-1', display='123.png')
         >>> s0.upload_filename()
-        'denshopd-1337-1.png'
-        >>> s1 = Source(densho_id='denshopd-1337-1', media='456.jpg')
+        'en-denshopd-1337-1.png'
+        >>> s1 = Source(encyclopedia_id='en-denshopd-1337-1', media='456.jpg')
         >>> s1.upload_filename()
-        'denshopd-1337-1.jpg'
-        >>> s2 = Source(densho_id='denshopd-1337-1', media='123.pdf', display='456.jpg')
+        'en-denshopd-1337-1.jpg'
+        >>> s2 = Source(encyclopedia_id='en-denshopd-1337-1', media='123.pdf', display='456.jpg')
         >>> s2.upload_filename()
-        'denshopd-1337-1.jpg'
-        >>> s3 = Source(densho_id='denshopd-1337-2')
+        'en-denshopd-1337-1.jpg'
+        >>> s3 = Source(encyclopedia_id='en-denshopd-1337-2')
         >>> s3.upload_filename()
         ''
         """
         if self.select_upload_file():
-            return '%s%s' % (self.densho_id, os.path.splitext(self.select_upload_file().name)[1])
+            return '%s%s' % (self.encyclopedia_id,
+                             os.path.splitext(self.select_upload_file().name)[1])
         return ''
     
     def upload_filename_abspath(self, media_root=settings.MEDIA_ROOT):
