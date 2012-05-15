@@ -26,13 +26,13 @@ def exists(page_name):
 def upload_file(abspath, comment='Uploaded by Tansu'):
     """Upload a file
     
+    //TODO What to do with previously deleted files?
+    
     >>> fn = '/home/gjost/img/6a00e55055.jpg'
     >>> f = open(fn, 'r')
     >>> page_name = '6a00e55055.jpg'
     >>> wf = wikitools.wikifile.File(wiki, page_name)
     >>> wf.upload(f, comment='not much to say about this file...')
-
-    //TODO What to do with previously deleted files?
     """
     page_name = os.path.basename(abspath)
     f = open(abspath, 'r')
@@ -93,9 +93,10 @@ def update_text(page_name, text):
 def delete_file(page_name, reason):
     """Delete file
     
+    NOTE: requires user with sysop perms
+    
     >>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
     >>> p.delete(reason='that is all')
-    NOTE: requires user with sysop perms
     """
     wiki = _login()
     p = wikitools.page.Page(wiki, page_name)
@@ -117,7 +118,6 @@ def replace_file():
                  u'sessionkey': u'10g2k5frt2mg.ta25z9.2.jpg',
                  u'warnings': {u'exists': u'6a00e55055.jpg'}}}
     >>> wf.upload(f, ignorewarnings=True)
-    ...hangs...
     """
     wiki = _login()
     assert False

@@ -3,10 +3,12 @@
 # File format: http://pip.openplans.org/requirement-format.html
 
 beautifulsoup4
+coverage
 Django
 #South
 #celery
 #django-celery
+django-coverage
 django-debug-toolbar
 django-extensions
 #django-pagination
