@@ -153,9 +153,9 @@ class Source(BaseModel):
     def get_absolute_url(self, http_host=settings.EDITORS_MEDIAWIKI_URL):
         """Returns link to editors' MediaWiki page or streaming URL for this Densho UID
         
-        >>> s0 = Source(densho_id='densho-i337-01', display='asdf.jpg')
+        >>> s0 = Source(encyclopedia_id='en-densho-i337-01', display='asdf.jpg')
         >>> s0.get_absolute_url(http_host='http://10.0.4.15:9000/mediawiki/index.php')
-        'http://10.0.4.15:9000/mediawiki/index.php/File:densho-i337-01.jpg'
+        'http://10.0.4.15:9000/mediawiki/index.php/File:en-densho-i337-01.jpg'
         >>> s1 = Source(streaming_url='http://youtu.be/vf9wHkkNGUU')
         >>> s1.get_absolute_url()
         'http://youtu.be/vf9wHkkNGUU'
@@ -218,10 +218,10 @@ class Source(BaseModel):
         >>> s0 = Source(display='sources/01.jpg')
         >>> s0.select_upload_file()
         <ImageFieldFile: sources/01.jpg>
-        >>> s1 = Source(media='sources/00.jpg')
+        >>> s1 = Source(original='sources/00.jpg')
         >>> s1.select_upload_file()
         <FieldFile: sources/00.jpg>
-        >>> s2 = Source(media='sources/00.jpg', display='sources/01.jpg')
+        >>> s2 = Source(original='sources/00.jpg', display='sources/01.jpg')
         >>> s2.select_upload_file()
         <ImageFieldFile: sources/01.jpg>
         """
@@ -240,10 +240,10 @@ class Source(BaseModel):
         >>> s0 = Source(encyclopedia_id='en-denshopd-1337-1', display='123.png')
         >>> s0.upload_filename()
         'en-denshopd-1337-1.png'
-        >>> s1 = Source(encyclopedia_id='en-denshopd-1337-1', media='456.jpg')
+        >>> s1 = Source(encyclopedia_id='en-denshopd-1337-1', original='456.jpg')
         >>> s1.upload_filename()
         'en-denshopd-1337-1.jpg'
-        >>> s2 = Source(encyclopedia_id='en-denshopd-1337-1', media='123.pdf', display='456.jpg')
+        >>> s2 = Source(encyclopedia_id='en-denshopd-1337-1', original='123.pdf', display='456.jpg')
         >>> s2.upload_filename()
         'en-denshopd-1337-1.jpg'
         >>> s3 = Source(encyclopedia_id='en-denshopd-1337-2')
@@ -258,11 +258,11 @@ class Source(BaseModel):
     def upload_filename_abspath(self, media_root=settings.MEDIA_ROOT):
         """Returns absolute path of upload filename; see upload_filename().
         
-        >>> s0 = Source(densho_id='denshopd-1337-1', display='123.png')
+        >>> s0 = Source(encyclopedia_id='en-denshopd-1337-1', display='123.png')
         >>> s0.id = 987
         >>> s0.upload_filename_abspath()
         '/var/www/html/psms/media/sources/987/123.png'
-        >>> s1 = Source(densho_id='denshopd-1337-1', display='123.png')
+        >>> s1 = Source(encyclopedia_id='en-denshopd-1337-1', display='123.png')
         >>> s1.upload_filename_abspath()
         ''
         """
@@ -274,16 +274,16 @@ class Source(BaseModel):
     def wikititle(self):
         """Returns MediaWiki page name (DENSHOUID.DISPLAY_EXT)
         
-        >>> s0 = Source(densho_id='denshopd-1337-1', display='123.png')
+        >>> s0 = Source(encyclopedia_id='en-denshopd-1337-1', display='123.png')
         >>> s0.wikititle()
-        'File:denshopd-1337-1.png'
-        >>> s1 = Source(densho_id='denshopd-1337-1', media='456.pdf')
+        'File:en-denshopd-1337-1.png'
+        >>> s1 = Source(encyclopedia_id='en-denshopd-1337-1', original='456.pdf')
         >>> s1.wikititle()
-        'File:denshopd-1337-1.pdf'
-        >>> s1 = Source(densho_id='denshopd-1337-1', media='123.pdf', display='456.jpg')
+        'File:en-denshopd-1337-1.pdf'
+        >>> s1 = Source(encyclopedia_id='en-denshopd-1337-1', original='123.pdf', display='456.jpg')
         >>> s1.wikititle()
-        'File:denshopd-1337-1.jpg'
-        >>> s2 = Source(densho_id='denshopd-1337-1')
+        'File:en-denshopd-1337-1.jpg'
+        >>> s2 = Source(encyclopedia_id='en-denshopd-1337-1')
         >>> s2.wikititle()
         ''
         """
