@@ -114,7 +114,7 @@ class Source(BaseModel):
     display = models.ImageField(upload_to=get_object_upload_path, blank=True, null=True,
         help_text='Image file used in lists and other interstitial pages')
     update_display = models.BooleanField('Refresh display', default=False,
-        help_text='Refresh copy of display file in MediaWiki.')
+        help_text="Refresh copy of display file in MediaWiki (click this if the image in MediaWiki doesn't change.")
     media_format = models.CharField(max_length=32, choices=MEDIA_FORMATS)
     notes = models.TextField(blank=True, null=True)
     
@@ -313,6 +313,8 @@ class Source(BaseModel):
         """Decide whether to upload a new file or update existing info.
         """
         logging.debug('wiki_sync(): %s' % self)
+        if not self.wikititle():
+            return None
         # assemble the variables
         keys = []
         upload_file = self.select_upload_file()
