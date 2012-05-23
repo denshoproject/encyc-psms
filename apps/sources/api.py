@@ -13,5 +13,15 @@ class SourceResource(ModelResource):
         allowed_methods = ['get']
         filtering = {
             'densho_id':ALL,
-            'encyclopedia_id': ('in',),
+            'encyclopedia_id': ('exact','in',),
             }
+    
+    def dehydrate_original(self, bundle):
+        if bundle.obj.original:
+            return bundle.obj.original.url
+        return ''
+    
+    def dehydrate_display(self, bundle):
+        if bundle.obj.display:
+            return bundle.obj.display.url
+        return ''
