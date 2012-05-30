@@ -3,6 +3,7 @@ import os
 
 from django.conf import settings
 from django.db import models
+from django.template import loader, Context
 
 from core.models import BaseModel
 from sources import wiki
@@ -36,17 +37,6 @@ varchar Name of collection
 
 MEDIA_PATH = 'sources/'
 
-
-WIKI_TEXT_TEMPLATE = """
-===== Caption =====
-%s
-
-===== Courtesy =====
-%s
-
-===== Edit =====
-%s
-"""
 
 WIKI_IMG_LINK = "[[%s|right|200px]]\n"
 
@@ -300,14 +290,10 @@ class Source(BaseModel):
         - link to edit page in Django admin
         
         @param http_host IP address or domain name (for testing).
-        
-        #>>> s = Source(id=123, caption='Badda bing badda boom.', courtesy="Bob's yer uncle.")
-        #>>> s.wikitext(http_host='http://123.456.78.9:8001')
-        #"\n===== Caption =====\nBadda bing badda boom.\n\n===== Courtesy =====\nBob's yer uncle.\n\n===== Edit =====\nhttp://123.456.78.9:8001/admin/sources/source/123/\n"
         """
-        return WIKI_TEXT_TEMPLATE % (self.caption,
-                                     self.courtesy,
-                                     self.admin_url(http_host=http_host))
+        t = loader.get_template('sources/mediawiki-file-page.html')
+        c = Context({'source': self})
+        return t.render(c)
     
     def wiki_sync(self, update_display):
         """Decide whether to upload a new file or update existing info.
