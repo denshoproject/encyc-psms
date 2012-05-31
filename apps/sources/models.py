@@ -190,17 +190,17 @@ class Source(BaseModel):
     def is_valid(self):
         """Tells if record is well-formed according to its media type.
         """
-        keys = []
-        if self.original:      keys.append('orig')
-        else:                  keys.append('----')
-        if self.streaming_url: keys.append('strm')
-        else:                  keys.append('----')
-        if self.display:       keys.append('keyf')
-        else:                  keys.append('----')
-        if self.transcript:    keys.append('tran')
-        else:                  keys.append('----')
-        keys = ':'.join(keys)
-        if hasattr(self,'media_format') and self.media_format:
+        if self.media_format:
+            keys = []
+            if self.original:      keys.append('orig')
+            else:                  keys.append('----')
+            if self.streaming_url: keys.append('strm')
+            else:                  keys.append('----')
+            if self.display:       keys.append('keyf')
+            else:                  keys.append('----')
+            if self.transcript:    keys.append('tran')
+            else:                  keys.append('----')
+            keys = ':'.join(keys)
             if keys in VALID_MEDIA[self.media_format]:
                 return True
         return False
