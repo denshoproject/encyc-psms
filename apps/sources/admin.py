@@ -13,7 +13,7 @@ class SourceAdmin(admin.ModelAdmin):
             ('densho_id','encyclopedia_id',),
         )}),
         (None, {'fields': (
-            'media_format',
+            ('media_format', 'aspect_ratio'),
             ('original', 'streaming_url', 'transcript'),
             ('display','update_display'),
         )}),
@@ -41,7 +41,7 @@ class SourceAdmin(admin.ModelAdmin):
         )
     list_display_links = ['densho_id',]
     ordering = ['headword', 'densho_id',]
-    list_filter = ['media_format','headword',]
+    list_filter = ['media_format', 'aspect_ratio', 'headword',]
     search_fields = [
         'headword',
         'densho_id', 'encyclopedia_id',
