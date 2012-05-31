@@ -1,0 +1,14 @@
+{% if source.caption %}===== Caption =====
+{{ source.caption }}{% endif %}
+
+{% if source.courtesy %}===== Courtesy =====
+{{ source.courtesy }}{% endif %}
+
+{% if source.collection_name or source.institution_id %}===== Source =====
+{{ source.collection_name }} ({{ source.institution_id }}){% endif %}
+
+{% if source.external_url %}===== External URL =====
+{{ source.external_url }}{% endif %}
+
+===== Edit =====
+{{ source.admin_url }}
