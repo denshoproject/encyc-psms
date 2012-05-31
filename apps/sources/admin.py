@@ -34,6 +34,7 @@ class SourceAdmin(admin.ModelAdmin):
     )
     list_display = (
         'is_valid',
+        'media_format',
         'densho_id',
         'encyclopedia_id',
         'headword',
