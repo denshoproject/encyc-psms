@@ -55,6 +55,12 @@ MEDIA_FORMATS = (
     ('document', 'document'),
     ('video', 'VH'),
     )
+
+ASPECT_RATIOS = (
+    ('hd', 'HD'),
+    ('sd', 'SD'),
+    )
+
 VALID_MEDIA = {
     'image':    ['orig:----:----:----',
                  '----:----:keyf:----',
@@ -116,6 +122,7 @@ class Source(BaseModel):
     update_display = models.BooleanField('Refresh display', default=False,
         help_text="Refresh copy of display file in MediaWiki (click this if the image in MediaWiki doesn't change.")
     media_format = models.CharField(max_length=32, choices=MEDIA_FORMATS)
+    aspect_ratio = models.CharField(max_length=32, choices=ASPECT_RATIOS, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     
     class Meta:
