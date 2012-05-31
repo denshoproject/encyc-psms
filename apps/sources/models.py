@@ -305,7 +305,7 @@ class Source(BaseModel):
     def wiki_sync(self, update_display):
         """Decide whether to upload a new file or update existing info.
         """
-        logging.debug('wiki_sync(): %s' % self)
+        #logging.debug('wiki_sync(): %s' % self)
         if not self.wikititle():
             return None
         # assemble the variables
