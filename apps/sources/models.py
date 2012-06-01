@@ -393,7 +393,11 @@ class Source(BaseModel):
         """Just update the text of the File: page.
         """
         logging.debug('Source._wiki_update')
-        response = wiki.update_text(self.wikititle(), self.wikitext())
+        # prevent errors while importing primary source files
+        try:
+            response = wiki.update_text(self.wikititle(), self.wikitext())
+        except:
+            response = 'wiki error'
         logging.debug('    OK')
         return response
     
