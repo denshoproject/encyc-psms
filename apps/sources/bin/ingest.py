@@ -2,7 +2,7 @@
 
 Cut-and-paste into manage.py shell (use %paste)
 """
-files = [('p','PD_PrimarySource_Metadata_20120525.csv'),
+files = [('p','PD_PrimarySource_Metadata_20120601.csv'),
          ('v','VH_PrimarySource_Metadata_20120525.csv'),]
 def ingest(files):
     import csv
