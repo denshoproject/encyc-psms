@@ -80,15 +80,16 @@ def get_object_upload_path(file_object, filename):
     >>> img = Source()
     >>> img.id = 1
     >>> get_object_upload_path(img, 'img.jpg')
-    'sources/1/img.jpg'
+    'sources/1/1/img.jpg'
     >>> img.id = 56
     >>> get_object_upload_path(img, 'img.jpg')
-    'sources/56/img.jpg'
+    'sources/5/56/img.jpg'
     >>> img.id = 2501
     >>> get_object_upload_path(img, 'img.jpg')
-    'sources/2501/img.jpg'
+    'sources/2/2501/img.jpg'
     """
-    return '%s%s/%s' % (MEDIA_PATH, str(file_object.id), filename)
+    idstr = str(file_object.id)
+    return '%s%s/%s/%s' % (MEDIA_PATH, idstr[0], idstr, filename)
 
 class Source(BaseModel):
     #created
