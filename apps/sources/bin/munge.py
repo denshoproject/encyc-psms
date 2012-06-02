@@ -65,10 +65,6 @@ from sources.models import Source, get_object_upload_path
 
 
 
-src_path = '/home/gjost/ps_masters/PD/en-denshopd-i226-00018-1.jpg'
-dest_dir = '/home/gjost'
-longest_side = 400
-
 def resize(src_path, dest_dir, longest_side):
     verified = False
     original_size = None
@@ -242,6 +238,6 @@ def munge_transcripts(source_dir, name):
     print 'problems: %s' % str(len(nonexist))
     print nonexist
 
-#munge_photos(     '/home/gjost/ps_masters/PD/',           'pd')
-#munge_keyframes(  '/home/gjost/ps_masters/VH/keyframe/',  'vhk')
-#munge_transcripts('/home/gjost/ps_masters/VH/transcript/','vht')
+#munge_photos(     '/var/www/html/ps_masters/PD/',           'pd')
+#munge_keyframes(  '/var/www/html/ps_masters/VH/keyframe/',  'vhk')
+#munge_transcripts('/var/www/html/ps_masters/VH/transcript/','vht')
