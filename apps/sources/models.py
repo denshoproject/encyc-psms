@@ -105,7 +105,7 @@ class Source(BaseModel):
     creative_commons = models.BooleanField(default=False)
     original = models.FileField('Original', upload_to=get_object_upload_path, blank=True, null=True,
         help_text='Full-size file from which thumbnails, keyframes, etc are derived')
-    streaming_url = models.URLField('Streaming URL', blank=True, null=True,
+    streaming_url = models.CharField('Streaming URL', max_length=100, blank=True, null=True,
         help_text='URL for streaming media (video, audio). Must be a full URL, including domain name.')
     transcript = models.FileField(upload_to=get_object_upload_path, blank=True, null=True)
     display = models.ImageField(upload_to=get_object_upload_path, blank=True, null=True,
