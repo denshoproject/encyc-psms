@@ -186,22 +186,44 @@ def munge_keyframes(source_dir, name):
     - thumb: 250px square
     - display: 640px x - 360px y (HD), 640px x - 480px y (SD)
     """
+    LONGEST_SIDE = 640
+    ASPECT_RATIOS = {'hd': (640,360),
+                     'sd': (640,480),}
     nonexist = []
-    total_files = 0
-    for fn in os.listdir(source_dir):
-        total_files = total_files + 1
+    source_files = os.listdir(source_dir)
+    num_total = len(source_files)
+    n = 0
+    for fn in source_files:
+        n = n + 1
+        upload_path = ''
+        dest_path = ''
+        src_path = ''.join([source_dir, fn])
         eid,ext = os.path.splitext(fn)
-        print '%s %s' % (name, eid)
-        try:
-            s = Source.objects.get(encyclopedia_id__contains=eid)
-        except:
-            s = None
-            nonexist.append(fn)
-        if s:
-            path = get_object_upload_path(s, fn)
-            print '  >> %s' % (path)
+        print '%s/%s %s %s' % (n, num_total, name, eid)
+        sources = Source.objects.filter(encyclopedia_id__contains=eid)
+        if sources:
+            for s in sources:
+                print '    >> %s' % s
+                already_updated = False
+                upload_path = get_object_upload_path(s, fn)
+                if upload_path:
+                    dest_path = ''.join([settings.MEDIA_ROOT, upload_path])
+                # OK Go!
+                print '         SRC: %s' % src_path
+                print '        DEST: %s' % dest_path
+                dest_dir = os.path.dirname(dest_path)
+                print '              %s' % (dest_dir)
+                if src_path and (not os.path.exists(dest_path)):
+                    if not os.path.exists(dest_dir):
+                        os.makedirs(dest_dir)
+                    shutil.copy(src_path, dest_path)
+                    print '    COPIED'
+                if os.path.exists(dest_path) and ((not s.display) or (s.display != upload_path)):
+                    s.display = upload_path
+                    s.save()
+                    print '    SAVED'
         print
-    print 'total_files: %s' % total_files
+    print 'total_files: %s' % num_total
     print 'problems: %s' % str(len(nonexist))
     print nonexist
 
