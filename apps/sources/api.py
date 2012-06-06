@@ -25,3 +25,9 @@ class SourceResource(ModelResource):
         if bundle.obj.display:
             return bundle.obj.display.url
         return ''
+    
+    def dehydrate(self, bundle):
+        # include small and large thumbnails
+        bundle.data['thumbnail_sm'] = bundle.obj.thumbnail_sm().url
+        bundle.data['thumbnail_lg'] = bundle.obj.thumbnail_lg().url
+        return bundle

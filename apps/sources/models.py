@@ -5,6 +5,8 @@ from django.conf import settings
 from django.db import models
 from django.template import loader, Context
 
+from sorl.thumbnail import get_thumbnail
+
 from core.models import BaseModel
 from sources import wiki
 
@@ -37,7 +39,6 @@ varchar Name of collection
 
 MEDIA_PATH = 'sources/'
 
-
 WIKI_IMG_LINK = "[[%s|right|200px]]\n"
 
 MEDIA_FORMATS = (
@@ -45,6 +46,9 @@ MEDIA_FORMATS = (
     ('document', 'document'),
     ('video', 'VH'),
     )
+
+THUMBNAIL_SM = 200
+THUMBNAIL_LG = 700
 
 ASPECT_RATIOS = (
     ('hd', 'HD'),
@@ -228,7 +232,20 @@ class Source(BaseModel):
         elif self.original:
             return self.original
         return None
-    
+
+    def thumbnail_lg(self):
+        if not hasattr(self, '_thumbnail_lg'):
+            self._thumbnail_lg = None
+            if   self.display:  self._thumbnail_lg = get_thumbnail(self.display, str(THUMBNAIL_LG))
+            elif self.original: self._thumbnail_lg = get_thumbnail(self.original, str(THUMBNAIL_LG))
+        return self._thumbnail_lg
+    def thumbnail_sm(self):
+        if not hasattr(self, '_thumbnail_sm'):
+            self._thumbnail_sm = None
+            if   self.display: self._thumbnail_sm = get_thumbnail(self.display, str(THUMBNAIL_SM))
+            elif self.original: self._thumbnail_sm = get_thumbnail(self.original, str(THUMBNAIL_SM))
+        return self._thumbnail_sm
+
     def upload_filename(self):
         """Returns filename to be uploaded to wiki (ENCYCLOPEDIA_ID.DISPLAY_EXT)
         
