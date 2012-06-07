@@ -260,6 +260,46 @@ def munge_transcripts(source_dir, name):
     print 'problems: %s' % str(len(nonexist))
     print nonexist
 
+def munge_documents(source_dir, name):
+    sources = Source.objects.filter(media_format__exact='document', original__icontains='.jpg')
+    pdf_sources = []
+    jpg_sources = []
+    for s in sources:
+        eid,ext = os.path.splitext(os.path.basename(s.original.name))
+        pdf = ''.join([ source_dir, '.'.join([eid,'pdf']) ])
+        if os.path.exists(pdf):
+            pdf_sources.append(s)
+        else:
+            jpg_sources.append(s)
+    print 'sources: %s' % len(sources)
+    print
+    print 'pdfs: %s' % len(pdf_sources)
+    print pdf_sources
+    print
+    print 'jpgs: %s' % len(jpg_sources)
+    print jpg_sources
+    print
+    for s in pdf_sources:
+        s.display = s.original
+        eid,ext = os.path.splitext(os.path.basename(s.original.name))
+        pdf = ''.join([ source_dir, '.'.join([eid,'pdf']) ])
+        src_path = pdf
+        upload_path = get_object_upload_path(s, os.path.basename(pdf))
+        print upload_path
+        dest_path = ''.join([settings.MEDIA_ROOT, upload_path])
+        print '  >> %s' % (upload_path)
+        print '     %s' % (dest_path)
+        s.original = upload_path
+        if src_path and (not os.path.exists(dest_path)):
+            dest_dir = os.path.dirname(dest_path)
+            if not os.path.exists(dest_dir):
+                os.makedirs(dest_dir)
+            shutil.copy(src_path, dest_path)
+            print '    COPIED'
+        s.save()
+
 #munge_photos(     '/var/www/html/ps_masters/PD/',           'pd')
 #munge_keyframes(  '/var/www/html/ps_masters/VH/keyframe/',  'vhk')
 #munge_transcripts('/var/www/html/ps_masters/VH/transcript/','vht')
+#munge_documents(  '/var/www/html/ps_masters/PD/',           'pd')
+
