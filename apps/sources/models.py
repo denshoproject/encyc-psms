@@ -149,7 +149,7 @@ class Source(BaseModel):
         super(Source, self).delete()
     
     def __unicode__(self):
-        return '(%s) %s' % (self.densho_id, self.caption)
+        return '(%s %s) %s' % (self.id, self.densho_id, self.caption[:50])
     
     #@models.permalink
     def get_absolute_url(self, http_host=settings.EDITORS_MEDIAWIKI_URL):
