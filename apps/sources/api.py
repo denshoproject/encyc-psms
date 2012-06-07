@@ -17,17 +17,21 @@ class SourceResource(ModelResource):
             }
     
     def dehydrate_original(self, bundle):
-        if bundle.obj.original:
+        if bundle.obj.original and hasattr(bundle.obj.original, 'url'):
             return bundle.obj.original.url
         return ''
     
     def dehydrate_display(self, bundle):
-        if bundle.obj.display:
+        if bundle.obj.display and hasattr(bundle.obj.display, 'url'):
             return bundle.obj.display.url
         return ''
     
     def dehydrate(self, bundle):
         # include small and large thumbnails
-        bundle.data['thumbnail_sm'] = bundle.obj.thumbnail_sm().url
-        bundle.data['thumbnail_lg'] = bundle.obj.thumbnail_lg().url
+        thumbnail_sm = bundle.obj.thumbnail_sm()
+        thumbnail_lg = bundle.obj.thumbnail_lg()
+        if thumbnail_sm and hasattr(thumbnail_sm, 'url'):
+            bundle.data['thumbnail_sm'] = bundle.obj.thumbnail_sm().url
+        if thumbnail_lg and hasattr(thumbnail_lg, 'url'):
+            bundle.data['thumbnail_lg'] = bundle.obj.thumbnail_lg().url
         return bundle

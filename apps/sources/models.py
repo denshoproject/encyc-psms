@@ -236,14 +236,30 @@ class Source(BaseModel):
     def thumbnail_lg(self):
         if not hasattr(self, '_thumbnail_lg'):
             self._thumbnail_lg = None
-            if   self.display:  self._thumbnail_lg = get_thumbnail(self.display, str(THUMBNAIL_LG))
-            elif self.original: self._thumbnail_lg = get_thumbnail(self.original, str(THUMBNAIL_LG))
+            if   self.display:
+                try:
+                    self._thumbnail_lg = get_thumbnail(self.display, str(THUMBNAIL_LG))
+                except:
+                    logging.error('Source.thumbnail_lg display  %s' % self)
+            elif self.original:
+                try:
+                    self._thumbnail_lg = get_thumbnail(self.original, str(THUMBNAIL_LG))
+                except:
+                    logging.error('Source.thumbnail_lg original %s' % self)
         return self._thumbnail_lg
     def thumbnail_sm(self):
         if not hasattr(self, '_thumbnail_sm'):
             self._thumbnail_sm = None
-            if   self.display: self._thumbnail_sm = get_thumbnail(self.display, str(THUMBNAIL_SM))
-            elif self.original: self._thumbnail_sm = get_thumbnail(self.original, str(THUMBNAIL_SM))
+            if   self.display:
+                try:
+                    self._thumbnail_sm = get_thumbnail(self.display, str(THUMBNAIL_SM))
+                except:
+                    logging.error('Source.thumbnail_sm display  %s' % self)
+            elif self.original:
+                try:
+                    self._thumbnail_sm = get_thumbnail(self.original, str(THUMBNAIL_SM))
+                except:
+                    logging.error('Source.thumbnail_sm original %s' % self)
         return self._thumbnail_sm
 
     def upload_filename(self):
