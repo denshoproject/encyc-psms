@@ -34,4 +34,13 @@ class SourceResource(ModelResource):
             bundle.data['thumbnail_sm'] = bundle.obj.thumbnail_sm().url
         if thumbnail_lg and hasattr(thumbnail_lg, 'url'):
             bundle.data['thumbnail_lg'] = bundle.obj.thumbnail_lg().url
+        # size
+        if bundle.obj.original:
+            bundle.data['original_size'] = bundle.obj.original.size
+        else:
+            bundle.data['original_size'] = 0
+        if bundle.obj.display:
+            bundle.data['display_size'] = bundle.obj.display.size
+        else:
+            bundle.data['display_size'] = 0
         return bundle
