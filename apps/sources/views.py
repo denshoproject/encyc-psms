@@ -62,3 +62,15 @@ def links(request, template_name='sources/links.html'):
          'wiki_url':settings.EDITORS_MEDIAWIKI_URL,},
         context_instance=RequestContext(request, processors=[app_context])
     )
+
+@require_http_methods(['GET',])
+def sitemap(request, template_name='sources/links.html'):
+    """Returns just enough data for Front to generate a sitemap.xml
+    """
+    sources = {'objects':[],}
+    for source in Source.objects.all():
+        s = {'encyclopedia_id': source.encyclopedia_id,
+             'modified': str(source.modified),
+             'wikititle': source.wikititle(),}
+        sources['objects'].append(s)
+    return HttpResponse(json.dumps(sources), mimetype='application/json')

@@ -23,6 +23,7 @@ v01_api.register(VideoFileResource())
 urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/v0.1/primarysource/sitemap/$', 'sources.views.sitemap', name='sources-sitemap'),
     url(r'^api/', include(v01_api.urls)),
     url(r'^tansu/', include('tansu.urls')),
     url(r'^mw/$', 'sources.views.links', name='sources-links'),
