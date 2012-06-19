@@ -68,7 +68,7 @@ def sitemap(request, template_name='sources/links.html'):
     """Returns just enough data for Front to generate a sitemap.xml
     """
     sources = {'objects':[],}
-    for source in Source.objects.all():
+    for source in Source.objects.filter(published=True):
         s = {'encyclopedia_id': source.encyclopedia_id,
              'modified': str(source.modified),
              'wikititle': source.wikititle(),}

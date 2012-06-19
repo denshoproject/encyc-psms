@@ -98,6 +98,7 @@ def get_object_upload_path(file_object, filename):
 class Source(BaseModel):
     #created
     #modified
+    published = models.BooleanField(default=False)
     densho_id = models.CharField(max_length=255)
     headword = models.CharField(max_length=255)
     encyclopedia_id = models.CharField(max_length=255, unique=True)

@@ -9,7 +9,7 @@ class SourceAdmin(admin.ModelAdmin):
             #'created',
             #'modified',
         (None, {'fields': (
-            'headword',
+            ('published','headword',),
             ('densho_id','encyclopedia_id',),
         )}),
         (None, {'fields': (
@@ -33,6 +33,7 @@ class SourceAdmin(admin.ModelAdmin):
         )}),
     )
     list_display = (
+        'published',
         'is_valid',
         'media_format',
         'densho_id',
@@ -42,7 +43,7 @@ class SourceAdmin(admin.ModelAdmin):
         )
     list_display_links = ['densho_id',]
     ordering = ['headword', 'densho_id',]
-    list_filter = ['media_format', 'aspect_ratio', 'headword',]
+    list_filter = ['published', 'media_format', 'aspect_ratio', 'headword',]
     search_fields = [
         'headword',
         'densho_id', 'encyclopedia_id',

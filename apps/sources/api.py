@@ -7,7 +7,7 @@ from sources.models import Source
 
 class SourceResource(ModelResource):
     class Meta:
-        queryset = Source.objects.all()
+        queryset = Source.objects.filter(published=True)
         resource_name = 'primarysource'
         excludes = ['notes','update_display',]
         allowed_methods = ['get']
