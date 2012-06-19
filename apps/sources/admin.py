@@ -22,7 +22,7 @@ class SourceAdmin(admin.ModelAdmin):
             'external_url',
         )}),
         (None, {'fields': (
-            'caption',
+            'caption', 'caption_extended',
             'courtesy',
         )}),
         (None, {'fields': (
@@ -46,7 +46,7 @@ class SourceAdmin(admin.ModelAdmin):
     search_fields = [
         'headword',
         'densho_id', 'encyclopedia_id',
-        'caption', 'courtesy',
+        'caption', 'caption_extended', 'courtesy',
         'institution_id', 'collection_name',
         'original', 'display', 'external_url',
         'media_format',

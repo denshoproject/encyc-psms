@@ -101,7 +101,11 @@ class Source(BaseModel):
     densho_id = models.CharField(max_length=255)
     headword = models.CharField(max_length=255)
     encyclopedia_id = models.CharField(max_length=255, unique=True)
-    caption = models.TextField(blank=True, null=True)
+    caption = models.TextField(blank=True, null=True,
+        help_text='Contents of this field will be visible on the article page, ' \
+                  'in lightboxes, and on the Primary Source detail page.')
+    caption_extended = models.TextField('Caption (Extended)', blank=True, null=True,
+        help_text='Contents of this field will only be visible on the Primary Source detail page.')
     courtesy = models.TextField(blank=True, null=True)
     institution_id = models.CharField(max_length=255, blank=True, null=True)
     collection_name = models.CharField(max_length=255, blank=True, null=True)
@@ -327,6 +331,7 @@ class Source(BaseModel):
         
         File description (on MediaWiki) should include:
         - caption
+        - caption_extended
         - courtesy fields
         - link to edit page in Django admin
         

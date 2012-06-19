@@ -1,5 +1,8 @@
-{% if source.caption %}===== Caption =====
-{{ source.caption }}{% endif %}
+{% if source.caption or source.caption_extended %}===== Caption =====
+{{ source.caption }}
+
+{{ source.caption_extended }}
+{% endif %}
 
 {% if source.courtesy %}===== Courtesy =====
 {{ source.courtesy }}{% endif %}
