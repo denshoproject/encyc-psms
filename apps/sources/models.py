@@ -47,7 +47,7 @@ MEDIA_FORMATS = (
     ('video', 'VH'),
     )
 
-THUMBNAIL_SM = 200
+THUMBNAIL_SM = 300
 THUMBNAIL_LG = 700
 
 ASPECT_RATIOS = (
