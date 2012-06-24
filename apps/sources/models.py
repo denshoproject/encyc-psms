@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.template import loader, Context
 
-from sorl.thumbnail import get_thumbnail
+from sorl.thumbnail import get_thumbnail, delete as delete_thumbnail
 
 from core.models import BaseModel
 from sources import wiki
@@ -145,12 +145,18 @@ class Source(BaseModel):
         # save
         super(Source, self).save()
         # post
-        self.wiki_sync(update_display)
+        self.thumbnail_sm()            # TODO: celery
+        self.thumbnail_lg()            # TODO: celery
+        self.wiki_sync(update_display) # TODO: celery
     
     def delete(self):
         """Removes media from wiki on deletion.
         """
         self.wiki_delete()
+        if self.display:
+            delete_thumbnail(self.display)
+        if self.original:
+            delete_thumbnail(self.original)
         super(Source, self).delete()
     
     def __unicode__(self):
