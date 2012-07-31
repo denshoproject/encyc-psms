@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 
 from tastypie.api import Api
 
+from locations.api import LocationResource
 from sources.api import SourceResource
 from tansu.api import EntityResource
 from tansu.api import AudioFileResource, DocumentFileResource, ImageFileResource, VideoFileResource
@@ -13,6 +14,7 @@ from tansu.api import AudioFileResource, DocumentFileResource, ImageFileResource
 admin.autodiscover()
 
 v01_api = Api(api_name='v0.1')
+v01_api.register(LocationResource())
 v01_api.register(SourceResource())
 v01_api.register(EntityResource())
 v01_api.register(AudioFileResource())
