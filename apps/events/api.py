@@ -22,6 +22,7 @@ class Event(object):
 
 class EventResource(Resource):
     id = fields.CharField(attribute='id')
+    published = fields.CharField(attribute='published')
     start_date = fields.CharField(attribute='start_date')
     end_date = fields.CharField(attribute='end_date', blank=True, null=True)
     title = fields.CharField(attribute='title', blank=True, null=True)
@@ -45,6 +46,7 @@ class EventResource(Resource):
         for e in all_events():
             obj = Event()
             obj.id = e['id']
+            obj.published = e['published']
             obj.start_date = e['start_date']
             obj.end_date = e['end_date']
             obj.title = e['title']
@@ -61,6 +63,7 @@ class EventResource(Resource):
             if e['uid'] == kwargs['pk']:
                 obj = Event()
                 obj.id = e['id']
+                obj.published = e['published']
                 obj.start_date = e['start_date']
                 obj.end_date = e['end_date']
                 obj.title = e['title']
