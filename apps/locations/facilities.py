@@ -12,6 +12,7 @@ def all_facilities():
     facilities = []
     for facility in soup.find_all('Facility'):
         f = {'uid': facility.attrs['UID'],
+             'category': facility.Category.attrs['code'],
              'nps_name': facility.Name.NPSName.string,
              'location_name': facility.Location.LocationName.string,
              'lat': facility.Location.GISInfo.GISLat.string,
