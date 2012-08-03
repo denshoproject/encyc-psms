@@ -25,6 +25,7 @@ class LocationResource(Resource):
     lat = fields.CharField(attribute='lat')
     lng = fields.CharField(attribute='lng')
     category = fields.CharField(attribute='category')
+    category_name = fields.CharField(attribute='category_name')
     nps_name = fields.CharField(attribute='nps_name')
     location_name = fields.CharField(attribute='location_name')
     
@@ -48,6 +49,7 @@ class LocationResource(Resource):
             obj.lat = f['lat']
             obj.lng = f['lng']
             obj.category = f['category']
+            obj.category_name = f['category_name']
             obj.nps_name = f['nps_name']
             obj.location_name = f['location_name']
             results.append(obj)
@@ -64,6 +66,7 @@ class LocationResource(Resource):
                 obj.lat = f['lat']
                 obj.lng = f['lng']
                 obj.category = f['category']
+                obj.category_name = f['category_name']
                 obj.nps_name = f['nps_name']
                 obj.location_name = f['location_name']
                 return obj
