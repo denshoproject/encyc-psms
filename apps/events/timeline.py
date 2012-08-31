@@ -11,7 +11,21 @@ def all_events():
     published = 0
     if ('published' in soup.Timeline.attrs):
         published = 1
+    blink = soup.new_tag('blink')
     events = []
+    
+    def pretty_contents(tag):
+        """return contents of a caption/etc even if contains other tags.
+        """
+        parts = []
+        for part in tag.contents:
+            if type(part) == type(blink):
+                parts.append(unicode(part))
+            else:
+                parts.append(part)
+        print parts
+        return ''.join(parts)
+    
     for event in soup.find_all('Event'):
         e = {'id': int(event.attrs['id']),
              'published': published,
@@ -24,9 +38,9 @@ def all_events():
                and event.Enddate.attrs.get('datenormal'):
             e['end_date'] = event.Enddate.attrs['datenormal']
         if hasattr(event,'Title') and event.Title:
-             e['title'] = event.Title.string
+            e['title'] = event.Title.string
         if hasattr(event,'Caption') and event.Caption:
-             e['description'] = event.Caption.string
+            e['description'] = pretty_contents(event.Caption)
         if hasattr(event,'Link') and event.Link:
              e['url'] = event.Link.string
         events.append(e)
