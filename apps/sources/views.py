@@ -1,7 +1,9 @@
+from datetime import datetime
 import json
 import logging
 
 import requests
+import unicodecsv
 
 from django.conf import settings
 from django.http import HttpResponse, Http404
@@ -62,6 +64,28 @@ def links(request, template_name='sources/links.html'):
          'wiki_url':settings.EDITORS_MEDIAWIKI_URL,},
         context_instance=RequestContext(request, processors=[app_context])
     )
+
+@require_http_methods(['GET',])
+def export(request):
+    """Returns all sources as a CSV spreadsheet.
+    """
+    filename = 'primarysources-%s.csv' % datetime.now().strftime('%Y%m%d-%H%M')
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    writer = unicodecsv.writer(response, encoding='utf-8', dialect='excel')
+    # fieldnames in first row
+    fieldnames = []
+    for field in Source._meta.fields:
+        fieldnames.append(field.name)
+    writer.writerow(fieldnames)
+    # data rows
+    for source in Source.objects.all():
+        values = []
+        for field in fieldnames:
+            values.append( getattr(source, field) )
+        writer.writerow(values)
+    # done
+    return response
 
 @require_http_methods(['GET',])
 def sitemap(request, template_name='sources/links.html'):

@@ -25,6 +25,7 @@ pyyaml
 requests
 simplejson
 sorl-thumbnail
+unicodecsv           # used to export sources as CSV
 wikitools
 
 # USE THESE?
