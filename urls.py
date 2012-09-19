@@ -21,10 +21,9 @@ v01_api.register(SourceResource())
 urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/v0.1/locations/locations.kml$', 'locations.views.kml', name='locations-kml'),
-    url(r'^api/v0.1/primarysource/sitemap/$', 'sources.views.sitemap', name='sources-sitemap'),
+    url(r'^api/v1.0/locations/locations.kml$', 'locations.views.kml', name='locations-kml'),
+    url(r'^api/v1.0/primarysource/sitemap/$', 'sources.views.sitemap', name='sources-sitemap'),
     url(r'^api/', include(v01_api.urls)),
-    url(r'^tansu/', include('tansu.urls')),
     url(r'^mw/$', 'sources.views.links', name='sources-links'),
     url(r'^$', lambda x: HttpResponseRedirect('/mw/')),
 )
