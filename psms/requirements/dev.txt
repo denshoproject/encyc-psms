@@ -1,0 +1,9 @@
+# dependencies for development environment
+
+# include base
+-r _base.txt
+
+bpython
+coverage
+django-coverage
+django-debug-toolbar
