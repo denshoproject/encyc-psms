@@ -1,4 +1,5 @@
 import logging
+logger = logging.getLogger(__name__)
 import os
 
 from django.conf import settings
@@ -139,6 +140,7 @@ class Source(BaseModel):
         - courtesy fields
         - link to edit page in Django admin
         """
+        logging.debug('save(%s)' % self)
         # pre
         update_display = self.update_display
         self.update_display = False
@@ -152,6 +154,7 @@ class Source(BaseModel):
     def delete(self):
         """Removes media from wiki on deletion.
         """
+        logging.debug('delete(%s)' % self)
         self.wiki_delete()
         if self.display:
             delete_thumbnail(self.display)
@@ -351,7 +354,7 @@ class Source(BaseModel):
     def wiki_sync(self, update_display):
         """Decide whether to upload a new file or update existing info.
         """
-        #logging.debug('wiki_sync(): %s' % self)
+        logging.debug('wiki_sync(%s)' % self)
         if not self.wikititle():
             return None
         # assemble the variables
@@ -359,6 +362,7 @@ class Source(BaseModel):
         upload_file = self.select_upload_file()
         page_exists = wiki.exists(self.wikititle())
         if page_exists:
+            logging.debug('page exists')
             link_exists = self._wiki_link_exists()
         else:
             link_exists = False
@@ -413,7 +417,7 @@ class Source(BaseModel):
         
         symlink the wiki file, upload, rm symlink
         """
-        logging.debug('Source._wiki_upload_file')
+        logging.debug('_wiki_upload(%s)' % self)
         # upload initial file
         responses = []
         src = self.select_upload_file().path
@@ -437,7 +441,7 @@ class Source(BaseModel):
     def _wiki_update(self):
         """Just update the text of the File: page.
         """
-        logging.debug('Source._wiki_update')
+        logging.debug('_wiki_update(%s)' % self)
         # prevent errors while importing primary source files
         try:
             response = wiki.update_text(self.wikititle(), self.wikitext())
@@ -459,5 +463,5 @@ class Source(BaseModel):
         return response
 
     def wiki_delete(self):
-        logging.debug('Source._wiki_delete')
+        logging.debug('_wiki_delete(%s)' % self)
         logging.debug('    NOT IMPLEMENTED')

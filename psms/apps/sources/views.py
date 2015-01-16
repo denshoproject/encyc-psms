@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 import logging
+logger = logging.getLogger(__name__)
 
 import requests
 import unicodecsv
@@ -12,9 +13,6 @@ from django.template import RequestContext
 from django.views.decorators.http import require_http_methods
 
 from sources.models import Source
-
-
-logger = logging.getLogger(__name__)
 
 
 def app_context(request):
@@ -29,6 +27,7 @@ def app_context(request):
 
 @require_http_methods(['GET',])
 def links(request, template_name='sources/links.html'):
+    logging.debug('------------------------------------------------------------------------')
     headwords = []
     headword_sources_tmp = {}
     headword_sources = []
@@ -36,12 +35,15 @@ def links(request, template_name='sources/links.html'):
     # get list of headwords
     args = '?action=query&list=categorymembers&cmtitle=Category:Pages_Needing_Primary_Sources&cmlimit=500&format=json'
     url = '%s%s' % (settings.EDITORS_MEDIAWIKI_API, args)
+    logging.debug(url)
     if settings.EDITORS_MEDIAWIKI_USER and settings.EDITORS_MEDIAWIKI_PASS:
-        r = requests.get(url, (settings.EDITORS_MEDIAWIKI_USER, settings.EDITORS_MEDIAWIKI_PASS))
+        fake_pwd = ''.join(['*' for n in range(0, len(settings.EDITORS_MEDIAWIKI_PASS))])
+        logging.debug('MW auth: %s,%s' % (settings.EDITORS_MEDIAWIKI_USER, fake_pwd))
+        r = requests.get(url, auth=(settings.EDITORS_MEDIAWIKI_USER, settings.EDITORS_MEDIAWIKI_PASS))
     else:
+        logging.debug('missing settings: EDITORS_MEDIAWIKI_USER, EDITORS_MEDIAWIKI_PASS')
         r = requests.get(url)
-    if r.status_code != 200:
-        assert False
+    logging.debug('r.status_code %s' % r.status_code)
     data = json.loads(r.text)
     for member in data['query']['categorymembers']:
         headwords.append(member['title'])
@@ -69,6 +71,7 @@ def links(request, template_name='sources/links.html'):
 def export(request):
     """Returns all sources as a CSV spreadsheet.
     """
+    logging.debug('------------------------------------------------------------------------')
     filename = 'primarysources-%s.csv' % datetime.now().strftime('%Y%m%d-%H%M')
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
