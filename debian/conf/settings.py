@@ -121,23 +121,61 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'psms.urls'
 
-# See http://docs.djangoproject.com/en/dev/topics/logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)-8s [%(module)s.%(funcName)s]  %(message)s'
+        },
+        'simple': {
+            'format': '%(asctime)s %(levelname)-8s %(message)s'
+        },
+    },
+    'filters': {
+        # only log when settings.DEBUG == False
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+    },
     'handlers': {
-        'mail_admins': {
+        'null': {
             'level': 'DEBUG',
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+            'class': 'django.utils.log.NullHandler',
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': '/var/log/encyc/psms.log',
+            'when': 'D',
+            'backupCount': 14,
+            'filters': [],
+            'formatter': 'verbose',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'propagate': True,
+            'handlers': ['mail_admins'],
         },
-    }
+    },
+    # This is the only way I found to write log entries from the whole DDR stack.
+    'root': {
+        'level': 'DEBUG',
+        'handlers': ['file'],
+    },
 }
 
 TIME_ZONE = 'America/Los_Angeles'
