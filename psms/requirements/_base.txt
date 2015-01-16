@@ -2,28 +2,28 @@
 # Install using pip: http://pip.openplans.org/
 # File format: http://pip.openplans.org/requirement-format.html
 
-beautifulsoup4
+beautifulsoup4==4.0.5
 distribute>=0.6.28
-Django
+Django==1.4
+django-extensions==0.8
+django-tastypie==0.9.11
+gunicorn==0.14.3
+lxml==2.3.4
+MySQL-python==1.2.3  # depends on libmysqlclient-dev
+PIL==1.1.7           # depends on libjpeg8 libjpeg8-dev
+poster==0.8.1
+python-memcached==1.48
+PyYAML==3.10
+requests==0.12.1
+simplejson==2.5.2
+sorl-thumbnail==11.12
+unicodecsv==0.9.0    # used to export sources as CSV
+wikitools==1.1.1
 #South
 #celery
 #django-celery
-django-extensions
 #django-pagination
-django-tastypie
-gunicorn
-lxml
-MySQL-python
-PIL                  # NOTE: depends on libjpeg8, libjpeg8-dev
-poster
 #psycopg2
-python-memcached
-pyyaml
-requests
-simplejson
-sorl-thumbnail
-unicodecsv           # used to export sources as CSV
-wikitools
 
 # USE THESE?
 
