@@ -1,7 +1,7 @@
 *.db
 *.pyc
 *~
-settings.py
+psms/settings.py
 pip-log.txt
 media
 build
