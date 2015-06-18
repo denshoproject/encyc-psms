@@ -7,7 +7,6 @@ PROJECT_ROOT = path.dirname(path.abspath(__file__))
 sys.path.append(path.join(PROJECT_ROOT, "apps"))
 
 DEBUG = False
-DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ID = 2
@@ -32,8 +31,31 @@ DATABASES = {
 #update django_site set domain='10.0.4.15:8000', name='densho front' where id=1;
 #insert into django_site (domain, name) values ('10.0.4.15:8080', 'densho psms');
 
+STATIC_ROOT = '/var/www/psmsenv/encyc-psms/psms/static/'
+MEDIA_ROOT = '/var/www/html/psms/media/'
+STATIC_URL = 'http://encyclopedia.densho.org/psms/static/'
+MEDIA_URL = 'http://encyclopedia.densho.org/psms/media/'
+
+# jQuery
+# ex: http://ajax.googleapis.com/ajax/libs/jquery/{{ JQUERY_VERSION }}/jquery.min.js
+JQUERY_VERSION = '1.7'
+
+# psms/tansu
+PSMS_MEDIAWIKI_API = 'http://127.0.0.1:9000/mediawiki/api.php'
+PSMS_MEDIAWIKI_USERNAME = 'psmsbot'
+PSMS_MEDIAWIKI_PASSWORD = 'PASSWORD GOES HERE'
+TANSU_API  = 'http://127.0.0.1:8080/api/v0.1'
+
+# sources
+EDITORS_MEDIAWIKI_URL = 'http://192.168.0.16:9066/mediawiki/index.php'
+EDITORS_MEDIAWIKI_API = 'http://192.168.0.16:9000/mediawiki/api.php'
+EDITORS_MEDIAWIKI_USER = 'psmsbot'
+EDITORS_MEDIAWIKI_PASS = 'PASSWORD GOES HERE'
+SOURCES_HTTP_HOST = 'http://192.168.0.16:8080'
+
 CACHES = {
     'default': {
+#        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
         'KEY_PREFIX': 'psms:',
@@ -44,15 +66,7 @@ CACHES = {
     }
 }
 
-STATIC_ROOT = '/var/www/psmsenv/encyc-psms/psms/static/'
-MEDIA_ROOT  = '/var/www/html/psms/media/'
-#STATIC_URL         = 'http://192.168.0.16/psms/static/'
-#MEDIA_URL          = 'http://192.168.0.16/psms/media/'
-STATIC_URL         = 'http://encyclopedia.densho.org/psms/static/'
-MEDIA_URL          = 'http://encyclopedia.densho.org/psms/media/'
-STATICFILES_DIRS = ('/var/www/psmsenv/encyc-psms/psms/static/',)
-
-TEMPLATE_DIRS    = ('/var/www/psmsenv/encyc-psms/psms/templates/',)
+# ----------------------------------------------------------------------
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -71,38 +85,18 @@ INSTALLED_APPS = (
     'tansu',
 )
 
-
-# ----------------------------------------------------------------------
-
-# jQuery
-# ex: http://ajax.googleapis.com/ajax/libs/jquery/{{ JQUERY_VERSION }}/jquery.min.js
-JQUERY_VERSION = '1.7'
-
-# wikiprox
-#WIKIPROX_MEDIAWIKI_API = 'http://beater/mediawiki/api.php'
-#WIKIPROX_MEDIAWIKI_HTML = 'http://beater/mediawiki/index.php'
-#WIKIPROX_MEDIAWIKI_HTML = 'http://10.0.4.15:9000/mediawiki/index.php'
-#WIKIPROX_MEDIAWIKI_HTML = 'http://en.wikipedia.org/wiki'
-
-# psms/tansu
-PSMS_MEDIAWIKI_API = 'http://127.0.0.1:9000/mediawiki/api.php'
-PSMS_MEDIAWIKI_USERNAME = 'gjost'
-PSMS_MEDIAWIKI_PASSWORD = 'PASSWORD GOES HERE'
-TANSU_API  = 'http://127.0.0.1:8080/api/v0.1'
-
-# sources
-EDITORS_MEDIAWIKI_URL = 'http://192.168.0.16:9066/mediawiki/index.php'
-EDITORS_MEDIAWIKI_API = 'http://192.168.0.16:9000/mediawiki/api.php'
-EDITORS_MEDIAWIKI_USER = ''
-EDITORS_MEDIAWIKI_PASS = ''
-SOURCES_HTTP_HOST = 'http://192.168.0.16:8080'
-
-# ----------------------------------------------------------------------
+STATICFILES_DIRS = (
+    '/var/www/psmsenv/encyc-psms/psms/static/',
+)
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+TEMPLATE_DIRS = (
+    '/var/www/psmsenv/encyc-psms/psms/templates/',
 )
 
 TEMPLATE_LOADERS = (
@@ -121,6 +115,24 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'psms.urls'
 
+# See http://docs.djangoproject.com/en/dev/topics/logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -149,7 +161,7 @@ LOGGING = {
             'formatter': 'simple',
         },
         'file': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': '/var/log/encyc/psms.log',
             'when': 'D',
