@@ -2,57 +2,17 @@
 # Install using pip: http://pip.openplans.org/
 # File format: http://pip.openplans.org/requirement-format.html
 
+# sudo apt-get install libjpeg8 libjpeg8-dev libmysqlclient-dev
+
 beautifulsoup4==4.0.5
-distribute>=0.6.28
 Django==1.4
-django-extensions==0.8
-django-tastypie==0.9.11
 gunicorn==0.14.3
 lxml==2.3.4
 MySQL-python==1.2.3  # depends on libmysqlclient-dev
-Pillow           # depends on libjpeg8 libjpeg8-dev
-poster==0.8.1
+Pillow               # depends on libjpeg8 libjpeg8-dev
 pykml==0.1.0
 python-memcached==1.48
-PyYAML==3.10
 requests==0.12.1
-simplejson==2.5.2
 sorl-thumbnail==11.12
-unicodecsv==0.9.0    # used to export sources as CSV
+unicodecsv==0.9.0
 wikitools==1.1.1
-#South
-#celery
-#django-celery
-#django-pagination
-#psycopg2
-
-# USE THESE?
-
-#django-celery-transactions
-#django-compress     # compresses css and js files
-#django_compressor   # compresses css and js files into single cached files
-#django-registration
-#django-reversion    # versioned models in admin
-#django-storages     # S3, MogileFS, etc
-#django-tagging
-#johnny-cache        # caches all read queries (requires memcached)
-#typogrify
-
-#django-redis-cache
-#django-redis-sessions
-#redis
-
-#django-haystack
-#celery-haystack
-
-#https://github.com/poswald/microformats.git  # maybe make similar project for RDF,OAI?
-
-# CSS frameworks
-#django-css          # works with HSS, Sass, CleverCSS, LESS
-#django-less
-#django-scss
-#scss
-#CleverCSS2
-
-# python-geohash     # lightweight coordinate system
-# http://blog.adamfast.com/2011/11/faking-it-geospatial-search-without-the-prereqs-or-infrastructure/
