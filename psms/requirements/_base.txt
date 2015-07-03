@@ -6,6 +6,7 @@
 
 beautifulsoup4==4.0.5
 Django==1.4
+django_extensions
 gunicorn==0.14.3
 lxml==2.3.4
 MySQL-python==1.2.3  # depends on libmysqlclient-dev
