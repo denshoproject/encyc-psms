@@ -46,26 +46,33 @@ howto-install:
 	@echo ""
 	@echo "    # make install"
 	@echo ""
-	@echo "Adjust configs to fit the local environment. Values in /etc/encyc/local.cfg"
-	@echo "override those in production.cfg::"
+	@echo "Adjust configs to fit the local environment. Values in /etc/encyc/psms-local.cfg"
+	@echo "override those in psms.cfg::"
 	@echo ""
-	@echo "    # vi /etc/encyc/local.cfg"
+	@echo "    # vi /etc/encyc/psms-local.cfg"
 	@echo ""
-	@echo "Create database...::"
+	@echo "Reload an existing database::"
+	@echo ""
+	@echo "	   # mysql -p -u root psms < DATABASE_BACKUP_FILE.mysql"
+	@echo ""
+	@echo "Or create a new database::"
 	@echo ""
 	@echo "	   # mysql -p -u root"
 	@echo "    mysql> create database psms;"
 	@echo "    mysql> grant all privileges on psms.* to psms@localhost identified by 'PASSWORD';"
 	@echo "    mysql> flush privileges;"
-	@echo "    mysql> exit"
-	@echo ""
-	@echo "...or reload an existing one::"
-	@echo ""
-	@echo "	   # mysql -p -u root psms < DATABASE_BACKUP_FILE.mysql"
 	@echo ""
 	@echo "Apply any database updates that need applying::"
 	@echo ""
 	@echo "    # make syncdb"
+	@echo ""
+	@echo "Insert some records::"
+	@echo ""
+	@echo "	   # mysql -p -u root"
+	@echo "    mysql> use psms;"
+	@echo "    mysql> update django_site set domain='10.0.4.15:8000', name='densho front' where id=1;"
+	@echo "    mysql> insert into django_site (domain, name) values ('10.0.4.15:8080', 'densho psms');"
+	@echo "    mysql> exit"
 	@echo ""
 	@echo "Restart::"
 	@echo ""
@@ -108,7 +115,7 @@ git-config:
 install-misc-tools:
 	@echo ""
 	@echo "Installing miscellaneous tools -----------------------------------------"
-	apt-get --assume-yes install ack-grep byobu elinks htop httpie iftop iotop mg multitail sshuttle
+	apt-get --assume-yes install ack-grep byobu elinks htop iftop iotop mg multitail
 
 
 install-daemons: install-nginx install-mysql install-memcached
@@ -145,7 +152,7 @@ install-encyc-psms:
 	apt-get --assume-yes install imagemagick libjpeg-dev libmysqlclient-dev libxml2 libxslt1.1 libxslt1-dev python-dev python-pip python-virtualenv supervisor
 	test -d $(VIRTUALENV) || virtualenv $(VIRTUALENV)
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U --download-cache=$(PIP_CACHE_DIR) bpython setuptools
+	pip install -U --download-cache=$(PIP_CACHE_DIR) setuptools
 	source $(VIRTUALENV)/bin/activate; \
 	pip install -U --download-cache=$(PIP_CACHE_DIR) -r $(INSTALLDIR)/psms/requirements/production.txt
 	-mkdir /var/log/encyc
@@ -155,7 +162,7 @@ install-encyc-psms:
 	-mkdir -p $(STATIC_ROOT)
 	chown -R psms.root $(STATIC_ROOT)
 	chmod -R 755 $(STATIC_ROOT)
-	cp -R $(INSTALLDIR)/psms/apps/tansu/static/tansu/* $(STATIC_ROOT)/
+	cp -R $(INSTALLDIR)/psms/tansu/static/tansu/* $(STATIC_ROOT)/
 	chown -R psms.root $(MEDIA_BASE)
 	chmod -R 755 $(MEDIA_BASE)
 
@@ -163,7 +170,7 @@ syncdb:
 	cd $(INSTALLDIR)/psms
 	source $(VIRTUALENV)/bin/activate; \
 	python manage.py syncdb --noinput
-	chown -R encyc.root /var/log/encyc
+	chown -R psms.root /var/log/encyc
 	chmod -R 755 /var/log/encyc
 
 update-encyc-psms:
