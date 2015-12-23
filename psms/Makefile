@@ -91,7 +91,7 @@ howto-install:
 
 
 
-install: install-prep install-psms install-static install-configs
+install: install-prep install-psms install-configs install-static
 
 update: update-psms
 
@@ -270,6 +270,16 @@ uninstall-daemons-configs:
 	-rm $(NGINX_CONF_LINK) 
 	-rm $(NGINX_CONF) 
 	-rm $(SUPERVISOR_CONF)
+
+
+install-static: collectstatic
+
+collectstatic:
+	@echo ""
+	@echo "collectstatic -------------------------------------------------------"
+	cd $(INSTALLDIR)/psms
+	source $(VIRTUALENV)/bin/activate; \
+	python manage.py collectstatic --noinput
 
 
 reload: reload-nginx reload-supervisor

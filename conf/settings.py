@@ -45,7 +45,7 @@ DATABASES = {
 #update django_site set domain='10.0.4.15:8000', name='densho front' where id=1;
 #insert into django_site (domain, name) values ('10.0.4.15:8080', 'densho psms');
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = config.get('media', 'static_root')
 STATIC_URL = config.get('media', 'static_url')
 MEDIA_ROOT = config.get('media', 'media_root')
 MEDIA_URL = config.get('media', 'media_url')
@@ -115,7 +115,6 @@ INSTALLED_APPS = (
 )
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static/'),
 )
 
 STATICFILES_FINDERS = (
