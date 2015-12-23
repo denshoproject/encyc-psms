@@ -1,13 +1,28 @@
 SHELL = /bin/bash
 
-PACKAGE_SERVER=tank.densho.org
+PACKAGE_SERVER=ddr.densho.org/static/encycpsms
 
-PIP_CACHE_DIR=/usr/local/src/pip-cache
-VIRTUALENV=/usr/local/src/env/psms
-INSTALLDIR=/usr/local/src/encyc-psms
-MEDIA_BASE=/var/www/html/psms
+INSTALL_BASE=/usr/local/src
+PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
+VIRTUALENV=$(INSTALL_BASE)/env/psms
+INSTALLDIR=$(INSTALL_BASE)/encyc-psms
+SETTINGS=$(INSTALLDIR)/psms/psms/settings.py
+
+CONF_BASE=/etc/encyc
+CONF_PRODUCTION=$(CONF_BASE)/psms.cfg
+CONF_LOCAL=$(CONF_BASE)/psms-local.cfg
+CONF_SECRET=$(CONF_BASE)/psms-secret-key.txt
+
+LOG_BASE=/var/log/encyc
+
+MEDIA_BASE=/var/www/encycpsms
 MEDIA_ROOT=$(MEDIA_BASE)/media
 STATIC_ROOT=$(MEDIA_BASE)/static
+
+SUPERVISOR_CONF=/etc/supervisor/conf.d/psms.conf
+NGINX_CONF=/etc/nginx/sites-available/psms.conf
+NGINX_CONF_LINK=/etc/nginx/sites-enabled/psms.conf
+
 
 .PHONY: help
 
@@ -35,8 +50,8 @@ howto-install:
 	@echo ""
 	@echo "    # apt-get install make"
 	@echo "    # adduser psms"
-	@echo "    # git clone git@github.com:densho/encyc-psms.git /usr/local/src/encyc-psms"
-	@echo "    # cd /usr/local/src/encyc-psms/psms"
+	@echo "    # git clone git@github.com:densho/encyc-psms.git $(INSTALL_BASE)/encyc-psms"
+	@echo "    # cd $(INSTALL_BASE)/encyc-psms/psms"
 	@echo ""
 	@echo "If not running the master branch, switch to it now::"
 	@echo ""
@@ -46,10 +61,10 @@ howto-install:
 	@echo ""
 	@echo "    # make install"
 	@echo ""
-	@echo "Adjust configs to fit the local environment. Values in /etc/encyc/local.cfg"
-	@echo "override those in production.cfg::"
+	@echo "Adjust configs to fit the local environment. Values in $(CONF_LOCAL)"
+	@echo "override those in $(CONF_PRODUCTION)::"
 	@echo ""
-	@echo "    # vi /etc/encyc/local.cfg"
+	@echo "    # vi $(CONF_LOCAL)"
 	@echo ""
 	@echo "Create database...::"
 	@echo ""
@@ -76,7 +91,7 @@ howto-install:
 
 
 
-install: install-prep install-daemons install-psms install-static install-configs
+install: install-prep install-psms install-static install-configs
 
 update: update-psms
 
@@ -113,7 +128,7 @@ install-misc-tools:
 	apt-get --assume-yes install ack-grep byobu elinks htop httpie iftop iotop mg multitail sshuttle
 
 
-install-daemons: install-nginx install-mysql install-memcached
+install-daemons: install-nginx install-redis install-supervisor
 
 install-nginx:
 	@echo ""
@@ -125,10 +140,27 @@ install-mysql:
 	@echo "MySQL ------------------------------------------------------------------"
 	apt-get --assume-yes install mysql-server mysql-client
 
-install-memcached:
+install-redis:
 	@echo ""
-	@echo "Memcached --------------------------------------------------------------"
-	apt-get --assume-yes install memcached
+	@echo "Redis ------------------------------------------------------------------"
+	apt-get --assume-yes install redis-server
+
+install-supervisor:
+	@echo ""
+	@echo "Supervisor -------------------------------------------------------------"
+	apt-get --assume-yes install supervisor
+
+
+install-virtualenv:
+	apt-get --assume-yes install python-pip python-virtualenv
+	test -d $(VIRTUALENV) || virtualenv --distribute --setuptools $(VIRTUALENV)
+
+install-setuptools: install-virtualenv
+	@echo ""
+	@echo "install-setuptools -----------------------------------------------------"
+	apt-get --assume-yes install python-dev
+	source $(VIRTUALENV)/bin/activate; \
+	pip install -U --download-cache=$(PIP_CACHE_DIR) bpython setuptools
 
 
 install-psms: install-encyc-psms
@@ -140,24 +172,23 @@ uninstall-psms: uninstall-encyc-psms
 clean-psms: clean-encyc-psms
 
 
-install-encyc-psms:
+install-encyc-psms: install-virtualenv install-setuptools
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
-#	apt-get --assume-yes install imagemagick libjpeg62-turbo-dev libxml2 libxslt1.1 libxslt1-dev python-dev python-pip python-virtualenv supervisor zlib1g-dev
-	apt-get --assume-yes install imagemagick libjpeg-dev libmysqlclient-dev libxml2 libxslt1.1 libxslt1-dev python-dev python-pip python-virtualenv supervisor
-	test -d $(VIRTUALENV) || virtualenv $(VIRTUALENV)
-	source $(VIRTUALENV)/bin/activate; \
-	pip install -U --download-cache=$(PIP_CACHE_DIR) bpython setuptools
+	apt-get --assume-yes install imagemagick libjpeg-dev libmysqlclient-dev libxml2 libxslt1.1 libxslt1-dev
 	source $(VIRTUALENV)/bin/activate; \
 	pip install -U --download-cache=$(PIP_CACHE_DIR) -r $(INSTALLDIR)/psms/requirements/production.txt
-	-mkdir /var/log/encyc
-	chown -R psms.root /var/log/encyc
-	chmod -R 755 /var/log/encyc
-	-mkdir -p $(MEDIA_ROOT)
+# logs dir
+	-mkdir $(LOG_BASE)
+	chown -R ddr.root $(LOG_BASE)
+	chmod -R 755 $(LOG_BASE)
+# static dir
 	-mkdir -p $(STATIC_ROOT)
 	chown -R psms.root $(STATIC_ROOT)
 	chmod -R 755 $(STATIC_ROOT)
 	cp -R $(INSTALLDIR)/psms/apps/tansu/static/tansu/* $(STATIC_ROOT)/
+# media dir
+	-mkdir -p $(MEDIA_ROOT)
 	chown -R psms.root $(MEDIA_BASE)
 	chmod -R 755 $(MEDIA_BASE)
 
@@ -193,43 +224,53 @@ clean-pip:
 	-rm -Rf $(PIP_CACHE_DIR)/*
 
 
-install-static: 
-
-clean-static:
+branch:
+	cd $(INSTALLDIR)/psms; python ./bin/git-checkout-branch.py $(BRANCH)
 
 
 install-configs:
 	@echo ""
 	@echo "installing configs ----------------------------------------------------"
-# web app settings - psms.cfg
-	-mkdir /etc/encyc
-	cp $(INSTALLDIR)/debian/conf/psms.cfg /etc/encyc/
-	chown root.psms /etc/encyc/psms.cfg
-	chmod 640 /etc/encyc/psms.cfg
-	touch /etc/encyc/psms-local.cfg
-	chown root.psms /etc/encyc/psms-local.cfg
-	chmod 640 /etc/encyc/psms-local.cfg
-# web app settings - settings.py
-	cp $(INSTALLDIR)/debian/conf/settings.py $(INSTALLDIR)/psms/
-	chown root.root $(INSTALLDIR)/psms/settings.py
-	chmod 644 $(INSTALLDIR)/psms/settings.py
-# supervisord - gunicorn_psms.conf
-	cp $(INSTALLDIR)/debian/conf/gunicorn_psms.conf /etc/supervisor/conf.d/
-	chown root.root /etc/supervisor/conf.d/gunicorn_psms.conf
-	chmod 644 /etc/supervisor/conf.d/gunicorn_psms.conf
-# nginx settings - psms.conf
-	cp $(INSTALLDIR)/debian/conf/psms.conf /etc/nginx/sites-available
-	chown root.root /etc/nginx/sites-available/psms.conf
-	chmod 644 /etc/nginx/sites-available/psms.conf
-	-ln -s /etc/nginx/sites-available/psms.conf /etc/nginx/sites-enabled/psms.conf
-	-rm /etc/nginx/sites-enabled/default
+	-mkdir $(CONF_BASE)
+	python -c 'import random; print "".join([random.choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for i in range(50)])' > $(CONF_SECRET)
+	chown ddr.ddr $(CONF_SECRET)
+	chmod 640 $(CONF_SECRET)
+# web app settings
+	cp $(INSTALLDIR)/conf/settings.py $(SETTINGS)
+	chown root.root $(SETTINGS)
+	chmod 644 $(SETTINGS)
+# web app settings
+	cp $(INSTALLDIR)/conf/psms.cfg $(CONF_BASE)
+	chown root.psms $(CONF_PRODUCTION)
+	chmod 640 $(CONF_PRODUCTION)
+	touch $(CONF_LOCAL)
+	chown root.psms $(CONF_LOCAL)
+	chmod 640 $(CONF_LOCAL)
 
 uninstall-configs:
-	-rm /etc/nginx/sites-available/psms.conf
-	-rm /etc/nginx/sites-enabled/psms.conf
-	-rm /etc/supervisor/conf.d/gunicorn_psms.conf
-	-rm $(INSTALLDIR)/psms/settings.py
-	-rm /etc/encyc/psms.conf
+	-rm $(SETTINGS)
+	-rm $(CONF_PRODUCTION)
+	-rm $(CONF_LOCAL)
+	-rm $(CONF_SECRET)
+
+install-daemons-configs:
+	@echo ""
+	@echo "configuring daemons -------------------------------------------------"
+# nginx
+	cp $(INSTALLDIR)/conf/psms.conf $(NGINX_CONF)
+	chown root.root $(NGINX_CONF)
+	chmod 644 $(NGINX_CONF)
+	-ln -s $(NGINX_CONF) $(NGINX_CONF_LINK)
+	-rm /etc/nginx/sites-enabled/default
+# supervisord
+	cp $(INSTALLDIR)/conf/gunicorn_psms.conf $(SUPERVISOR_CONF)
+	chown root.root $(SUPERVISOR_CONF)
+	chmod 644 $(SUPERVISOR_CONF)
+
+uninstall-daemons-configs:
+	-rm $(NGINX_CONF_LINK) 
+	-rm $(NGINX_CONF) 
+	-rm $(SUPERVISOR_CONF)
 
 
 reload: reload-nginx reload-supervisor
@@ -241,7 +282,7 @@ reload-supervisor:
 	supervisorctl reload
 
 
-restart: restart-nginx restart-mysql restart-memcached restart-supervisor
+restart: restart-nginx restart-mysql restart-redis restart-supervisor
 
 restart-nginx:
 	/etc/init.d/nginx restart
@@ -249,8 +290,8 @@ restart-nginx:
 restart-mysql:
 	/etc/init.d/mysql restart
 
-restart-memcached:
-	/etc/init.d/memcached restart
+restart-redis:
+	/etc/init.d/redis-server restart
 
 restart-supervisor:
 	/etc/init.d/supervisor restart
@@ -259,7 +300,6 @@ restart-supervisor:
 status:
 	@echo [`systemctl is-active nginx`] nginx
 	@echo [`systemctl is-active mysql`] mysql
-	@echo [`systemctl is-active memcached`] memcached
 	@echo [`systemctl is-active supervisor`] supervisor
 	@supervisorctl status
 
