@@ -6,7 +6,7 @@ INSTALL_BASE=/usr/local/src
 PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
 VIRTUALENV=$(INSTALL_BASE)/env/psms
 INSTALLDIR=$(INSTALL_BASE)/encyc-psms
-SETTINGS=$(INSTALLDIR)/psms/psms/settings.py
+SETTINGS=$(INSTALLDIR)/psms/settings.py
 
 CONF_BASE=/etc/encyc
 CONF_PRODUCTION=$(CONF_BASE)/psms.cfg
