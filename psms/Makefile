@@ -91,13 +91,13 @@ howto-install:
 
 
 
-install: install-prep install-psms install-configs install-static
+install: install-prep install-app install-configs install-static
 
-update: update-psms
+update: update-app
 
-uninstall: uninstall-psms
+uninstall: uninstall-app
 
-clean: clean-psms
+clean: clean-app
 
 
 install-prep: apt-update install-core git-config install-misc-tools
@@ -163,13 +163,13 @@ install-setuptools: install-virtualenv
 	pip install -U --download-cache=$(PIP_CACHE_DIR) bpython setuptools
 
 
-install-psms: install-encyc-psms
+install-app: install-encyc-psms
 
-update-psms: update-encyc-psms install-configs
+update-app: update-encyc-psms install-configs
 
-uninstall-psms: uninstall-encyc-psms
+uninstall-app: uninstall-encyc-psms
 
-clean-psms: clean-encyc-psms
+clean-app: clean-encyc-psms
 
 
 install-encyc-psms: install-virtualenv install-setuptools
