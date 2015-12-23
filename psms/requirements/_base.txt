@@ -6,10 +6,11 @@
 
 beautifulsoup4==4.0.5
 Django==1.4
+django-extensions==1.6.1
 gunicorn==0.14.3
 lxml==2.3.4
-MySQL-python==1.2.3  # depends on libmysqlclient-dev
-Pillow               # depends on libjpeg8 libjpeg8-dev
+mysql-python==1.2.3  # depends on libmysqlclient-dev
+Pillow==3.0.0        # depends on libjpeg8 libjpeg8-dev
 pykml==0.1.0
 python-memcached==1.48
 requests==0.12.1
