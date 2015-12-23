@@ -103,7 +103,11 @@ howto-install:
 	@echo ""
 	@echo "    # vi $(CONF_LOCAL)"
 	@echo ""
-	@echo "Create database...::"
+	@echo "Reload an existing database::"
+	@echo ""
+	@echo "	   # mysql -p -u root psms < DATABASE_BACKUP_FILE.mysql"
+	@echo ""
+	@echo "Or create a new database::"
 	@echo ""
 	@echo "	   # mysql -p -u root"
 	@echo "    mysql> create database psms;"
@@ -120,6 +124,14 @@ howto-install:
 	@echo "Apply any database updates that need applying::"
 	@echo ""
 	@echo "    # make syncdb"
+	@echo ""
+	@echo "Insert some records::"
+	@echo ""
+	@echo "	   # mysql -p -u root"
+	@echo "    mysql> use psms;"
+	@echo "    mysql> update django_site set domain='10.0.4.15:8000', name='densho front' where id=1;"
+	@echo "    mysql> insert into django_site (domain, name) values ('10.0.4.15:8080', 'densho psms');"
+	@echo "    mysql> exit"
 	@echo ""
 	@echo "Restart::"
 	@echo ""
@@ -162,7 +174,7 @@ git-config:
 install-misc-tools:
 	@echo ""
 	@echo "Installing miscellaneous tools -----------------------------------------"
-	apt-get --assume-yes install ack-grep byobu elinks htop httpie iftop iotop mg multitail sshuttle
+	apt-get --assume-yes install ack-grep byobu elinks htop iftop iotop mg multitail
 
 
 install-daemons: install-nginx install-redis install-supervisor
@@ -232,7 +244,7 @@ syncdb:
 	cd $(INSTALLDIR)/psms
 	source $(VIRTUALENV)/bin/activate; \
 	python manage.py syncdb --noinput
-	chown -R encyc.root /var/log/encyc
+	chown -R psms.root /var/log/encyc
 	chmod -R 755 /var/log/encyc
 
 update-encyc-psms:
