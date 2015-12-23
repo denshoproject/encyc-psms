@@ -57,6 +57,8 @@ howto-install:
 	@echo "    mysql> create database psms;"
 	@echo "    mysql> grant all privileges on psms.* to psms@localhost identified by 'PASSWORD';"
 	@echo "    mysql> flush privileges;"
+	@echo "    mysql> update django_site set domain='10.0.4.15:8000', name='densho front' where id=1;"
+	@echo "    mysql> insert into django_site (domain, name) values ('10.0.4.15:8080', 'densho psms');"
 	@echo "    mysql> exit"
 	@echo ""
 	@echo "...or reload an existing one::"
