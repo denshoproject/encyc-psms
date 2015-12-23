@@ -180,16 +180,15 @@ install-encyc-psms: install-virtualenv install-setuptools
 	pip install -U --download-cache=$(PIP_CACHE_DIR) -r $(INSTALLDIR)/psms/requirements/production.txt
 # logs dir
 	-mkdir $(LOG_BASE)
-	chown -R ddr.root $(LOG_BASE)
+	chown -R encyc.root $(LOG_BASE)
 	chmod -R 755 $(LOG_BASE)
 # static dir
 	-mkdir -p $(STATIC_ROOT)
-	chown -R psms.root $(STATIC_ROOT)
+	chown -R encyc.root $(STATIC_ROOT)
 	chmod -R 755 $(STATIC_ROOT)
-	cp -R $(INSTALLDIR)/psms/apps/tansu/static/tansu/* $(STATIC_ROOT)/
 # media dir
 	-mkdir -p $(MEDIA_ROOT)
-	chown -R psms.root $(MEDIA_BASE)
+	chown -R encyc.root $(MEDIA_BASE)
 	chmod -R 755 $(MEDIA_BASE)
 
 syncdb:
@@ -233,7 +232,7 @@ install-configs:
 	@echo "installing configs ----------------------------------------------------"
 	-mkdir $(CONF_BASE)
 	python -c 'import random; print "".join([random.choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for i in range(50)])' > $(CONF_SECRET)
-	chown ddr.ddr $(CONF_SECRET)
+	chown encyc.encyc $(CONF_SECRET)
 	chmod 640 $(CONF_SECRET)
 # web app settings
 	cp $(INSTALLDIR)/conf/settings.py $(SETTINGS)
@@ -241,10 +240,10 @@ install-configs:
 	chmod 644 $(SETTINGS)
 # web app settings
 	cp $(INSTALLDIR)/conf/psms.cfg $(CONF_BASE)
-	chown root.psms $(CONF_PRODUCTION)
+	chown root.encyc $(CONF_PRODUCTION)
 	chmod 640 $(CONF_PRODUCTION)
 	touch $(CONF_LOCAL)
-	chown root.psms $(CONF_LOCAL)
+	chown root.encyc $(CONF_LOCAL)
 	chmod 640 $(CONF_LOCAL)
 
 uninstall-configs:
