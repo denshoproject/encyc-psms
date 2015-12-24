@@ -7,6 +7,7 @@
 beautifulsoup4==4.0.5
 Django==1.4
 django-extensions==1.6.1
+django-tastypie==0.9.11
 gunicorn==0.14.3
 lxml==2.3.4
 mysql-python==1.2.3  # depends on libmysqlclient-dev
@@ -17,3 +18,4 @@ requests==0.12.1
 sorl-thumbnail==11.12
 unicodecsv==0.9.0
 wikitools==1.1.1
+poster==0.8.1
