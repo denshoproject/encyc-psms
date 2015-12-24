@@ -1,57 +1,71 @@
-# Django settings for psms project.
+"""
+Django settings for encyc-psms project.
 
-# add ./apps/ to path
-import sys
-from os import path
-PROJECT_ROOT = path.dirname(path.abspath(__file__))
-sys.path.append(path.join(PROJECT_ROOT, "apps"))
+For more information on this file, see
+https://docs.djangoproject.com/en/1.6/topics/settings/
 
-DEBUG = False
+For the full list of settings and their values, see
+https://docs.djangoproject.com/en/1.6/ref/settings/
+"""
+
+import ConfigParser
+import os
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+# User-configurable settings are located in the following files.
+# Files appearing *later* in the list override earlier files.
+CONFIG_FILES = [
+    '/etc/encyc/psms.cfg',
+    '/etc/encyc/psms-local.cfg'
+]
+config = ConfigParser.ConfigParser()
+configs_read = config.read(CONFIG_FILES)
+if not configs_read:
+    raise Exception('No config file!')
+
+# ----------------------------------------------------------------------
+
+DEBUG = config.get('debug', 'debug')
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ID = 2
-SECRET_KEY = 'SECRET KEY HERE'
-
-ADMINS = (
-    ('Geoff Froh', 'geoff.froh@densho.org'),
-    ('geoffrey jost', 'geoffrey.jost@densho.org'),
-)
-MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
-        'PORT': 3306,
-        'NAME': 'psms',
-        'USER': 'psms',
-        'PASSWORD': 'PASSWORD GOES HERE',
+        'ENGINE': config.get('database', 'engine'),
+        'HOST': config.get('database', 'host'),
+        'PORT': config.get('database', 'port'),
+        'NAME': config.get('database', 'name'),
+        'USER': config.get('database', 'user'),
+        'PASSWORD': config.get('database', 'password'),
     }
 }
 #update django_site set domain='10.0.4.15:8000', name='densho front' where id=1;
 #insert into django_site (domain, name) values ('10.0.4.15:8080', 'densho psms');
 
-STATIC_ROOT = '/var/www/psmsenv/encyc-psms/psms/static/'
-MEDIA_ROOT = '/var/www/html/psms/media/'
-STATIC_URL = 'http://encyclopedia.densho.org/psms/static/'
-MEDIA_URL = 'http://encyclopedia.densho.org/psms/media/'
+STATIC_ROOT = config.get('media', 'static_root')
+STATIC_URL = config.get('media', 'static_url')
+MEDIA_ROOT = config.get('media', 'media_root')
+MEDIA_URL = config.get('media', 'media_url')
 
 # jQuery
 # ex: http://ajax.googleapis.com/ajax/libs/jquery/{{ JQUERY_VERSION }}/jquery.min.js
 JQUERY_VERSION = '1.7'
 
 # psms/tansu
-PSMS_MEDIAWIKI_API = 'http://127.0.0.1:9000/mediawiki/api.php'
-PSMS_MEDIAWIKI_USERNAME = 'psmsbot'
-PSMS_MEDIAWIKI_PASSWORD = 'PASSWORD GOES HERE'
-TANSU_API  = 'http://127.0.0.1:8080/api/v0.1'
+PSMS_MEDIAWIKI_API = config.get('psms', 'mediawiki_api')
+PSMS_MEDIAWIKI_USERNAME = config.get('psms', 'mediawiki_username')
+PSMS_MEDIAWIKI_PASSWORD = config.get('psms', 'mediawiki_password')
+TANSU_API  = config.get('psms', 'tansu_api')
 
 # sources
-EDITORS_MEDIAWIKI_URL = 'http://192.168.0.16:9066/mediawiki/index.php'
-EDITORS_MEDIAWIKI_API = 'http://192.168.0.16:9000/mediawiki/api.php'
-EDITORS_MEDIAWIKI_USER = 'psmsbot'
-EDITORS_MEDIAWIKI_PASS = 'PASSWORD GOES HERE'
-SOURCES_HTTP_HOST = 'http://192.168.0.16:8080'
+EDITORS_MEDIAWIKI_URL = config.get('sources', 'mediawiki_url')
+EDITORS_MEDIAWIKI_API = config.get('sources', 'mediawiki_api')
+EDITORS_MEDIAWIKI_USER = config.get('sources', 'mediawiki_username')
+EDITORS_MEDIAWIKI_PASS = config.get('sources', 'mediawiki_password')
+SOURCES_HTTP_HOST = config.get('sources', 'http_host')
 
 CACHES = {
     'default': {
@@ -68,6 +82,22 @@ CACHES = {
 
 # ----------------------------------------------------------------------
 
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in config.get('security', 'allowed_hosts').strip().split(',')
+]
+
+SECRET_KEY = config.get('security', 'secret_key')
+
+
+ADMINS = (
+    ('Geoff Froh', 'geoff.froh@densho.org'),
+    ('geoffrey jost', 'geoffrey.jost@densho.org'),
+)
+MANAGERS = ADMINS
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -80,13 +110,11 @@ INSTALLED_APPS = (
     'django_extensions',
     'sorl.thumbnail',
     #
-    'core',
     'sources',
     'tansu',
 )
 
 STATICFILES_DIRS = (
-    '/var/www/psmsenv/encyc-psms/psms/static/',
 )
 
 STATICFILES_FINDERS = (
@@ -96,7 +124,7 @@ STATICFILES_FINDERS = (
 )
 
 TEMPLATE_DIRS = (
-    '/var/www/psmsenv/encyc-psms/psms/templates/',
+    os.path.join(BASE_DIR, 'templates/'),
 )
 
 TEMPLATE_LOADERS = (
