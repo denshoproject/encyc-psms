@@ -45,7 +45,8 @@ Add this to `/etc/crontab`:
 
 """
 
-import argparse
+#import argparse
+import optparse
 import ConfigParser
 from datetime import datetime
 import os
@@ -166,10 +167,9 @@ def make_files_dict(files_list):
     @param files_list: list of file dicts
     @returns: dict
     """
-    fd = {
-        f['basename']: f
-        for f in files_list
-    }
+    fd = {}
+    for f in files_list:
+        fd[f['basename']] = f
     return fd
 
 def choose_files(src_files, dest_files):
@@ -246,17 +246,18 @@ def exec_scp_cmds(cmds, dryrun=False):
 
 def main():
 
-    parser = argparse.ArgumentParser(
+    parser = optparse.OptionParser(
         description=description,
         epilog=epilog,
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        #formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    args = parser.parse_args()
+    options,args = parser.parse_args()
     
     config = ConfigParser.ConfigParser()
     configs_read = config.read(CONFIG_FILES)
     if not configs_read:
-        raise Exception('No config file!')
+        msg = 'Config missing or unreadable! Looked in %s.' % CONFIG_FILES
+        raise Exception(msg)
     
     SRC_REMOTE = config.get('sources', 'src_remote')
     DEST_REMOTE = config.get('sources', 'dest_remote')
