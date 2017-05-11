@@ -4,8 +4,8 @@ PACKAGE_SERVER=ddr.densho.org/static/encycpsms
 
 INSTALL_BASE=/usr/local/src
 PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
-VIRTUALENV=$(INSTALL_BASE)/env/psms
 INSTALLDIR=$(INSTALL_BASE)/encyc-psms
+VIRTUALENV=$(INSTALLDIR)/venv
 SETTINGS=$(INSTALLDIR)/psms/settings.py
 
 CONF_BASE=/etc/encyc

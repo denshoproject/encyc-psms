@@ -5,3 +5,4 @@ psms/settings.py
 pip-log.txt
 media
 build
+venv/
