@@ -226,7 +226,7 @@ install-encyc-psms: install-virtualenv install-setuptools
 	@echo "encyc-psms --------------------------------------------------------------"
 	apt-get --assume-yes install imagemagick libjpeg-dev libmysqlclient-dev libxml2 libxslt1.1 libxslt1-dev
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U --download-cache=$(PIP_CACHE_DIR) -r $(INSTALLDIR)/psms/requirements/production.txt
+	pip install -U --download-cache=$(PIP_CACHE_DIR) -r $(INSTALLDIR)/requirements/production.txt
 # logs dir
 	-mkdir $(LOG_BASE)
 	chown -R encyc.root $(LOG_BASE)
@@ -252,12 +252,12 @@ update-encyc-psms:
 	@echo "encyc-psms --------------------------------------------------------------"
 	git fetch && git pull
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U --download-cache=$(PIP_CACHE_DIR) -r $(INSTALLDIR)/psms/requirements/production.txt
+	pip install -U --download-cache=$(PIP_CACHE_DIR) -r $(INSTALLDIR)/requirements/production.txt
 
 uninstall-encyc-psms:
 	cd $(INSTALLDIR)/psms
 	source $(VIRTUALENV)/bin/activate; \
-	-pip uninstall -r $(INSTALLDIR)/psms/requirements/production.txt
+	-pip uninstall -r $(INSTALLDIR)/requirements/production.txt
 	-rm /usr/local/lib/python2.7/dist-packages/psms-*
 	-rm -Rf /usr/local/lib/python2.7/dist-packages/psms
 
