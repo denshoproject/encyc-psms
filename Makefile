@@ -1,11 +1,22 @@
-SHELL = /bin/bash
+PROJECT=encyc
+APP=encycpsms
+USER=encyc
 
+SHELL = /bin/bash
+DEBIAN_CODENAME := $(shell lsb_release -sc)
+DEBIAN_RELEASE := $(shell lsb_release -sr)
+VERSION := $(shell cat VERSION)
+
+GIT_SOURCE_URL=https://github.com/densho/encyc-psms
 PACKAGE_SERVER=ddr.densho.org/static/encycpsms
 
-INSTALL_BASE=/usr/local/src
-PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
+INSTALL_BASE=/opt
 INSTALLDIR=$(INSTALL_BASE)/encyc-psms
-VIRTUALENV=$(INSTALLDIR)/venv
+DOWNLOADS_DIR=/tmp/$(APP)-install
+REQUIREMENTS=$(INSTALLDIR)/requirements.txt
+PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
+
+VIRTUALENV=$(INSTALLDIR)/venv/psms
 SETTINGS=$(INSTALLDIR)/psms/settings.py
 
 CONF_BASE=/etc/encyc
@@ -22,6 +33,15 @@ STATIC_ROOT=$(MEDIA_BASE)/static
 SUPERVISOR_CONF=/etc/supervisor/conf.d/psms.conf
 NGINX_CONF=/etc/nginx/sites-available/psms.conf
 NGINX_CONF_LINK=/etc/nginx/sites-enabled/psms.conf
+
+FPM_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
+FPM_ARCH=amd64
+FPM_NAME=$(APP)-$(FPM_BRANCH)
+FPM_FILE=$(FPM_NAME)_$(VERSION)_$(FPM_ARCH).deb
+FPM_VENDOR=Densho.org
+FPM_MAINTAINER=<geoffrey.jost@densho.org>
+FPM_DESCRIPTION=Encyclopedia Primary Source Management System
+FPM_BASE=opt/encyc-psms
 
 
 .PHONY: help
@@ -326,9 +346,8 @@ install-static: collectstatic
 collectstatic:
 	@echo ""
 	@echo "collectstatic -------------------------------------------------------"
-	cd $(INSTALLDIR)/psms
 	source $(VIRTUALENV)/bin/activate; \
-	python manage.py collectstatic --noinput
+	python $(INSTALLDIR)/psms/manage.py collectstatic --noinput
 
 
 reload: reload-nginx reload-supervisor
@@ -364,3 +383,48 @@ status:
 git-status:
 	@echo "------------------------------------------------------------------------"
 	cd $(INSTALLDIR) && git status
+
+
+# http://fpm.readthedocs.io/en/latest/
+# https://stackoverflow.com/questions/32094205/set-a-custom-install-directory-when-making-a-deb-package-with-fpm
+# https://brejoc.com/tag/fpm/
+deb:
+	@echo ""
+	@echo "FPM packaging ----------------------------------------------------------"
+	-rm -Rf $(FPM_FILE)
+	virtualenv --python=python3 --relocatable $(VIRTUALENV)  # Make venv relocatable
+	fpm   \
+	--verbose   \
+	--input-type dir   \
+	--output-type deb   \
+	--name $(FPM_NAME)   \
+	--version $(VERSION)   \
+	--package $(FPM_FILE)   \
+	--url "$(GIT_SOURCE_URL)"   \
+	--vendor "$(FPM_VENDOR)"   \
+	--maintainer "$(FPM_MAINTAINER)"   \
+	--description "$(FPM_DESCRIPTION)"   \
+	--depends "mysql-server"   \
+	--depends "mysql-client"   \
+	--depends "redis-server"   \
+	--depends "supervisor"   \
+	--depends "nginx"   \
+	--chdir $(INSTALLDIR)   \
+	conf=$(FPM_BASE)   \
+	COPYRIGHT=$(FPM_BASE)   \
+	debian=$(FPM_BASE)   \
+	.git=$(FPM_BASE)   \
+	.gitignore=$(FPM_BASE)   \
+	INSTALL.rst=$(FPM_BASE)   \
+	LICENSE=$(FPM_BASE)   \
+	Makefile=$(FPM_BASE)   \
+	NOTES=$(FPM_BASE)   \
+	psms=$(FPM_BASE)  \
+	README.rst=$(FPM_BASE)   \
+	requirements=$(FPM_BASE)  \
+	venv=$(FPM_BASE)   \
+	VERSION=$(FPM_BASE)  \
+	conf/psms.cfg=etc/encyc/psms.cfg   \
+	conf/gunicorn_psms.conf=etc/supervisor/conf.d/psms.conf \
+	conf/psms.conf=etc/nginx/sites-available/psms.conf   \
+	conf/settings.py=$(FPM_BASE)/psms
