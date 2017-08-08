@@ -404,8 +404,8 @@ deb:
 	--vendor "$(FPM_VENDOR)"   \
 	--maintainer "$(FPM_MAINTAINER)"   \
 	--description "$(FPM_DESCRIPTION)"   \
-	--depends "mysql-server"   \
-	--depends "mysql-client"   \
+	--depends "mariadb-server"   \
+	--depends "mariadb-client"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
 	--depends "nginx"   \
