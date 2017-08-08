@@ -404,11 +404,11 @@ deb:
 	--vendor "$(FPM_VENDOR)"   \
 	--maintainer "$(FPM_MAINTAINER)"   \
 	--description "$(FPM_DESCRIPTION)"   \
-	--depends "mariadb-server"   \
-	--depends "mariadb-client"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
 	--depends "nginx"   \
+	--deb-recommends "mariadb-client"   \
+	--deb-suggests "mariadb-server"   \
 	--chdir $(INSTALLDIR)   \
 	conf=$(FPM_BASE)   \
 	COPYRIGHT=$(FPM_BASE)   \
