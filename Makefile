@@ -425,6 +425,4 @@ deb:
 	venv=$(FPM_BASE)   \
 	VERSION=$(FPM_BASE)  \
 	conf/psms.cfg=etc/encyc/psms.cfg   \
-	conf/gunicorn_psms.conf=etc/supervisor/conf.d/psms.conf \
-	conf/psms.conf=etc/nginx/sites-available/psms.conf   \
 	conf/settings.py=$(FPM_BASE)/psms
