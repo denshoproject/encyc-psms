@@ -407,9 +407,10 @@ class Source(BaseModel):
         logging.debug('    functions: %s' % functions)
         for f in functions:
             function_name = '_wiki_%s' % f
+            logging.debug(function_name)
             response = self.__getattribute__(function_name)()
+            logging.debug(response)
         # done!
-        logging.debug(response)
         return response
 
     def _wiki_upload(self):
@@ -442,13 +443,7 @@ class Source(BaseModel):
         """Just update the text of the File: page.
         """
         logging.debug('_wiki_update(%s)' % self)
-        # prevent errors while importing primary source files
-        try:
-            response = wiki.update_text(self.wikititle(), self.wikitext())
-        except:
-            response = 'wiki error'
-        logging.debug('    OK')
-        return response
+        return wiki.update_text(self.wikititle(), self.wikitext())
     
     def _wiki_linktext(self):
         return "[[%s|right|200px]]" % self.wikititle()

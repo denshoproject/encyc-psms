@@ -16,6 +16,7 @@ def _login():
     logging.debug(wiki)
     wiki.login(username=settings.PSMS_MEDIAWIKI_USERNAME,
                password=settings.PSMS_MEDIAWIKI_PASSWORD)
+    logging.debug(wiki)
     logging.debug('done')
     return wiki
 
