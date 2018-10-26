@@ -1,13 +1,25 @@
-PROJECT=encyc
-APP=encycpsms
+PROJECT=encycpsms
+APP=psms
 USER=encyc
-
 SHELL = /bin/bash
-DEBIAN_CODENAME := $(shell lsb_release -sc)
-DEBIAN_RELEASE := $(shell lsb_release -sr)
-VERSION := $(shell cat VERSION)
 
+APP_VERSION := $(shell cat VERSION)
 GIT_SOURCE_URL=https://github.com/densho/encyc-psms
+
+# Release name e.g. jessie
+DEBIAN_CODENAME := $(shell lsb_release -sc)
+# Release numbers e.g. 8.10
+DEBIAN_RELEASE := $(shell lsb_release -sr)
+# Sortable major version tag e.g. deb8
+DEBIAN_RELEASE_TAG = deb$(shell lsb_release -sr | cut -c1)
+
+# current branch name minus dashes or underscores
+PACKAGE_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
+# current commit hash
+PACKAGE_COMMIT := $(shell git log -1 --pretty="%h")
+# current commit date minus dashes
+PACKAGE_TIMESTAMP := $(shell git log -1 --pretty="%ad" --date=short | tr -d -)
+
 PACKAGE_SERVER=ddr.densho.org/static/encycpsms
 
 INSTALL_BASE=/opt
@@ -16,7 +28,7 @@ DOWNLOADS_DIR=/tmp/$(APP)-install
 REQUIREMENTS=$(INSTALLDIR)/requirements.txt
 PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
 
-VIRTUALENV=$(INSTALLDIR)/venv/psms
+VIRTUALENV=$(INSTALLDIR)/venv/$(APP)
 SETTINGS=$(INSTALLDIR)/psms/settings.py
 
 CONF_BASE=/etc/encyc
@@ -26,22 +38,25 @@ CONF_SECRET=$(CONF_BASE)/psms-secret-key.txt
 
 LOG_BASE=/var/log/encyc
 
-MEDIA_BASE=/var/www/encycpsms
+MEDIA_BASE=/var/www/$(APP)
 MEDIA_ROOT=$(MEDIA_BASE)/media
 STATIC_ROOT=$(MEDIA_BASE)/static
 
-SUPERVISOR_CONF=/etc/supervisor/conf.d/psms.conf
-NGINX_CONF=/etc/nginx/sites-available/psms.conf
-NGINX_CONF_LINK=/etc/nginx/sites-enabled/psms.conf
+SUPERVISOR_GUNICORN_CONF=/etc/supervisor/conf.d/$(APP).conf
+NGINX_APP_CONF=/etc/nginx/sites-available/$(APP).conf
+NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/$(APP).conf
 
-FPM_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
-FPM_ARCH=amd64
-FPM_NAME=$(APP)-$(FPM_BRANCH)
-FPM_FILE=$(FPM_NAME)_$(VERSION)_$(FPM_ARCH).deb
-FPM_VENDOR=Densho.org
-FPM_MAINTAINER=<geoffrey.jost@densho.org>
-FPM_DESCRIPTION=Encyclopedia Primary Source Management System
-FPM_BASE=opt/encyc-psms
+DEB_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
+DEB_ARCH=amd64
+DEB_NAME_STRETCH=$(PROJECT)-$(DEB_BRANCH)
+# Application version, separator (~), Debian release tag e.g. deb8
+# Release tag used because sortable and follows Debian project usage.
+DEB_VERSION_STRETCH=$(APP_VERSION)~deb9
+DEB_FILE_STRETCH=$(DEB_NAME_STRETCH)_$(DEB_VERSION_STRETCH)_$(DEB_ARCH).deb
+DEB_VENDOR=Densho.org
+DEB_MAINTAINER=<geoffrey.jost@densho.org>
+DEB_DESCRIPTION=Encyclopedia Primary Source Management System
+DEB_BASE=opt/encyc-psms
 
 
 .PHONY: help
@@ -229,7 +244,7 @@ install-setuptools: install-virtualenv
 	@echo "install-setuptools -----------------------------------------------------"
 	apt-get --assume-yes install python-dev
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U --download-cache=$(PIP_CACHE_DIR) bpython setuptools
+	pip install -U bpython setuptools
 
 
 install-app: install-encyc-psms
@@ -244,9 +259,9 @@ clean-app: clean-encyc-psms
 install-encyc-psms: install-virtualenv install-setuptools
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
-	apt-get --assume-yes install imagemagick libjpeg-dev libmysqlclient-dev libxml2 libxslt1.1 libxslt1-dev
+	apt-get --assume-yes install imagemagick libjpeg-dev libmariadbclient-dev libxml2 libxslt1.1 libxslt1-dev
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U --download-cache=$(PIP_CACHE_DIR) -r $(INSTALLDIR)/requirements/production.txt
+	pip install -U -r $(INSTALLDIR)/requirements/production.txt
 # logs dir
 	-mkdir $(LOG_BASE)
 	chown -R encyc.root $(LOG_BASE)
@@ -272,7 +287,7 @@ update-encyc-psms:
 	@echo "encyc-psms --------------------------------------------------------------"
 	git fetch && git pull
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U --download-cache=$(PIP_CACHE_DIR) -r $(INSTALLDIR)/requirements/production.txt
+	pip install -U -r $(INSTALLDIR)/requirements/production.txt
 
 uninstall-encyc-psms:
 	cd $(INSTALLDIR)/psms
@@ -325,20 +340,20 @@ install-daemons-configs:
 	@echo ""
 	@echo "configuring daemons -------------------------------------------------"
 # nginx
-	cp $(INSTALLDIR)/conf/psms.conf $(NGINX_CONF)
-	chown root.root $(NGINX_CONF)
-	chmod 644 $(NGINX_CONF)
-	-ln -s $(NGINX_CONF) $(NGINX_CONF_LINK)
+	cp $(INSTALLDIR)/conf/psms.conf $(NGINX_APP_CONF)
+	chown root.root $(NGINX_APP_CONF)
+	chmod 644 $(NGINX_APP_CONF)
+	-ln -s $(NGINX_APP_CONF) $(NGINX_APP_CONF_LINK)
 	-rm /etc/nginx/sites-enabled/default
 # supervisord
-	cp $(INSTALLDIR)/conf/gunicorn_psms.conf $(SUPERVISOR_CONF)
-	chown root.root $(SUPERVISOR_CONF)
-	chmod 644 $(SUPERVISOR_CONF)
+	cp $(INSTALLDIR)/conf/gunicorn_psms.conf $(SUPERVISOR_GUNICORN_CONF)
+	chown root.root $(SUPERVISOR_GUNICORN_CONF)
+	chmod 644 $(SUPERVISOR_GUNICORN_CONF)
 
 uninstall-daemons-configs:
-	-rm $(NGINX_CONF_LINK) 
-	-rm $(NGINX_CONF) 
-	-rm $(SUPERVISOR_CONF)
+	-rm $(NGINX_APP_CONF_LINK) 
+	-rm $(NGINX_APP_CONF) 
+	-rm $(SUPERVISOR_GUNICORN_CONF)
 
 
 install-static: collectstatic
@@ -388,41 +403,45 @@ git-status:
 # http://fpm.readthedocs.io/en/latest/
 # https://stackoverflow.com/questions/32094205/set-a-custom-install-directory-when-making-a-deb-package-with-fpm
 # https://brejoc.com/tag/fpm/
-deb:
+deb: deb-jessie deb-stretch
+
+# deb-jessie and deb-stretch are identical
+deb-stretch:
 	@echo ""
-	@echo "FPM packaging ----------------------------------------------------------"
-	-rm -Rf $(FPM_FILE)
+	@echo "DEB packaging (stretch) ------------------------------------------------"
+	-rm -Rf $(DEB_FILE_STRETCH)
 	virtualenv --python=python3 --relocatable $(VIRTUALENV)  # Make venv relocatable
 	fpm   \
 	--verbose   \
 	--input-type dir   \
 	--output-type deb   \
-	--name $(FPM_NAME)   \
-	--version $(VERSION)   \
-	--package $(FPM_FILE)   \
+	--name $(DEB_NAME_STRETCH)   \
+	--version $(DEB_VERSION_STRETCH)   \
+	--package $(DEB_FILE_STRETCH)   \
 	--url "$(GIT_SOURCE_URL)"   \
-	--vendor "$(FPM_VENDOR)"   \
-	--maintainer "$(FPM_MAINTAINER)"   \
-	--description "$(FPM_DESCRIPTION)"   \
+	--vendor "$(DEB_VENDOR)"   \
+	--maintainer "$(DEB_MAINTAINER)"   \
+	--description "$(DEB_DESCRIPTION)"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
 	--depends "nginx"   \
+	--depends "libmariadbclient-dev"  \
 	--deb-recommends "mariadb-client"   \
 	--deb-suggests "mariadb-server"   \
 	--chdir $(INSTALLDIR)   \
-	conf=$(FPM_BASE)   \
-	COPYRIGHT=$(FPM_BASE)   \
-	debian=$(FPM_BASE)   \
-	.git=$(FPM_BASE)   \
-	.gitignore=$(FPM_BASE)   \
-	INSTALL.rst=$(FPM_BASE)   \
-	LICENSE=$(FPM_BASE)   \
-	Makefile=$(FPM_BASE)   \
-	NOTES=$(FPM_BASE)   \
-	psms=$(FPM_BASE)  \
-	README.rst=$(FPM_BASE)   \
-	requirements=$(FPM_BASE)  \
-	venv=$(FPM_BASE)   \
-	VERSION=$(FPM_BASE)  \
+	conf=$(DEB_BASE)   \
+	COPYRIGHT=$(DEB_BASE)   \
+	debian=$(DEB_BASE)   \
+	.git=$(DEB_BASE)   \
+	.gitignore=$(DEB_BASE)   \
+	INSTALL.rst=$(DEB_BASE)   \
+	LICENSE=$(DEB_BASE)   \
+	Makefile=$(DEB_BASE)   \
+	NOTES=$(DEB_BASE)   \
+	psms=$(DEB_BASE)  \
+	README.rst=$(DEB_BASE)   \
+	requirements=$(DEB_BASE)  \
+	venv=$(DEB_BASE)   \
+	VERSION=$(DEB_BASE)  \
 	conf/psms.cfg=etc/encyc/psms.cfg   \
-	conf/settings.py=$(FPM_BASE)/psms
+	conf/settings.py=$(DEB_BASE)/psms
