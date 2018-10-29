@@ -1,5 +1,6 @@
 *.db
 *.pyc
+*.deb
 *~
 psms/settings.py
 pip-log.txt
