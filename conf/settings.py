@@ -14,7 +14,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-with open(os.path.join(BASE_DIR, '..', 'VERSION'), 'r') as f:
+with open(os.path.join(BASE_DIR, 'VERSION'), 'r') as f:
     VERSION = f.read()
 
 # User-configurable settings are located in the following files.
