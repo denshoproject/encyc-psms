@@ -261,7 +261,7 @@ install-encyc-psms: install-virtualenv install-setuptools
 	@echo "encyc-psms --------------------------------------------------------------"
 	apt-get --assume-yes install imagemagick libjpeg-dev libmariadbclient-dev libxml2 libxslt1.1 libxslt1-dev
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U -r $(INSTALLDIR)/requirements/production.txt
+	pip install -U -r $(INSTALLDIR)/requirements.txt
 # logs dir
 	-mkdir $(LOG_BASE)
 	chown -R encyc.root $(LOG_BASE)
@@ -287,12 +287,12 @@ update-encyc-psms:
 	@echo "encyc-psms --------------------------------------------------------------"
 	git fetch && git pull
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U -r $(INSTALLDIR)/requirements/production.txt
+	pip install -U -r $(INSTALLDIR)/requirements.txt
 
 uninstall-encyc-psms:
 	cd $(INSTALLDIR)/psms
 	source $(VIRTUALENV)/bin/activate; \
-	-pip uninstall -r $(INSTALLDIR)/requirements/production.txt
+	-pip uninstall -r $(INSTALLDIR)/requirements.txt
 	-rm /usr/local/lib/python2.7/dist-packages/psms-*
 	-rm -Rf /usr/local/lib/python2.7/dist-packages/psms
 
@@ -440,7 +440,7 @@ deb-stretch:
 	NOTES=$(DEB_BASE)   \
 	psms=$(DEB_BASE)  \
 	README.rst=$(DEB_BASE)   \
-	requirements=$(DEB_BASE)  \
+	requirements.txt=$(DEB_BASE)  \
 	venv=$(DEB_BASE)   \
 	VERSION=$(DEB_BASE)  \
 	conf/psms.cfg=etc/encyc/psms.cfg   \

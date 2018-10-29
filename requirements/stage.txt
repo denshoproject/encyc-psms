@@ -1,4 +1,0 @@
-# dependencies for stage environment
-
-# include base
--r _base.txt
