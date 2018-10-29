@@ -212,27 +212,41 @@ install-misc-tools:
 	apt-get --assume-yes install ack-grep byobu elinks htop iftop iotop mg multitail
 
 
-install-daemons: install-nginx install-redis install-supervisor
+install-daemons: install-mariadb install-nginx install-redis install-supervisor
+
+remove-daemons: remove-mariadb remove-nginx remove-redis remove-supervisor
 
 install-nginx:
 	@echo ""
 	@echo "Nginx ------------------------------------------------------------------"
 	apt-get --assume-yes install nginx
 
-install-mysql:
+remove-nginx:
+	apt-get --assume-yes remove nginx
+
+install-mariadb:
 	@echo ""
-	@echo "MySQL ------------------------------------------------------------------"
-	apt-get --assume-yes install mysql-server mysql-client
+	@echo "MariaDB ----------------------------------------------------------------"
+	apt-get --assume-yes install mariadb-server mariadb-client libmariadbclient-dev
+
+remove-mariadb:
+	apt-get --assume-yes remove mariadb-server mariadb-client libmariadbclient-dev
 
 install-redis:
 	@echo ""
 	@echo "Redis ------------------------------------------------------------------"
 	apt-get --assume-yes install redis-server
 
+remove-redis:
+	apt-get --assume-yes remove redis-server
+
 install-supervisor:
 	@echo ""
 	@echo "Supervisor -------------------------------------------------------------"
 	apt-get --assume-yes install supervisor
+
+remove-supervisor:
+	apt-get --assume-yes remove supervisor
 
 
 install-virtualenv:
@@ -422,12 +436,12 @@ deb-stretch:
 	--vendor "$(DEB_VENDOR)"   \
 	--maintainer "$(DEB_MAINTAINER)"   \
 	--description "$(DEB_DESCRIPTION)"   \
-	--depends "redis-server"   \
-	--depends "supervisor"   \
-	--depends "nginx"   \
-	--depends "libmariadbclient-dev"  \
 	--deb-recommends "mariadb-client"   \
 	--deb-suggests "mariadb-server"   \
+	--depends "libmariadbclient-dev"  \
+	--depends "nginx"   \
+	--depends "redis-server"   \
+	--depends "supervisor"   \
 	--chdir $(INSTALLDIR)   \
 	conf=$(DEB_BASE)   \
 	COPYRIGHT=$(DEB_BASE)   \
