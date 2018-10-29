@@ -128,6 +128,9 @@ STATICFILES_FINDERS = (
 )
 
 TEMPLATE_DIRS = (
+    '/opt/encyc-psms/venv/psms/lib/python2.7/site-packages/django/template/',
+    '/opt/encyc-psms/venv/psms/django/contrib/admin/templates',
+    '/opt/encyc-psms/psms/templates/',
     os.path.join(BASE_DIR, 'templates/'),
 )
 
