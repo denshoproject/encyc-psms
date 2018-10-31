@@ -7,7 +7,7 @@ import requests
 import unicodecsv
 
 from django.conf import settings
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.views.decorators.http import require_http_methods
@@ -73,7 +73,7 @@ def export(request):
     """
     logging.debug('------------------------------------------------------------------------')
     filename = 'primarysources-%s.csv' % datetime.now().strftime('%Y%m%d-%H%M')
-    response = HttpResponse(mimetype='text/csv')
+    response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
     writer = unicodecsv.writer(response, encoding='utf-8', dialect='excel')
     # fieldnames in first row
@@ -100,4 +100,4 @@ def sitemap(request, template_name='sources/links.html'):
              'modified': str(source.modified),
              'wikititle': source.wikititle(),}
         sources['objects'].append(s)
-    return HttpResponse(json.dumps(sources), mimetype='application/json')
+    return JsonResponse(sources)
