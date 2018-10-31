@@ -29,7 +29,7 @@ REQUIREMENTS=$(INSTALLDIR)/requirements.txt
 PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
 
 VIRTUALENV=$(INSTALLDIR)/venv/$(APP)
-SETTINGS=$(INSTALLDIR)/psms/settings.py
+SETTINGS=$(INSTALLDIR)/psms/psms/settings.py
 
 CONF_BASE=/etc/encyc
 CONF_PRODUCTION=$(CONF_BASE)/psms.cfg
