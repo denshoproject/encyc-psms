@@ -412,7 +412,7 @@ git-status:
 # http://fpm.readthedocs.io/en/latest/
 # https://stackoverflow.com/questions/32094205/set-a-custom-install-directory-when-making-a-deb-package-with-fpm
 # https://brejoc.com/tag/fpm/
-deb: deb-jessie deb-stretch
+deb: deb-stretch
 
 # deb-jessie and deb-stretch are identical
 deb-stretch:

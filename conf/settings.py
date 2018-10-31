@@ -12,7 +12,7 @@ import ConfigParser
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 with open(os.path.join(BASE_DIR, '..', 'VERSION'), 'r') as f:
     VERSION = f.read()
@@ -31,10 +31,13 @@ if not configs_read:
 # ----------------------------------------------------------------------
 
 DEBUG = config.get('debug', 'debug')
-TEMPLATE_DEBUG = DEBUG
 
 SITE_ID = 2
 
+WSGI_APPLICATION = 'psms.wsgi.application'
+
+# Database
+# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 DATABASES = {
     'default': {
         'ENGINE': config.get('database', 'engine'),
@@ -102,130 +105,77 @@ ADMINS = (
 )
 MANAGERS = ADMINS
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
     #
     'django_extensions',
     'sorl.thumbnail',
     #
     'sources',
     'tansu',
-)
+]
 
-STATICFILES_DIRS = (
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(
+                os.path.dirname(BASE_DIR),
+                'venv/psms/lib/python2.7/site-packages',
+                'django/contrib/admin/templates',
+            )
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-)
-
-TEMPLATE_DIRS = (
-    '/opt/encyc-psms/venv/psms/lib/python2.7/site-packages/django/template/',
-    '/opt/encyc-psms/venv/psms/django/contrib/admin/templates',
-    '/opt/encyc-psms/psms/templates/',
-    os.path.join(BASE_DIR, 'templates/'),
-)
-
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
-
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-)
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
 
 ROOT_URLCONF = 'psms.urls'
 
-# See http://docs.djangoproject.com/en/dev/topics/logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'mail_admins': {
-            'level': 'DEBUG',
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+# Password validation
+# https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    }
-}
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '%(asctime)s %(levelname)-8s [%(module)s.%(funcName)s]  %(message)s'
-        },
-        'simple': {
-            'format': '%(asctime)s %(levelname)-8s %(message)s'
-        },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-    'filters': {
-        # only log when settings.DEBUG == False
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
-    'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'logging.NullHandler',
-        },
-        'console':{
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-        },
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': '/var/log/encyc/psms.log',
-            'when': 'D',
-            'backupCount': 14,
-            'filters': [],
-            'formatter': 'verbose',
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false'],
-            'formatter': 'verbose',
-        },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
-    'loggers': {
-        'django.request': {
-            'level': 'ERROR',
-            'propagate': True,
-            'handlers': ['mail_admins'],
-        },
-    },
-    # This is the only way I found to write log entries from the whole DDR stack.
-    'root': {
-        'level': 'DEBUG',
-        'handlers': ['file'],
-    },
-}
+]
 
+# Internationalization
+# https://docs.djangoproject.com/en/1.11/topics/i18n/
 TIME_ZONE = 'America/Los_Angeles'
 LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 USE_L10N = False
+USE_TZ = True
