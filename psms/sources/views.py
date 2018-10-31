@@ -8,7 +8,7 @@ import unicodecsv
 
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.views.decorators.http import require_http_methods
 
@@ -58,14 +58,12 @@ def links(request, template_name='sources/links.html'):
     # package
     for headword in headwords:
         headword_sources.append( {'headword':headword, 'sources':headword_sources_tmp[headword]} )
-    return render_to_response(
-        template_name, 
-        {'headwords':headwords,
-         'headword_sources':headword_sources,
-         'bad_headword_sources':bad_headword_sources,
-         'wiki_url':settings.EDITORS_MEDIAWIKI_URL,},
-        context_instance=RequestContext(request, processors=[app_context])
-    )
+    return render(request, template_name, {
+        'headwords':headwords,
+        'headword_sources':headword_sources,
+        'bad_headword_sources':bad_headword_sources,
+        'wiki_url':settings.EDITORS_MEDIAWIKI_URL,
+    })
 
 @require_http_methods(['GET',])
 def export(request):
