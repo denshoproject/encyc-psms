@@ -2,7 +2,7 @@
 *.pyc
 *.deb
 *~
-psms/settings.py
+psms/psms/settings.py
 pip-log.txt
 media
 build
