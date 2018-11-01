@@ -1,7 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from django.conf.urls.defaults import url
+from django.conf.urls import url
 
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 

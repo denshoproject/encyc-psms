@@ -29,7 +29,7 @@ REQUIREMENTS=$(INSTALLDIR)/requirements.txt
 PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
 
 VIRTUALENV=$(INSTALLDIR)/venv/$(APP)
-SETTINGS=$(INSTALLDIR)/psms/settings.py
+SETTINGS=$(INSTALLDIR)/psms/psms/settings.py
 
 CONF_BASE=/etc/encyc
 CONF_PRODUCTION=$(CONF_BASE)/psms.cfg
@@ -250,15 +250,10 @@ remove-supervisor:
 
 
 install-virtualenv:
-	apt-get --assume-yes install python-pip python-virtualenv
-	test -d $(VIRTUALENV) || virtualenv --distribute --setuptools $(VIRTUALENV)
-
-install-setuptools: install-virtualenv
 	@echo ""
-	@echo "install-setuptools -----------------------------------------------------"
-	apt-get --assume-yes install python-dev
-	source $(VIRTUALENV)/bin/activate; \
-	pip install -U bpython setuptools
+	@echo "install-virtualenv -----------------------------------------------------"
+	apt-get --assume-yes install python-pip python-virtualenv
+	test -d $(VIRTUALENV) || virtualenv $(VIRTUALENV)
 
 
 install-app: install-encyc-psms
@@ -270,7 +265,7 @@ uninstall-app: uninstall-encyc-psms
 clean-app: clean-encyc-psms
 
 
-install-encyc-psms: install-virtualenv install-setuptools
+install-encyc-psms: install-virtualenv
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
 	apt-get --assume-yes install imagemagick libjpeg-dev libmariadbclient-dev libxml2 libxslt1.1 libxslt1-dev
@@ -417,14 +412,14 @@ git-status:
 # http://fpm.readthedocs.io/en/latest/
 # https://stackoverflow.com/questions/32094205/set-a-custom-install-directory-when-making-a-deb-package-with-fpm
 # https://brejoc.com/tag/fpm/
-deb: deb-jessie deb-stretch
+deb: deb-stretch
 
 # deb-jessie and deb-stretch are identical
 deb-stretch:
 	@echo ""
 	@echo "DEB packaging (stretch) ------------------------------------------------"
 	-rm -Rf $(DEB_FILE_STRETCH)
-	virtualenv --python=python3 --relocatable $(VIRTUALENV)  # Make venv relocatable
+	virtualenv --relocatable $(VIRTUALENV)  # Make venv relocatable
 	fpm   \
 	--verbose   \
 	--input-type dir   \

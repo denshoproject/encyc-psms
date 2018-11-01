@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import url
+from django.conf.urls import url
 
 from tastypie import fields, utils
 from tastypie.resources import Resource, ALL, ALL_WITH_RELATIONS

@@ -1,17 +1,17 @@
 from django import template
 
-from tansu.forms import EntityEditForm
+#from tansu.forms import EntityEditForm
 
 register = template.Library()
 
-@register.simple_tag
-def entity(entity, request):
-    form = EntityEditForm(instance=entity)
-    c = {'request': request,
-         'entity':entity,
-         'form': form,}
-    t = template.loader.get_template('tansu/entity-tag.html')
-    return t.render(template.Context(c))
+#@register.simple_tag
+#def entity(entity, request):
+#    form = EntityEditForm(instance=entity)
+#    c = {'request': request,
+#         'entity':entity,
+#         'form': form,}
+#    t = template.loader.get_template('tansu/entity-tag.html')
+#    return t.render(template.Context(c))
 
 @register.simple_tag
 def list_entity(entity, request):
