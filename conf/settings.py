@@ -114,11 +114,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #
     'django_extensions',
+    'rest_framework',
     'sorl.thumbnail',
     #
     'sources',
     'tansu',
 ]
+
+API_BASE = '/api/2.0/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'PAGE_SIZE': 20,
+}
 
 TEMPLATES = [
     {

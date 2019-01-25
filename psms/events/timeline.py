@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import os
 
 from bs4 import BeautifulSoup, SoupStrainer, Comment
@@ -23,17 +24,17 @@ def all_events():
                 parts.append(unicode(part))
             else:
                 parts.append(part)
-        print parts
         return ''.join(parts)
     
     for event in soup.find_all('Event'):
-        e = {'id': int(event.attrs['id']),
-             'published': published,
-             'start_date': event.Startdate.attrs['datenormal'],
-             'end_date': '',
-             'title': '',
-             'description': '',
-             'url': '',}
+        e = OrderedDict()
+        e['id'] = int(event.attrs['id'])
+        e['published'] = published
+        e['start_date'] = event.Startdate.attrs['datenormal']
+        e['end_date'] = ''
+        e['title'] = ''
+        e['description'] = ''
+        e['url'] = ''
         if hasattr(event,'Enddate') and hasattr(event.Enddate,'attrs') \
                and event.Enddate.attrs.get('datenormal'):
             e['end_date'] = event.Enddate.attrs['datenormal']
