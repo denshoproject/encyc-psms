@@ -9,12 +9,9 @@ admin.autodiscover()
 from rest_framework import permissions
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from events.api import events
-from locations.api import categories, locations
-#from sources.api import SourceResource
 #from locations.views import kml as locations_kml
 from sources.views import export, links, sitemap
-from sources import api
+from psms import api
 
 #v01_api = Api(api_name='v1.0')
 #v01_api.register(SourceResource())
@@ -27,12 +24,12 @@ urlpatterns = [
     url(r'^api/v1.0/primarysource/sitemap/$', sitemap, name='sources-sitemap'),
     url(r'^api/v1.0/primarysource/csv/$', export, name='sources-export'),
     
-    url(r'^api/v2.0/events', events, name='api-events'),
-    url(r'^api/v2.0/categories', categories, name='api-categories'),
-    url(r'^api/v2.0/locations', locations, name='api-locations'),
-    url(r'^api/v2.0', api.index, name='api-index'),
-    url(r'^api/v1.0', api.index, name='api-index'),
-    url(r'^api', api.index, name='api-index'),
+    url(r'^api/v2.0/events',     api.events,     name='api-events'),
+    url(r'^api/v2.0/categories', api.categories, name='api-categories'),
+    url(r'^api/v2.0/locations',  api.locations,  name='api-locations'),
+    url(r'^api/v2.0',            api.index,      name='api-index'),
+    url(r'^api/v1.0',            api.index,      name='api-index'),
+    url(r'^api',                 api.index,      name='api-index'),
     
     url(r'^mw/$', links, name='sources-links'),
     url(r'^$', lambda x: HttpResponseRedirect('/mw/')),
