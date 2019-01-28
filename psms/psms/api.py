@@ -17,6 +17,7 @@ def index(request, format=None):
     """Swagger UI: /api/swagger/
     """
     data = {
+        'sources': reverse('api-sources', request=request),
         'events': reverse('api-events', request=request),
         'categories': reverse('api-categories', request=request),
         'locations': reverse('api-locations', request=request),
@@ -27,8 +28,9 @@ def index(request, format=None):
 def sources(request, format=None):
     """PRIMARYSOURCES DESCRIPTION GOES HERE
     """
-    return Response({
-    })
+    return Response(
+        Source.sources()
+    )
 
 @api_view(['GET'])
 def events(request, format=None):

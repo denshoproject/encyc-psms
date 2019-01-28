@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import logging
 logger = logging.getLogger(__name__)
 import os
@@ -460,3 +461,17 @@ class Source(BaseModel):
     def wiki_delete(self):
         logging.debug('_wiki_delete(%s)' % self)
         logging.debug('    NOT IMPLEMENTED')
+    
+    @staticmethod
+    def sources():
+        fieldnames = [
+            field.name
+            for field in Source._meta.fields
+        ]
+        objects = []
+        for source in Source.objects.all():
+            o = OrderedDict()
+            for f in fieldnames:
+                o[f] = unicode(getattr(source, f))
+            objects.append(o)
+        return objects
