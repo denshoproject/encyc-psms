@@ -14,7 +14,7 @@ from sources.models import Source
 
 @api_view(['GET'])
 def index(request, format=None):
-    """Swagger UI: /api/swagger/
+    """OpenAPI/Swagger: /api/swagger/
     """
     data = {
         'sources': reverse('api-sources', request=request),
@@ -26,7 +26,9 @@ def index(request, format=None):
 
 @api_view(['GET'])
 def sources(request, format=None):
-    """PRIMARYSOURCES DESCRIPTION GOES HERE
+    """Source images used in the Encyclopedia.
+    
+    JSON-formatted list of the entire set of primary sources.
     """
     return Response(
         Source.sources()
@@ -34,7 +36,9 @@ def sources(request, format=None):
 
 @api_view(['GET'])
 def events(request, format=None):
-    """EVENTS DESCRIPTION GOES HERE
+    """Timeline of the Japanese American story during World War II.
+    
+    JSON-formatted list of events.
     """
     return Response({
         'objects': all_events()
@@ -42,7 +46,10 @@ def events(request, format=None):
 
 @api_view(['GET'])
 def categories(request, format=None):
-    """CATEGORIES DESCRIPTION GOES HERE
+    """Categories of JA confinement facilities used during World War II.
+    
+    JSON-formatted list of the entire set of facility types.
+    Used to display subsets of the master list of locations.
     """
     return Response(
         facilities.categories()
@@ -50,7 +57,9 @@ def categories(request, format=None):
 
 @api_view(['GET'])
 def locations(request, format=None):
-    """LOCATIONS DESCRIPTION GOES HERE
+    """Locations of facilities used to confine Japanese Americans in World War II.
+    
+    JSON-formatted list of the entire set of facilities.
     """
     return Response({
         'objects': facilities.all_facilities()

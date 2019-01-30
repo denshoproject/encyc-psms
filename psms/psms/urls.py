@@ -21,10 +21,10 @@ API_BASE = '/api/2.0/'
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Densho Digital Repository API",
-      default_version='0.2',
-      description="DESCRIPTION TEXT HERE",
-      terms_of_service="http://ddr.densho.org/terms/",
+      title="Encyclopedia Primary Sources API",
+      default_version='2.0',
+      description="Back-end resources for the Densho Encyclopedia",
+      terms_of_service="http://encyclopedia.densho.org/about/#tosprivacy",
       contact=openapi.Contact(email="info@densho.org"),
       license=openapi.License(name="TBD"),
    ),
