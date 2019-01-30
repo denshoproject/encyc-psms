@@ -114,6 +114,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #
     'django_extensions',
+    'drf_yasg',
     'rest_framework',
     'sorl.thumbnail',
     #

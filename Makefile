@@ -365,9 +365,9 @@ uninstall-daemons-configs:
 	-rm $(SUPERVISOR_GUNICORN_CONF)
 
 
-install-static: collectstatic install-restframework
+install-static: collectstatic install-restframework install-swagger
 
-clean-static: clean-restframework
+clean-static: clean-restframework clean-swagger
 
 collectstatic:
 	@echo ""
@@ -381,8 +381,17 @@ install-restframework:
 	-mkdir -p $(MEDIA_BASE)
 	cp -R $(VIRTUALENV)/lib/$(PYTHON_VERSION)/site-packages/rest_framework/static/rest_framework/ $(STATIC_ROOT)/
 
+install-swagger:
+	@echo ""
+	@echo "rest-swagger assets -----------------------------------------------------"
+	-mkdir -p $(MEDIA_BASE)
+	cp -R $(VIRTUALENV)/lib/$(PYTHON_VERSION)/site-packages/drf_yasg/static/drf-yasg/ $(STATIC_ROOT)/
+
 clean-restframework:
 	-rm -Rf $(STATIC_ROOT)/rest_framework/
+
+clean-swagger:
+	-rm -Rf $(STATIC_ROOT)/drf_yasg/
 
 
 reload: reload-nginx reload-supervisor
