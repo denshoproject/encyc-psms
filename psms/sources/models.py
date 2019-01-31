@@ -486,3 +486,18 @@ class Source(BaseModel):
                 )
             ]
         return [pack(source, fieldnames) for source in Source.objects.all()]
+    
+    @staticmethod
+    def source(densho_id):
+        """
+        @param densho_id: str
+        """
+        fieldnames = [
+            field.name
+            for field in Source._meta.fields
+        ]
+        source = Source.objects.get(densho_id=densho_id)
+        o = OrderedDict()
+        for f in fieldnames:
+            o[f] = unicode(getattr(source, f))
+        return o

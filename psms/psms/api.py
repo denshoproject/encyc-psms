@@ -42,6 +42,16 @@ def sources(request, encyclopedia_ids=None, format=None):
     )
 
 @api_view(['GET'])
+def source(request, densho_id, format=None):
+    """Source image used in the Encyclopedia.
+    
+    JSON-formatted record.
+    """
+    return Response(
+        Source.source(densho_id)
+    )
+
+@api_view(['GET'])
 def events(request, format=None):
     """Timeline of the Japanese American story during World War II.
     
