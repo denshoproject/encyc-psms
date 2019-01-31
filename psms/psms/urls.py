@@ -50,6 +50,9 @@ urlpatterns = [
     url(r'^api/v1.0/primarysource/sitemap/$', sitemap, name='sources-sitemap'),
     url(r'^api/v1.0/primarysource/csv/$', export, name='sources-export'),
     
+    url(r'^api/v2.0/sources/(?P<encyclopedia_ids>[\w,-]+)',
+        api.sources, name='api-sources'
+    ),
     url(r'^api/v2.0/sources',    api.sources,    name='api-sources'),
     url(r'^api/v2.0/events',     api.events,     name='api-events'),
     url(r'^api/v2.0/categories', api.categories, name='api-categories'),

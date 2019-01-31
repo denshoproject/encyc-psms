@@ -463,15 +463,26 @@ class Source(BaseModel):
         logging.debug('    NOT IMPLEMENTED')
     
     @staticmethod
-    def sources():
+    def sources(encyclopedia_ids=[]):
+        """
+        @param encyclopedia_ids: list Example: ['en-denshopd-i35-00428-1','en-denshopd-i67-00105-1']
+        """
         fieldnames = [
             field.name
             for field in Source._meta.fields
         ]
-        objects = []
-        for source in Source.objects.all():
+
+        def pack(source, fieldnames):
             o = OrderedDict()
             for f in fieldnames:
                 o[f] = unicode(getattr(source, f))
-            objects.append(o)
-        return objects
+            return o
+        
+        if encyclopedia_ids:
+            return [
+                pack(source, fieldnames)
+                for source in Source.objects.filter(
+                        encyclopedia_id__in=encyclopedia_ids
+                )
+            ]
+        return [pack(source, fieldnames) for source in Source.objects.all()]

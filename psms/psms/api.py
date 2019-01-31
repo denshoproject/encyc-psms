@@ -25,13 +25,20 @@ def index(request, format=None):
     return Response(data)
 
 @api_view(['GET'])
-def sources(request, format=None):
+def sources(request, encyclopedia_ids=None, format=None):
     """Source images used in the Encyclopedia.
     
-    JSON-formatted list of the entire set of primary sources.
+    JSON-formatted list of primary sources.
+    If encyclopedia IDs <encyclopedia_ids> are specified, list sources
+    for that particular page, otherwise the entire list with no pagination.
+    
+    @param : 'en-denshopd-i35-00428-1,en-denshopd-i67-00105-1'
+
     """
+    if encyclopedia_ids:
+        encyclopedia_ids = encyclopedia_ids.split(',')
     return Response(
-        Source.sources()
+        Source.sources(encyclopedia_ids)
     )
 
 @api_view(['GET'])
