@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import logging
 logger = logging.getLogger(__name__)
 import os
@@ -460,3 +461,43 @@ class Source(BaseModel):
     def wiki_delete(self):
         logging.debug('_wiki_delete(%s)' % self)
         logging.debug('    NOT IMPLEMENTED')
+    
+    @staticmethod
+    def sources(encyclopedia_ids=[]):
+        """
+        @param encyclopedia_ids: list Example: ['en-denshopd-i35-00428-1','en-denshopd-i67-00105-1']
+        """
+        fieldnames = [
+            field.name
+            for field in Source._meta.fields
+        ]
+
+        def pack(source, fieldnames):
+            o = OrderedDict()
+            for f in fieldnames:
+                o[f] = unicode(getattr(source, f))
+            return o
+        
+        if encyclopedia_ids:
+            return [
+                pack(source, fieldnames)
+                for source in Source.objects.filter(
+                        encyclopedia_id__in=encyclopedia_ids
+                )
+            ]
+        return [pack(source, fieldnames) for source in Source.objects.all()]
+    
+    @staticmethod
+    def source(densho_id):
+        """
+        @param densho_id: str
+        """
+        fieldnames = [
+            field.name
+            for field in Source._meta.fields
+        ]
+        source = Source.objects.get(densho_id=densho_id)
+        o = OrderedDict()
+        for f in fieldnames:
+            o[f] = unicode(getattr(source, f))
+        return o

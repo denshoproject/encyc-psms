@@ -365,13 +365,33 @@ uninstall-daemons-configs:
 	-rm $(SUPERVISOR_GUNICORN_CONF)
 
 
-install-static: collectstatic
+install-static: collectstatic install-restframework install-swagger
+
+clean-static: clean-restframework clean-swagger
 
 collectstatic:
 	@echo ""
 	@echo "collectstatic -------------------------------------------------------"
 	source $(VIRTUALENV)/bin/activate; \
 	python $(INSTALLDIR)/psms/manage.py collectstatic --noinput
+
+install-restframework:
+	@echo ""
+	@echo "rest-framework assets ---------------------------------------------------"
+	-mkdir -p $(MEDIA_BASE)
+	cp -R $(VIRTUALENV)/lib/$(PYTHON_VERSION)/site-packages/rest_framework/static/rest_framework/ $(STATIC_ROOT)/
+
+install-swagger:
+	@echo ""
+	@echo "rest-swagger assets -----------------------------------------------------"
+	-mkdir -p $(MEDIA_BASE)
+	cp -R $(VIRTUALENV)/lib/$(PYTHON_VERSION)/site-packages/drf_yasg/static/drf-yasg/ $(STATIC_ROOT)/
+
+clean-restframework:
+	-rm -Rf $(STATIC_ROOT)/rest_framework/
+
+clean-swagger:
+	-rm -Rf $(STATIC_ROOT)/drf_yasg/
 
 
 reload: reload-nginx reload-supervisor

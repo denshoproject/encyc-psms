@@ -4,8 +4,23 @@ logger = logging.getLogger(__name__)
 from django.conf.urls import url
 
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
+from rest_framework.decorators import api_view
+from rest_framework.reverse import reverse
+from rest_framework.response import Response
 
 from sources.models import Source
+
+
+@api_view(['GET'])
+def index(request, format=None):
+    """Swagger UI: /api/swagger/
+    """
+    data = {
+        'events': reverse('api-events', request=request),
+        'categories': reverse('api-categories', request=request),
+        'locations': reverse('api-locations', request=request),
+    }
+    return Response(data)
 
 
 class SourceResource(ModelResource):
