@@ -39,16 +39,16 @@ urlpatterns = [
     #path(r'^api/swagger(?P<format>\.json|\.yaml)',
     #     schema_view.without_ui(cache_timeout=0), name='schema-json'
     #),
-    url(r'^api/swagger/',
+    url(r'^api/swagger',
         schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'
     ),
-    url(r'^api/redoc/',
+    url(r'^api/redoc',
         schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'
     ),
     
     #url(r'^api/v1.0/locations/locations.kml$', locations_kml, name='locations-kml'),
-    url(r'^api/2.0/primarysource/sitemap/$', sitemap, name='sources-sitemap'),
-    url(r'^api/2.0/primarysource/csv/$', export, name='sources-export'),
+    url(r'^api/2.0/primarysource/sitemap', sitemap, name='sources-sitemap'),
+    url(r'^api/2.0/primarysource/csv', export, name='sources-export'),
     
     url(r'^api/2.0/sources/source/(?P<densho_id>[\w-]+)',
         api.source, name='api-source'
@@ -64,7 +64,7 @@ urlpatterns = [
     url(r'^api/1.0',            api.index,      name='api-index'),
     url(r'^api',                api.index,      name='api-index'),
     
-    url(r'^mw/$', links, name='sources-links'),
+    url(r'^mw', links, name='sources-links'),
     url(r'^$', lambda x: HttpResponseRedirect('/mw/')),
 ]
 # serve /media/ in development
