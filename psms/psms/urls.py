@@ -47,22 +47,22 @@ urlpatterns = [
     ),
     
     #url(r'^api/v1.0/locations/locations.kml$', locations_kml, name='locations-kml'),
-    url(r'^api/v1.0/primarysource/sitemap/$', sitemap, name='sources-sitemap'),
-    url(r'^api/v1.0/primarysource/csv/$', export, name='sources-export'),
+    url(r'^api/2.0/primarysource/sitemap/$', sitemap, name='sources-sitemap'),
+    url(r'^api/2.0/primarysource/csv/$', export, name='sources-export'),
     
-    url(r'^api/v2.0/sources/source/(?P<densho_id>[\w-]+)',
+    url(r'^api/2.0/sources/source/(?P<densho_id>[\w-]+)',
         api.source, name='api-source'
     ),
-    url(r'^api/v2.0/sources/(?P<encyclopedia_ids>[\w,-]+)',
+    url(r'^api/2.0/sources/(?P<encyclopedia_ids>[\w,-]+)',
         api.sources, name='api-sources'
     ),
-    url(r'^api/v2.0/sources',    api.sources,    name='api-sources'),
-    url(r'^api/v2.0/events',     api.events,     name='api-events'),
-    url(r'^api/v2.0/categories', api.categories, name='api-categories'),
-    url(r'^api/v2.0/locations',  api.locations,  name='api-locations'),
-    url(r'^api/v2.0',            api.index,      name='api-index'),
-    url(r'^api/v1.0',            api.index,      name='api-index'),
-    url(r'^api',                 api.index,      name='api-index'),
+    url(r'^api/2.0/sources',    api.sources,    name='api-sources'),
+    url(r'^api/2.0/events',     api.events,     name='api-events'),
+    url(r'^api/2.0/categories', api.categories, name='api-categories'),
+    url(r'^api/2.0/locations',  api.locations,  name='api-locations'),
+    url(r'^api/2.0',            api.index,      name='api-index'),
+    url(r'^api/1.0',            api.index,      name='api-index'),
+    url(r'^api',                api.index,      name='api-index'),
     
     url(r'^mw/$', links, name='sources-links'),
     url(r'^$', lambda x: HttpResponseRedirect('/mw/')),
