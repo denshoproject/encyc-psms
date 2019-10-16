@@ -5,7 +5,7 @@ import os
 
 from django.conf import settings
 from django.db import models
-from django.template import loader, Context
+from django.template import loader
 
 from sorl.thumbnail import get_thumbnail, delete as delete_thumbnail
 
@@ -349,7 +349,7 @@ class Source(BaseModel):
         @param http_host IP address or domain name (for testing).
         """
         t = loader.get_template('sources/mediawiki-file-page.html')
-        c = Context({'source': self})
+        c = {'source': self}
         return t.render(c)
     
     def wiki_sync(self, update_display):
