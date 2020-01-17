@@ -29,7 +29,6 @@ REQUIREMENTS=$(INSTALLDIR)/requirements.txt
 PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
 
 VIRTUALENV=$(INSTALLDIR)/venv/$(APP)
-SETTINGS=$(INSTALLDIR)/psms/psms/settings.py
 
 CONF_BASE=/etc/encyc
 CONF_PRODUCTION=$(CONF_BASE)/psms.cfg
@@ -336,10 +335,6 @@ install-configs:
 	chown encyc.encyc $(CONF_SECRET)
 	chmod 640 $(CONF_SECRET)
 # web app settings
-	cp $(INSTALLDIR)/conf/settings.py $(SETTINGS)
-	chown root.root $(SETTINGS)
-	chmod 644 $(SETTINGS)
-# web app settings
 	cp $(INSTALLDIR)/conf/psms.cfg $(CONF_BASE)
 	chown root.encyc $(CONF_PRODUCTION)
 	chmod 640 $(CONF_PRODUCTION)
@@ -348,7 +343,6 @@ install-configs:
 	chmod 640 $(CONF_LOCAL)
 
 uninstall-configs:
-	-rm $(SETTINGS)
 	-rm $(CONF_PRODUCTION)
 	-rm $(CONF_LOCAL)
 	-rm $(CONF_SECRET)
@@ -480,5 +474,4 @@ deb-stretch:
 	requirements.txt=$(DEB_BASE)  \
 	venv=$(DEB_BASE)   \
 	VERSION=$(DEB_BASE)  \
-	conf/psms.cfg=etc/encyc/psms.cfg   \
-	conf/settings.py=$(DEB_BASE)/psms
+	conf/psms.cfg=etc/encyc/psms.cfg
