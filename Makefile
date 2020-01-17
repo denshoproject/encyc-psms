@@ -308,6 +308,14 @@ uninstall-encyc-psms:
 restart-psms:
 	/etc/init.d/supervisor restart psms
 
+shell:
+	source $(VIRTUALENV)/bin/activate; \
+	python psms/manage.py shell
+
+runserver:
+	source $(VIRTUALENV)/bin/activate; \
+	python psms/manage.py runserver 0.0.0.0:8025
+
 clean-encyc-psms:
 	-rm -Rf $(INSTALLDIR)/psms/env/
 	-rm -Rf $(INSTALLDIR)/psms/src
