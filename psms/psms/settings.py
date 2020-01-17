@@ -190,3 +190,62 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 USE_L10N = False
 USE_TZ = True
+
+LOG_LEVEL = config.get('debug', 'log_level')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)-8s [%(module)s.%(funcName)s]  %(message)s'
+        },
+        'simple': {
+            'format': '%(asctime)s %(levelname)-8s %(message)s'
+        },
+    },
+    'filters': {
+        # only log when settings.DEBUG == False
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+    },
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': '/var/log/encyc/psms.log',
+            'when': 'D',
+            'backupCount': 14,
+            'filters': [],
+            'formatter': 'verbose',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'level': 'ERROR',
+            'propagate': True,
+            'handlers': ['mail_admins'],
+        },
+    },
+    # This is the only way I found to write log entries from the whole DDR stack.
+    'root': {
+        'level': LOG_LEVEL,
+        'handlers': ['file'],
+    },
+}
