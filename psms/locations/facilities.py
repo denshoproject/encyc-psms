@@ -16,17 +16,23 @@ def all_facilities():
     facilities = []
     for facility in soup.find_all('Facility'):
         f = OrderedDict()
-        f['uid'] = facility.attrs['UID']
-        f['location_uri'] = facility.Location.LocationURI.string
-        f['lat'] = facility.Location.GISInfo.GISLat.string
-        f['lng'] = facility.Location.GISInfo.GISLong.string
-        f['category'] = facility.Category.attrs['code']
-        f['category_name'] = facility.Category.string
-        f['location_name'] = facility.Location.LocationName.string
-        f['title'] = facility.Name.DenshoName.string
-        f['description'] = facility.Location.Description.string
+        f['uid'] = facility.attrs.get('UID')
+        f['location_uri'] = _safe_string(facility.Location.LocationURI)
+        f['lat'] = _safe_string(facility.Location.GISInfo.GISLat)
+        f['lng'] = _safe_string(facility.Location.GISInfo.GISLong)
+        f['category'] = facility.Category.attrs.get('code')
+        f['category_name'] = _safe_string(facility.Category)
+        f['location_name'] = _safe_string(facility.Location.LocationName)
+        f['title'] = _safe_string(facility.Name.DenshoName)
+        f['description'] = _safe_string(facility.Location.Description)
         facilities.append(f)
     return facilities
+
+def _safe_string(tag):
+    try:
+        return tag.string
+    except AttributeError:
+        return ''
 
 def some_facilities(category):
     facilities = []
