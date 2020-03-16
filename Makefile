@@ -186,7 +186,7 @@ uninstall: uninstall-app
 clean: clean-app
 
 
-install-prep: apt-update install-core git-config install-misc-tools
+install-prep: apt-update
 
 
 apt-update:
