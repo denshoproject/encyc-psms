@@ -20,7 +20,6 @@ def _login():
     logging.debug('done')
     return wiki
 
-
 def exists(page_name):
     """Page exists in the wiki.
     """
@@ -28,6 +27,52 @@ def exists(page_name):
     p = wikitools.page.Page(wiki, page_name)
     return p.exists
 
+def link_exists(page_name, target):
+    """Check that link exists in page
+    """
+    wiki = _login()
+    p = wikitools.page.Page(wiki, page_name)
+    text = UnicodeDammit(p.getWikiText(), smart_quotes_to="html").unicode_markup
+    if target in text:
+        return True
+    return False
+
+def prepend_text(page_name, prependtext):
+    """Prepends a string to the existing file text
+    
+    >>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
+    >>> p.edit(prepend='[prepended]')
+    {u'edit': {u'newrevid': 178,
+               u'newtimestamp': u'2012-03-23T21:20:30Z',
+               u'oldrevid': 177,
+               u'pageid': 126,
+               u'result': u'Success',
+               u'title': u'File:6a00e55055.jpg'}}
+    """
+    wiki = _login()
+    p = wikitools.page.Page(wiki, page_name)
+    response = p.edit(prependtext=prependtext)
+    return response
+
+def update_text(page_name, text):
+    """Update existing file text
+
+    >>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
+    >>> p.edit(text='new description for this file!!!')
+    {u'edit': {u'newrevid': 178,
+               u'newtimestamp': u'2012-03-23T21:20:30Z',
+               u'oldrevid': 177,
+               u'pageid': 126,
+               u'result': u'Success',
+               u'title': u'File:6a00e55055.jpg'}}
+    """
+    logging.debug('update_text(%s, "%s...")' % (page_name, text[:25]))
+    wiki = _login()
+    p = wikitools.page.Page(wiki, page_name)
+    logging.debug(p)
+    response = p.edit(text=text)
+    logging.debug('response %s' % response)
+    return response
 
 def upload_file(abspath, comment='Uploaded by Tansu'):
     """Upload a file
@@ -52,57 +97,6 @@ def upload_file(abspath, comment='Uploaded by Tansu'):
     logging.debug('response %s' % response)
     return response
 
-
-def prepend_text(page_name, prependtext):
-    """Prepends a string to the existing file text
-    
-    >>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
-    >>> p.edit(prepend='[prepended]')
-    {u'edit': {u'newrevid': 178,
-               u'newtimestamp': u'2012-03-23T21:20:30Z',
-               u'oldrevid': 177,
-               u'pageid': 126,
-               u'result': u'Success',
-               u'title': u'File:6a00e55055.jpg'}}
-    """
-    wiki = _login()
-    p = wikitools.page.Page(wiki, page_name)
-    response = p.edit(prependtext=prependtext)
-    return response
-
-
-def link_exists(page_name, target):
-    """Check that link exists in page
-    """
-    wiki = _login()
-    p = wikitools.page.Page(wiki, page_name)
-    text = UnicodeDammit(p.getWikiText(), smart_quotes_to="html").unicode_markup
-    if target in text:
-        return True
-    return False
-
-
-def update_text(page_name, text):
-    """Update existing file text
-
-    >>> p = wikitools.page.Page(wiki, 'File:6a00e55055.jpg')
-    >>> p.edit(text='new description for this file!!!')
-    {u'edit': {u'newrevid': 178,
-               u'newtimestamp': u'2012-03-23T21:20:30Z',
-               u'oldrevid': 177,
-               u'pageid': 126,
-               u'result': u'Success',
-               u'title': u'File:6a00e55055.jpg'}}
-    """
-    logging.debug('update_text(%s, "%s...")' % (page_name, text[:25]))
-    wiki = _login()
-    p = wikitools.page.Page(wiki, page_name)
-    logging.debug(p)
-    response = p.edit(text=text)
-    logging.debug('response %s' % response)
-    return response
-
-
 def delete_file(page_name, reason):
     """Delete file
     
@@ -118,7 +112,6 @@ def delete_file(page_name, reason):
     response = p.delete(reason=reason)
     logging.debug('response %s' % response)
     return response
-
 
 def replace_file():
     """Replace existing file
