@@ -47,7 +47,7 @@ Add this to `/etc/crontab`:
 
 #import argparse
 import optparse
-import ConfigParser
+import configparser
 from datetime import datetime
 import os
 import subprocess
@@ -253,7 +253,7 @@ def main():
     )
     options,args = parser.parse_args()
     
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     configs_read = config.read(CONFIG_FILES)
     if not configs_read:
         msg = 'Config missing or unreadable! Looked in %s.' % CONFIG_FILES
