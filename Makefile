@@ -25,7 +25,7 @@ PACKAGE_SERVER=ddr.densho.org/static/encycpsms
 INSTALL_BASE=/opt
 INSTALLDIR=$(INSTALL_BASE)/encyc-psms
 DOWNLOADS_DIR=/tmp/$(APP)-install
-REQUIREMENTS=$(INSTALLDIR)/requirements.txt
+PIP_REQUIREMENTS=$(INSTALLDIR)/requirements.txt
 PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
 
 VIRTUALENV=$(INSTALLDIR)/venv/$(APP)
@@ -200,7 +200,7 @@ apt-upgrade:
 	apt-get --assume-yes upgrade
 
 install-core:
-	apt-get --assume-yes install bzip2 curl gdebi-core git-core logrotate ntp p7zip-full wget
+	apt-get --assume-yes install bzip2 curl gdebi-core git-core logrotate ntp p7zip-full python3 wget
 
 git-config:
 	git config --global alias.st status
@@ -254,8 +254,8 @@ remove-supervisor:
 install-virtualenv:
 	@echo ""
 	@echo "install-virtualenv -----------------------------------------------------"
-	apt-get --assume-yes install python-pip python-virtualenv
-	test -d $(VIRTUALENV) || virtualenv $(VIRTUALENV)
+	apt-get --assume-yes install python3-pip python3-virtualenv
+	test -d $(VIRTUALENV) || virtualenv --python=python3 --distribute --setuptools $(VIRTUALENV)
 
 
 install-app: install-encyc-psms
@@ -270,9 +270,9 @@ clean-app: clean-encyc-psms
 install-encyc-psms: install-virtualenv
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
-	apt-get --assume-yes install imagemagick libjpeg-dev libmariadbclient-dev libxml2 libxslt1.1 libxslt1-dev
+	apt-get --assume-yes install imagemagick libjpeg-dev libmariadbclient-dev libxml2 libxslt1.1 libxslt1-dev python3-dev
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U -r $(INSTALLDIR)/requirements.txt
+	pip3 install -U --cache-dir=$(PIP_CACHE_DIR) -r $(PIP_REQUIREMENTS)
 # logs dir
 	-mkdir $(LOG_BASE)
 	chown -R encyc.root $(LOG_BASE)
@@ -298,12 +298,12 @@ update-encyc-psms:
 	@echo "encyc-psms --------------------------------------------------------------"
 	git fetch && git pull
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U -r $(INSTALLDIR)/requirements.txt
+	pip3 install -U --cache-dir=$(PIP_CACHE_DIR) -U -r $(INSTALLDIR)/requirements.txt
 
 uninstall-encyc-psms:
 	cd $(INSTALLDIR)/psms
 	source $(VIRTUALENV)/bin/activate; \
-	-pip uninstall -r $(INSTALLDIR)/requirements.txt
+	-pip3 uninstall -r $(INSTALLDIR)/requirements.txt
 	-rm /usr/local/lib/python2.7/dist-packages/psms-*
 	-rm -Rf /usr/local/lib/python2.7/dist-packages/psms
 
