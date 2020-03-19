@@ -7,8 +7,8 @@ from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
 
-from events.timeline import all_events
-from locations import facilities
+#from events.timeline import all_events
+#from locations import facilities
 from sources.models import Source
 
 
@@ -18,9 +18,9 @@ def index(request, format=None):
     """
     data = {
         'sources': reverse('api-sources', request=request),
-        'events': reverse('api-events', request=request),
-        'categories': reverse('api-categories', request=request),
-        'locations': reverse('api-locations', request=request),
+        #'events': reverse('api-events', request=request),
+        #'categories': reverse('api-categories', request=request),
+        #'locations': reverse('api-locations', request=request),
     }
     return Response(data)
 
@@ -51,33 +51,33 @@ def source(request, densho_id, format=None):
         Source.source(densho_id)
     )
 
-@api_view(['GET'])
-def events(request, format=None):
-    """Timeline of the Japanese American story during World War II.
-    
-    JSON-formatted list of events.
-    """
-    return Response({
-        'objects': all_events()
-    })
+#@api_view(['GET'])
+#def events(request, format=None):
+#    """Timeline of the Japanese American story during World War II.
+#    
+#    JSON-formatted list of events.
+#    """
+#    return Response({
+#        'objects': all_events()
+#    })
 
-@api_view(['GET'])
-def categories(request, format=None):
-    """Categories of JA confinement facilities used during World War II.
-    
-    JSON-formatted list of the entire set of facility types.
-    Used to display subsets of the master list of locations.
-    """
-    return Response(
-        facilities.categories()
-    )
+#@api_view(['GET'])
+#def categories(request, format=None):
+#    """Categories of JA confinement facilities used during World War II.
+#    
+#    JSON-formatted list of the entire set of facility types.
+#    Used to display subsets of the master list of locations.
+#    """
+#    return Response(
+#        facilities.categories()
+#    )
 
-@api_view(['GET'])
-def locations(request, format=None):
-    """Locations of facilities used to confine Japanese Americans in World War II.
-    
-    JSON-formatted list of the entire set of facilities.
-    """
-    return Response({
-        'objects': facilities.all_facilities()
-    })
+#@api_view(['GET'])
+#def locations(request, format=None):
+#    """Locations of facilities used to confine Japanese Americans in World War II.
+#    
+#    JSON-formatted list of the entire set of facilities.
+#    """
+#    return Response({
+#        'objects': facilities.all_facilities()
+#    })

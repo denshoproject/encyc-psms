@@ -58,9 +58,9 @@ urlpatterns = [
         api.sources, name='api-sources'
     ),
     url(r'^api/2.0/sources',    api.sources,    name='api-sources'),
-    url(r'^api/2.0/events',     api.events,     name='api-events'),
-    url(r'^api/2.0/categories', api.categories, name='api-categories'),
-    url(r'^api/2.0/locations',  api.locations,  name='api-locations'),
+    #url(r'^api/2.0/events',     api.events,     name='api-events'),
+    #url(r'^api/2.0/categories', api.categories, name='api-categories'),
+    #url(r'^api/2.0/locations',  api.locations,  name='api-locations'),
     url(r'^api/2.0',            api.index,      name='api-index'),
     url(r'^api/1.0',            api.index,      name='api-index'),
     url(r'^api',                api.index,      name='api-index'),
