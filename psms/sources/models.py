@@ -475,7 +475,7 @@ class Source(BaseModel):
         def pack(source, fieldnames):
             o = OrderedDict()
             for f in fieldnames:
-                o[f] = unicode(getattr(source, f))
+                o[f] = str(getattr(source, f))
             return o
         
         if encyclopedia_ids:
@@ -499,5 +499,5 @@ class Source(BaseModel):
         source = Source.objects.get(densho_id=densho_id)
         o = OrderedDict()
         for f in fieldnames:
-            o[f] = unicode(getattr(source, f))
+            o[f] = str(getattr(source, f))
         return o
