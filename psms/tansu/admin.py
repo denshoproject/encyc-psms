@@ -111,8 +111,8 @@ class VideoFileAdmin(admin.ModelAdmin):
         'description',
     ]
 
-admin.site.register(Entity, EntityAdmin)
-admin.site.register(AudioFile, AudioFileAdmin)
-admin.site.register(ImageFile, ImageFileAdmin)
-admin.site.register(DocumentFile, DocumentFileAdmin)
-admin.site.register(VideoFile, VideoFileAdmin)
+#admin.site.register(Entity, EntityAdmin)
+#admin.site.register(AudioFile, AudioFileAdmin)
+#admin.site.register(ImageFile, ImageFileAdmin)
+#admin.site.register(DocumentFile, DocumentFileAdmin)
+#admin.site.register(VideoFile, VideoFileAdmin)
