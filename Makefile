@@ -316,7 +316,7 @@ shell:
 
 runserver:
 	source $(VIRTUALENV)/bin/activate; \
-	python psms/manage.py runserver 0.0.0.0:8025
+	python psms/manage.py runserver 0.0.0.0:8082
 
 clean-encyc-psms:
 	-rm -Rf $(INSTALLDIR)/psms/env/
