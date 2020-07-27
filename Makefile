@@ -163,6 +163,8 @@ howto-install:
 
 install: install-app install-configs install-static
 
+test: test-app
+
 uninstall: uninstall-app
 
 clean: clean-app
@@ -229,6 +231,8 @@ install-virtualenv:
 
 install-app: install-encyc-psms
 
+test-app: test-encyc-psms
+
 uninstall-app: uninstall-encyc-psms
 
 clean-app: clean-encyc-psms
@@ -252,6 +256,15 @@ install-encyc-psms: install-virtualenv
 	-mkdir -p $(MEDIA_ROOT)
 	chown -R encyc.root $(MEDIA_BASE)
 	chmod -R 755 $(MEDIA_BASE)
+
+test-encyc-psms: test-encyc-psms-sources
+
+test-encyc-psms-sources:
+	@echo ""
+	@echo "test-encyc-psms-sources -------------------------------------------------"
+	source $(VIRTUALENV)/bin/activate; \
+	cd $(INSTALLDIR)/; pytest --disable-warnings --reuse-db psms/sources/
+#	cd $(INSTALLDIR); python psms/manage.py test sources
 
 syncdb:
 	cd $(INSTALLDIR)/psms
