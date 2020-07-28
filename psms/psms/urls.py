@@ -10,7 +10,7 @@ from drf_yasg import openapi
 from rest_framework import permissions
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from sources.views import export, links, sitemap
+from sources.views import index, export, sitemap
 from psms import api
 
 #v01_api = Api(api_name='v1.0')
@@ -60,8 +60,7 @@ urlpatterns = [
     url(r'^api/1.0',            api.index,      name='api-index'),
     url(r'^api',                api.index,      name='api-index'),
     
-    url(r'^mw', links, name='sources-links'),
-    url(r'^$', lambda x: HttpResponseRedirect('/mw/')),
+    url('$', index, name='sources-index'),
 ]
 # serve /media/ in development
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

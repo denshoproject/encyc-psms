@@ -25,45 +25,8 @@ def app_context(request):
     return context
 
 
-@require_http_methods(['GET',])
-def links(request, template_name='sources/links.html'):
-    logging.debug('------------------------------------------------------------------------')
-    headwords = []
-    headword_sources_tmp = {}
-    headword_sources = []
-    bad_headword_sources = []
-    # get list of headwords
-    args = '?action=query&list=categorymembers&cmtitle=Category:Pages_Needing_Primary_Sources&cmlimit=500&format=json'
-    url = '%s%s' % (settings.EDITORS_MEDIAWIKI_API, args)
-    logging.debug(url)
-    if settings.EDITORS_MEDIAWIKI_USER and settings.EDITORS_MEDIAWIKI_PASS:
-        fake_pwd = ''.join(['*' for n in range(0, len(settings.EDITORS_MEDIAWIKI_PASS))])
-        logging.debug('MW auth: %s,%s' % (settings.EDITORS_MEDIAWIKI_USER, fake_pwd))
-        r = requests.get(url, auth=(settings.EDITORS_MEDIAWIKI_USER, settings.EDITORS_MEDIAWIKI_PASS))
-    else:
-        logging.debug('missing settings: EDITORS_MEDIAWIKI_USER, EDITORS_MEDIAWIKI_PASS')
-        r = requests.get(url)
-    logging.debug('r.status_code %s' % r.status_code)
-    data = json.loads(r.text)
-    for member in data['query']['categorymembers']:
-        headwords.append(member['title'])
-        headword_sources_tmp[member['title']] = []
-    # add sources
-    for source in Source.objects.all():
-        if source.headword in headwords:
-            l = headword_sources_tmp[source.headword]
-            l.append(source)
-        else:
-            bad_headword_sources.append(source)
-    # package
-    for headword in headwords:
-        headword_sources.append( {'headword':headword, 'sources':headword_sources_tmp[headword]} )
-    return render(request, template_name, {
-        'headwords':headwords,
-        'headword_sources':headword_sources,
-        'bad_headword_sources':bad_headword_sources,
-        'wiki_url':settings.EDITORS_MEDIAWIKI_URL,
-    })
+def index(request, template_name='sources/index.html'):
+    return render(request, template_name, {})
 
 @require_http_methods(['GET',])
 def export(request):
