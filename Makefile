@@ -41,9 +41,9 @@ MEDIA_BASE=/var/www/$(APP)
 MEDIA_ROOT=$(MEDIA_BASE)/media
 STATIC_ROOT=$(MEDIA_BASE)/static
 
-SUPERVISOR_GUNICORN_CONF=/etc/supervisor/conf.d/$(APP).conf
-NGINX_APP_CONF=/etc/nginx/sites-available/$(APP).conf
-NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/$(APP).conf
+SUPERVISOR_GUNICORN_CONF=/etc/supervisor/conf.d/encycpsms.conf
+NGINX_APP_CONF=/etc/nginx/sites-available/encycpsms.conf
+NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/encycpsms.conf
 
 DEB_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
 DEB_ARCH=amd64
@@ -327,13 +327,13 @@ install-daemons-configs:
 	@echo ""
 	@echo "configuring daemons -------------------------------------------------"
 # nginx
-	cp $(INSTALLDIR)/conf/psms.conf $(NGINX_APP_CONF)
+	cp $(INSTALLDIR)/conf/nginx.conf $(NGINX_APP_CONF)
 	chown root.root $(NGINX_APP_CONF)
 	chmod 644 $(NGINX_APP_CONF)
 	-ln -s $(NGINX_APP_CONF) $(NGINX_APP_CONF_LINK)
 	-rm /etc/nginx/sites-enabled/default
 # supervisord
-	cp $(INSTALLDIR)/conf/gunicorn_psms.conf $(SUPERVISOR_GUNICORN_CONF)
+	cp $(INSTALLDIR)/conf/supervisor.conf $(SUPERVISOR_GUNICORN_CONF)
 	chown root.root $(SUPERVISOR_GUNICORN_CONF)
 	chmod 644 $(SUPERVISOR_GUNICORN_CONF)
 
