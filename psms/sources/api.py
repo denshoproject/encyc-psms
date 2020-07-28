@@ -16,9 +16,6 @@ def index(request, format=None):
     """Swagger UI: /api/swagger/
     """
     data = {
-        'events': reverse('api-events', request=request),
-        'categories': reverse('api-categories', request=request),
-        'locations': reverse('api-locations', request=request),
     }
     return Response(data)
 

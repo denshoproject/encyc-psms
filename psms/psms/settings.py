@@ -68,11 +68,10 @@ MEDIA_URL = config.get('media', 'media_url')
 # ex: http://ajax.googleapis.com/ajax/libs/jquery/{{ JQUERY_VERSION }}/jquery.min.js
 JQUERY_VERSION = '1.7'
 
-# psms/tansu
+# psms
 PSMS_MEDIAWIKI_API = config.get('psms', 'mediawiki_api')
 PSMS_MEDIAWIKI_USERNAME = config.get('psms', 'mediawiki_username')
 PSMS_MEDIAWIKI_PASSWORD = config.get('psms', 'mediawiki_password')
-TANSU_API  = config.get('psms', 'tansu_api')
 
 # sources
 EDITORS_MEDIAWIKI_URL = config.get('sources', 'mediawiki_url')
@@ -127,7 +126,6 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     #
     'sources',
-    'tansu',
 ]
 
 API_BASE = '/api/2.0/'
