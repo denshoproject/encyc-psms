@@ -4,7 +4,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 import requests
-import unicodecsv
 
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse, Http404
@@ -38,20 +37,7 @@ def export(request):
     filename = 'primarysources-%s.csv' % datetime.now().strftime('%Y%m%d-%H%M')
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
-    writer = unicodecsv.writer(response, encoding='utf-8', dialect='excel')
-    # fieldnames in first row
-    fieldnames = []
-    for field in Source._meta.fields:
-        fieldnames.append(field.name)
-    writer.writerow(fieldnames)
-    # data rows
-    for source in Source.objects.all():
-        values = []
-        for field in fieldnames:
-            values.append( getattr(source, field) )
-        writer.writerow(values)
-    # done
-    return response
+    return Source.export_csv(response)
 
 @require_http_methods(['GET',])
 @cache_page(settings.CACHE_TIMEOUT)

@@ -3,6 +3,8 @@ import logging
 logger = logging.getLogger(__name__)
 import os
 
+import unicodecsv
+
 from django.conf import settings
 from django.db import models
 from django.template import loader
@@ -501,3 +503,23 @@ class Source(BaseModel):
         for f in fieldnames:
             o[f] = str(getattr(source, f))
         return o
+    
+    @staticmethod
+    def export_csv(response):
+        """
+        @param response: django.http.HttpResponse
+        @returns: django.http.HttpResponse
+        """
+        writer = unicodecsv.writer(response, encoding='utf-8', dialect='excel')
+        # fieldnames in first row
+        fieldnames = []
+        for field in Source._meta.fields:
+            fieldnames.append(field.name)
+        writer.writerow(fieldnames)
+        # data rows
+        for source in Source.objects.all():
+            values = []
+            for field in fieldnames:
+                values.append( getattr(source, field) )
+            writer.writerow(values)
+        return response
