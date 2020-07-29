@@ -18,6 +18,8 @@ def index(request, format=None):
     """
     data = {
         'sources': reverse('api-sources', request=request),
+        'sources-sitemap': reverse('sources-sitemap', request=request),
+        'sources-csv': reverse('sources-export', request=request),
     }
     return Response(data)
 
