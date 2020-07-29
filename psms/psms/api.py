@@ -1,7 +1,9 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from django.conf import settings
 from django.conf.urls import url
+from django.views.decorators.cache import cache_page
 
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
@@ -20,6 +22,7 @@ def index(request, format=None):
     return Response(data)
 
 @api_view(['GET'])
+@cache_page(settings.CACHE_TIMEOUT)
 def sources(request, encyclopedia_ids=None, format=None):
     """Source images used in the Encyclopedia.
     

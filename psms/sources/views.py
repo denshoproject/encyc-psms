@@ -10,6 +10,7 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
 
 from sources.models import Source
@@ -29,6 +30,7 @@ def index(request, template_name='sources/index.html'):
     return render(request, template_name, {})
 
 @require_http_methods(['GET',])
+@cache_page(settings.CACHE_TIMEOUT)
 def export(request):
     """Returns all sources as a CSV spreadsheet.
     """
@@ -52,6 +54,7 @@ def export(request):
     return response
 
 @require_http_methods(['GET',])
+@cache_page(settings.CACHE_TIMEOUT)
 def sitemap(request, template_name='sources/links.html'):
     """Returns just enough data for Front to generate a sitemap.xml
     """
