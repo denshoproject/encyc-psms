@@ -37,7 +37,7 @@ CONF_SECRET=$(CONF_BASE)/psms-secret-key.txt
 
 LOG_BASE=/var/log/encyc
 
-MEDIA_BASE=/var/www/$(APP)
+MEDIA_BASE=/var/www/encycpsms
 MEDIA_ROOT=$(MEDIA_BASE)/media
 STATIC_ROOT=$(MEDIA_BASE)/static
 
@@ -254,8 +254,8 @@ install-encyc-psms: install-virtualenv
 	chmod -R 755 $(STATIC_ROOT)
 # media dir
 	-mkdir -p $(MEDIA_ROOT)
-	chown -R encyc.root $(MEDIA_BASE)
-	chmod -R 755 $(MEDIA_BASE)
+	chown -R encyc.root $(MEDIA_ROOT)
+	chmod -R 755 $(MEDIA_ROOT)
 
 test-encyc-psms: test-encyc-psms-sources
 
