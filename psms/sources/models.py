@@ -363,10 +363,11 @@ class Source(BaseModel):
         # assemble the variables
         keys = []
         upload_file = self.select_upload_file()
-        page_exists = wiki.exists(self.wikititle())
+        mw = wiki.MediaWiki()
+        page_exists = mw.exists(self.wikititle())
         if page_exists:
             logging.debug('page exists')
-            link_exists = self._wiki_link_exists()
+            link_exists = self._wiki_link_exists(mw)
         else:
             link_exists = False
         if upload_file:    keys.append('file') # uploadable file exists
@@ -411,12 +412,12 @@ class Source(BaseModel):
         for f in functions:
             function_name = '_wiki_%s' % f
             logging.debug(function_name)
-            response = self.__getattribute__(function_name)()
+            response = self.__getattribute__(function_name)(mw)
             logging.debug(response)
         # done!
         return response
 
-    def _wiki_upload(self):
+    def _wiki_upload(self, mw):
         """Upload display file to wiki.
         
         symlink the wiki file, upload, rm symlink
@@ -433,7 +434,7 @@ class Source(BaseModel):
             os.symlink(src, dest)
             symlinked = True
             logging.debug('        symlinking...')
-        response = wiki.upload_file(dest, comment='Uploaded by PSMS/Tansu')
+        response = mw.upload_file(dest, comment='Uploaded by PSMS/Tansu')
         responses.append(response)
         if symlinked:
             os.remove(dest)
@@ -442,25 +443,25 @@ class Source(BaseModel):
         logging.debug('    OK')
         return responses
     
-    def _wiki_update(self):
+    def _wiki_update(self, mw):
         """Just update the text of the File: page.
         """
         logging.debug('_wiki_update(%s)' % self)
-        return wiki.update_text(self.wikititle(), self.wikitext())
+        return mw.update_text(self.wikititle(), self.wikitext())
     
     def _wiki_linktext(self):
         return "[[%s|right|200px]]" % self.wikititle()
     
-    def _wiki_link_exists(self):
-        return wiki.link_exists(self.headword, self.wikititle())
+    def _wiki_link_exists(self, mw):
+        return mw.link_exists(self.headword, self.wikititle())
     
-    def _wiki_link(self):
+    def _wiki_link(self, mw):
         logging.debug('Source._wiki_link')
-        response = wiki.prepend_text(self.headword, self._wiki_linktext())
+        response = mw.prepend_text(self.headword, self._wiki_linktext())
         logging.debug('    OK')
         return response
 
-    def wiki_delete(self):
+    def wiki_delete(self, mw):
         logging.debug('_wiki_delete(%s)' % self)
         logging.debug('    NOT IMPLEMENTED')
     
