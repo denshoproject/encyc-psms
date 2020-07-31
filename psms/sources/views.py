@@ -26,7 +26,11 @@ def app_context(request):
 
 
 def index(request, template_name='sources/index.html'):
-    return render(request, template_name, {})
+    return render(request, template_name, {
+        'mediawiki_scheme': settings.MEDIAWIKI_SCHEME,
+        'mediawiki_host': settings.MEDIAWIKI_HOST,
+        'mediawiki_username': settings.MEDIAWIKI_USERNAME,
+    })
 
 @require_http_methods(['GET',])
 @cache_page(settings.CACHE_TIMEOUT)
