@@ -4,12 +4,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 import requests
-import unicodecsv
 
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
 
 from sources.models import Source
@@ -25,47 +25,15 @@ def app_context(request):
     return context
 
 
-@require_http_methods(['GET',])
-def links(request, template_name='sources/links.html'):
-    logging.debug('------------------------------------------------------------------------')
-    headwords = []
-    headword_sources_tmp = {}
-    headword_sources = []
-    bad_headword_sources = []
-    # get list of headwords
-    args = '?action=query&list=categorymembers&cmtitle=Category:Pages_Needing_Primary_Sources&cmlimit=500&format=json'
-    url = '%s%s' % (settings.EDITORS_MEDIAWIKI_API, args)
-    logging.debug(url)
-    if settings.EDITORS_MEDIAWIKI_USER and settings.EDITORS_MEDIAWIKI_PASS:
-        fake_pwd = ''.join(['*' for n in range(0, len(settings.EDITORS_MEDIAWIKI_PASS))])
-        logging.debug('MW auth: %s,%s' % (settings.EDITORS_MEDIAWIKI_USER, fake_pwd))
-        r = requests.get(url, auth=(settings.EDITORS_MEDIAWIKI_USER, settings.EDITORS_MEDIAWIKI_PASS))
-    else:
-        logging.debug('missing settings: EDITORS_MEDIAWIKI_USER, EDITORS_MEDIAWIKI_PASS')
-        r = requests.get(url)
-    logging.debug('r.status_code %s' % r.status_code)
-    data = json.loads(r.text)
-    for member in data['query']['categorymembers']:
-        headwords.append(member['title'])
-        headword_sources_tmp[member['title']] = []
-    # add sources
-    for source in Source.objects.all():
-        if source.headword in headwords:
-            l = headword_sources_tmp[source.headword]
-            l.append(source)
-        else:
-            bad_headword_sources.append(source)
-    # package
-    for headword in headwords:
-        headword_sources.append( {'headword':headword, 'sources':headword_sources_tmp[headword]} )
+def index(request, template_name='sources/index.html'):
     return render(request, template_name, {
-        'headwords':headwords,
-        'headword_sources':headword_sources,
-        'bad_headword_sources':bad_headword_sources,
-        'wiki_url':settings.EDITORS_MEDIAWIKI_URL,
+        'mediawiki_scheme': settings.MEDIAWIKI_SCHEME,
+        'mediawiki_host': settings.MEDIAWIKI_HOST,
+        'mediawiki_username': settings.MEDIAWIKI_USERNAME,
     })
 
 @require_http_methods(['GET',])
+@cache_page(settings.CACHE_TIMEOUT)
 def export(request):
     """Returns all sources as a CSV spreadsheet.
     """
@@ -73,22 +41,10 @@ def export(request):
     filename = 'primarysources-%s.csv' % datetime.now().strftime('%Y%m%d-%H%M')
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
-    writer = unicodecsv.writer(response, encoding='utf-8', dialect='excel')
-    # fieldnames in first row
-    fieldnames = []
-    for field in Source._meta.fields:
-        fieldnames.append(field.name)
-    writer.writerow(fieldnames)
-    # data rows
-    for source in Source.objects.all():
-        values = []
-        for field in fieldnames:
-            values.append( getattr(source, field) )
-        writer.writerow(values)
-    # done
-    return response
+    return Source.export_csv(response)
 
 @require_http_methods(['GET',])
+@cache_page(settings.CACHE_TIMEOUT)
 def sitemap(request, template_name='sources/links.html'):
     """Returns just enough data for Front to generate a sitemap.xml
     """

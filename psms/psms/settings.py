@@ -8,7 +8,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
-import ConfigParser
+import configparser
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -23,7 +23,7 @@ CONFIG_FILES = [
     '/etc/encyc/psms.cfg',
     '/etc/encyc/psms-local.cfg'
 ]
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 configs_read = config.read(CONFIG_FILES)
 if not configs_read:
     raise Exception('No config file!')
@@ -46,6 +46,14 @@ DATABASES = {
         'NAME': config.get('database', 'name'),
         'USER': config.get('database', 'user'),
         'PASSWORD': config.get('database', 'password'),
+        'TEST': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'HOST': None,
+            'PORT': None,
+            'NAME': '/tmp/encycpsms-test.db',
+            'USER': None,
+            'PASSWORD': None,
+        }
     }
 }
 #update django_site set domain='10.0.4.15:8000', name='densho front' where id=1;
@@ -60,28 +68,32 @@ MEDIA_URL = config.get('media', 'media_url')
 # ex: http://ajax.googleapis.com/ajax/libs/jquery/{{ JQUERY_VERSION }}/jquery.min.js
 JQUERY_VERSION = '1.7'
 
-# psms/tansu
-PSMS_MEDIAWIKI_API = config.get('psms', 'mediawiki_api')
-PSMS_MEDIAWIKI_USERNAME = config.get('psms', 'mediawiki_username')
-PSMS_MEDIAWIKI_PASSWORD = config.get('psms', 'mediawiki_password')
-TANSU_API  = config.get('psms', 'tansu_api')
-
 # sources
 EDITORS_MEDIAWIKI_URL = config.get('sources', 'mediawiki_url')
-EDITORS_MEDIAWIKI_API = config.get('sources', 'mediawiki_api')
-EDITORS_MEDIAWIKI_USER = config.get('sources', 'mediawiki_username')
-EDITORS_MEDIAWIKI_PASS = config.get('sources', 'mediawiki_password')
+
+MEDIAWIKI_SCHEME = config.get('mediawiki', 'scheme')
+MEDIAWIKI_HOST = config.get('mediawiki', 'host')
+MEDIAWIKI_USERNAME = config.get('mediawiki', 'username')
+MEDIAWIKI_PASSWORD = config.get('mediawiki', 'password')
+MEDIAWIKI_HTTP_USERNAME = config.get('mediawiki', 'http_username')
+MEDIAWIKI_HTTP_PASSWORD = config.get('mediawiki', 'http_password')
+
 SOURCES_HTTP_HOST = config.get('sources', 'http_host')
 
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = '6379'
+REDIS_DB_CACHE = '0'
+REDIS_DB_SORL = '3'
+
+CACHE_TIMEOUT = 60 * 15
+
 CACHES = {
-    'default': {
-#        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-        'KEY_PREFIX': 'psms:',
-        'TIMEOUT': 60 * 15,
-        'OPTIONS': {
-            'MAX_ENTRIES': 1000
+    "default": {
+        #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://%s:%s" % (REDIS_HOST, REDIS_PORT),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
 }
@@ -119,7 +131,6 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     #
     'sources',
-    'tansu',
 ]
 
 API_BASE = '/api/2.0/'
@@ -153,6 +164,8 @@ TEMPLATES = [
         },
     },
 ]
+
+SESSION_ENGINE = 'redis_sessions.session'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

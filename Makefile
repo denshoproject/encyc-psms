@@ -25,7 +25,7 @@ PACKAGE_SERVER=ddr.densho.org/static/encycpsms
 INSTALL_BASE=/opt
 INSTALLDIR=$(INSTALL_BASE)/encyc-psms
 DOWNLOADS_DIR=/tmp/$(APP)-install
-REQUIREMENTS=$(INSTALLDIR)/requirements.txt
+PIP_REQUIREMENTS=$(INSTALLDIR)/requirements.txt
 PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
 
 VIRTUALENV=$(INSTALLDIR)/venv/$(APP)
@@ -37,13 +37,13 @@ CONF_SECRET=$(CONF_BASE)/psms-secret-key.txt
 
 LOG_BASE=/var/log/encyc
 
-MEDIA_BASE=/var/www/$(APP)
+MEDIA_BASE=/var/www/encycpsms
 MEDIA_ROOT=$(MEDIA_BASE)/media
 STATIC_ROOT=$(MEDIA_BASE)/static
 
-SUPERVISOR_GUNICORN_CONF=/etc/supervisor/conf.d/$(APP).conf
-NGINX_APP_CONF=/etc/nginx/sites-available/$(APP).conf
-NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/$(APP).conf
+SUPERVISOR_GUNICORN_CONF=/etc/supervisor/conf.d/encycpsms.conf
+NGINX_APP_CONF=/etc/nginx/sites-available/encycpsms.conf
+NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/encycpsms.conf
 
 DEB_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
 DEB_ARCH=amd64
@@ -71,20 +71,7 @@ help:
 	@echo ""
 	@echo "syncdb  - Initialize or update Django app's database tables."
 	@echo ""
-	@echo "update  - Updates ddr-workbench and re-copies config files."
-	@echo ""
 	@echo "branch BRANCH=[branch] - Switches encyc-psms and supporting repos to [branch]."
-	@echo ""
-	@echo "reload  - Reloads supervisord and nginx configs"
-	@echo "reload-nginx"
-	@echo "reload-supervisors"
-	@echo ""
-	@echo "restart - Restarts all servers"
-	@echo "restart-redis"
-	@echo "restart-nginx"
-	@echo "restart-supervisord"
-	@echo ""
-	@echo "status  - Server status"
 	@echo ""
 	@echo "uninstall - Deletes 'compiled' Python files. Leaves build dirs and configs."
 	@echo "clean   - Deletes files created by building the program. Leaves configs."
@@ -100,9 +87,6 @@ help-all:
 	@echo "install-static  - "
 	@echo "install-daemons - install-nginx install-redis"
 	@echo "install-daemons-configs"
-	@echo "update  - Do an update"
-	@echo "restart - Restart servers"
-	@echo "status  - Server status"
 	@echo "update-ddr - "
 	@echo "uninstall - "
 	@echo "clean - "
@@ -177,30 +161,17 @@ howto-install:
 
 
 
-install: install-prep install-app install-configs install-static
+install: install-app install-configs install-static
 
-update: update-app
+test: test-app
 
 uninstall: uninstall-app
 
 clean: clean-app
 
 
-install-prep: apt-update install-core git-config install-misc-tools
-
-
-apt-update:
-	@echo ""
-	@echo "Package update ---------------------------------------------------------"
-	apt-get --assume-yes update
-
-apt-upgrade:
-	@echo ""
-	@echo "Package upgrade --------------------------------------------------------"
-	apt-get --assume-yes upgrade
-
 install-core:
-	apt-get --assume-yes install bzip2 curl gdebi-core git-core logrotate ntp p7zip-full wget
+	apt-get --assume-yes install bzip2 curl gdebi-core git-core logrotate ntp p7zip-full python3 wget
 
 git-config:
 	git config --global alias.st status
@@ -254,13 +225,13 @@ remove-supervisor:
 install-virtualenv:
 	@echo ""
 	@echo "install-virtualenv -----------------------------------------------------"
-	apt-get --assume-yes install python-pip python-virtualenv
-	test -d $(VIRTUALENV) || virtualenv $(VIRTUALENV)
+	apt-get --assume-yes install python3-pip python3-virtualenv
+	test -d $(VIRTUALENV) || virtualenv --python=python3 --distribute --setuptools $(VIRTUALENV)
 
 
 install-app: install-encyc-psms
 
-update-app: update-encyc-psms install-configs
+test-app: test-encyc-psms
 
 uninstall-app: uninstall-encyc-psms
 
@@ -270,9 +241,9 @@ clean-app: clean-encyc-psms
 install-encyc-psms: install-virtualenv
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
-	apt-get --assume-yes install imagemagick libjpeg-dev libmariadbclient-dev libxml2 libxslt1.1 libxslt1-dev
+	apt-get --assume-yes install imagemagick libjpeg-dev libmariadbclient-dev libxml2 libxslt1.1 libxslt1-dev python3-dev
 	source $(VIRTUALENV)/bin/activate; \
-	pip install -U -r $(INSTALLDIR)/requirements.txt
+	pip3 install -U --cache-dir=$(PIP_CACHE_DIR) -r $(PIP_REQUIREMENTS)
 # logs dir
 	-mkdir $(LOG_BASE)
 	chown -R encyc.root $(LOG_BASE)
@@ -283,8 +254,17 @@ install-encyc-psms: install-virtualenv
 	chmod -R 755 $(STATIC_ROOT)
 # media dir
 	-mkdir -p $(MEDIA_ROOT)
-	chown -R encyc.root $(MEDIA_BASE)
-	chmod -R 755 $(MEDIA_BASE)
+	chown -R encyc.root $(MEDIA_ROOT)
+	chmod -R 755 $(MEDIA_ROOT)
+
+test-encyc-psms: test-encyc-psms-sources
+
+test-encyc-psms-sources:
+	@echo ""
+	@echo "test-encyc-psms-sources -------------------------------------------------"
+	source $(VIRTUALENV)/bin/activate; \
+	cd $(INSTALLDIR)/; pytest --disable-warnings --reuse-db psms/sources/
+#	cd $(INSTALLDIR); python psms/manage.py test sources
 
 syncdb:
 	cd $(INSTALLDIR)/psms
@@ -293,17 +273,10 @@ syncdb:
 	chown -R psms.root /var/log/encyc
 	chmod -R 755 /var/log/encyc
 
-update-encyc-psms:
-	@echo ""
-	@echo "encyc-psms --------------------------------------------------------------"
-	git fetch && git pull
-	source $(VIRTUALENV)/bin/activate; \
-	pip install -U -r $(INSTALLDIR)/requirements.txt
-
 uninstall-encyc-psms:
 	cd $(INSTALLDIR)/psms
 	source $(VIRTUALENV)/bin/activate; \
-	-pip uninstall -r $(INSTALLDIR)/requirements.txt
+	-pip3 uninstall -r $(INSTALLDIR)/requirements.txt
 	-rm /usr/local/lib/python2.7/dist-packages/psms-*
 	-rm -Rf /usr/local/lib/python2.7/dist-packages/psms
 
@@ -316,7 +289,7 @@ shell:
 
 runserver:
 	source $(VIRTUALENV)/bin/activate; \
-	python psms/manage.py runserver 0.0.0.0:8025
+	python psms/manage.py runserver 0.0.0.0:8082
 
 clean-encyc-psms:
 	-rm -Rf $(INSTALLDIR)/psms/env/
@@ -354,13 +327,13 @@ install-daemons-configs:
 	@echo ""
 	@echo "configuring daemons -------------------------------------------------"
 # nginx
-	cp $(INSTALLDIR)/conf/psms.conf $(NGINX_APP_CONF)
+	cp $(INSTALLDIR)/conf/nginx.conf $(NGINX_APP_CONF)
 	chown root.root $(NGINX_APP_CONF)
 	chmod 644 $(NGINX_APP_CONF)
 	-ln -s $(NGINX_APP_CONF) $(NGINX_APP_CONF_LINK)
 	-rm /etc/nginx/sites-enabled/default
 # supervisord
-	cp $(INSTALLDIR)/conf/gunicorn_psms.conf $(SUPERVISOR_GUNICORN_CONF)
+	cp $(INSTALLDIR)/conf/supervisor.conf $(SUPERVISOR_GUNICORN_CONF)
 	chown root.root $(SUPERVISOR_GUNICORN_CONF)
 	chmod 644 $(SUPERVISOR_GUNICORN_CONF)
 
@@ -397,41 +370,6 @@ clean-restframework:
 
 clean-swagger:
 	-rm -Rf $(STATIC_ROOT)/drf_yasg/
-
-
-reload: reload-nginx reload-supervisor
-
-reload-nginx:
-	/etc/init.d/nginx reload
-
-reload-supervisor:
-	supervisorctl reload
-
-
-restart: restart-nginx restart-mysql restart-redis restart-supervisor
-
-restart-nginx:
-	/etc/init.d/nginx restart
-
-restart-mysql:
-	/etc/init.d/mysql restart
-
-restart-redis:
-	/etc/init.d/redis-server restart
-
-restart-supervisor:
-	/etc/init.d/supervisor restart
-
-
-status:
-	@echo [`systemctl is-active nginx`] nginx
-	@echo [`systemctl is-active mysql`] mysql
-	@echo [`systemctl is-active supervisor`] supervisor
-	@supervisorctl status
-
-git-status:
-	@echo "------------------------------------------------------------------------"
-	cd $(INSTALLDIR) && git status
 
 
 # http://fpm.readthedocs.io/en/latest/

@@ -10,8 +10,7 @@ from drf_yasg import openapi
 from rest_framework import permissions
 from rest_framework.urlpatterns import format_suffix_patterns
 
-#from locations.views import kml as locations_kml
-from sources.views import export, links, sitemap
+from sources.views import index, export, sitemap
 from psms import api
 
 #v01_api = Api(api_name='v1.0')
@@ -47,7 +46,6 @@ urlpatterns = [
         schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'
     ),
     
-    #url(r'^api/v1.0/locations/locations.kml$', locations_kml, name='locations-kml'),
     url(r'^api/2.0/primarysource/sitemap', sitemap, name='sources-sitemap'),
     url(r'^api/2.0/primarysource/csv', export, name='sources-export'),
     
@@ -58,15 +56,11 @@ urlpatterns = [
         api.sources, name='api-sources'
     ),
     url(r'^api/2.0/sources',    api.sources,    name='api-sources'),
-    url(r'^api/2.0/events',     api.events,     name='api-events'),
-    url(r'^api/2.0/categories', api.categories, name='api-categories'),
-    url(r'^api/2.0/locations',  api.locations,  name='api-locations'),
     url(r'^api/2.0',            api.index,      name='api-index'),
     url(r'^api/1.0',            api.index,      name='api-index'),
     url(r'^api',                api.index,      name='api-index'),
     
-    url(r'^mw', links, name='sources-links'),
-    url(r'^$', lambda x: HttpResponseRedirect('/mw/')),
+    url('$', index, name='sources-index'),
 ]
 # serve /media/ in development
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
