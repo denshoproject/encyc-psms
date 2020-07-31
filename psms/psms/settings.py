@@ -68,16 +68,16 @@ MEDIA_URL = config.get('media', 'media_url')
 # ex: http://ajax.googleapis.com/ajax/libs/jquery/{{ JQUERY_VERSION }}/jquery.min.js
 JQUERY_VERSION = '1.7'
 
-# psms
-PSMS_MEDIAWIKI_API = config.get('psms', 'mediawiki_api')
-PSMS_MEDIAWIKI_USERNAME = config.get('psms', 'mediawiki_username')
-PSMS_MEDIAWIKI_PASSWORD = config.get('psms', 'mediawiki_password')
-
 # sources
 EDITORS_MEDIAWIKI_URL = config.get('sources', 'mediawiki_url')
-EDITORS_MEDIAWIKI_API = config.get('sources', 'mediawiki_api')
-EDITORS_MEDIAWIKI_USER = config.get('sources', 'mediawiki_username')
-EDITORS_MEDIAWIKI_PASS = config.get('sources', 'mediawiki_password')
+
+MEDIAWIKI_SCHEME = config.get('mediawiki', 'scheme')
+MEDIAWIKI_HOST = config.get('mediawiki', 'host')
+MEDIAWIKI_USERNAME = config.get('mediawiki', 'username')
+MEDIAWIKI_PASSWORD = config.get('mediawiki', 'password')
+MEDIAWIKI_HTTP_USERNAME = config.get('mediawiki', 'http_username')
+MEDIAWIKI_HTTP_PASSWORD = config.get('mediawiki', 'http_password')
+
 SOURCES_HTTP_HOST = config.get('sources', 'http_host')
 
 REDIS_HOST = '127.0.0.1'
