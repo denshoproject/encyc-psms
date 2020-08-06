@@ -385,7 +385,6 @@ deb-buster:
 	@echo ""
 	@echo "DEB packaging (buster) -------------------------------------------------"
 	-rm -Rf $(DEB_FILE_BUSTER)
-	virtualenv --relocatable $(VIRTUALENV)  # Make venv relocatable
 	fpm   \
 	--verbose   \
 	--input-type dir   \
