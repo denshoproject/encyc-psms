@@ -47,13 +47,10 @@ NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/encycpsms.conf
 
 DEB_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
 DEB_ARCH=amd64
-DEB_NAME_STRETCH=$(PROJECT)-$(DEB_BRANCH)
 DEB_NAME_BUSTER=$(APP)-$(DEB_BRANCH)
 # Application version, separator (~), Debian release tag e.g. deb8
 # Release tag used because sortable and follows Debian project usage.
-DEB_VERSION_STRETCH=$(APP_VERSION)~deb9
 DEB_VERSION_BUSTER=$(APP_VERSION)~deb10
-DEB_FILE_STRETCH=$(DEB_NAME_STRETCH)_$(DEB_VERSION_STRETCH)_$(DEB_ARCH).deb
 DEB_FILE_BUSTER=$(DEB_NAME_BUSTER)_$(DEB_VERSION_BUSTER)_$(DEB_ARCH).deb
 DEB_VENDOR=Densho.org
 DEB_MAINTAINER=<geoffrey.jost@densho.org>
@@ -225,8 +222,8 @@ remove-supervisor:
 install-virtualenv:
 	@echo ""
 	@echo "install-virtualenv -----------------------------------------------------"
-	apt-get --assume-yes install python3-pip python3-virtualenv
-	test -d $(VIRTUALENV) || virtualenv --python=python3 --distribute --setuptools $(VIRTUALENV)
+	apt-get --assume-yes install python3-pip python3-venv
+	python3 -m venv $(VIRTUALENV)
 
 
 install-app: install-encyc-psms
@@ -382,52 +379,12 @@ install-fpm:
 # http://fpm.readthedocs.io/en/latest/
 # https://stackoverflow.com/questions/32094205/set-a-custom-install-directory-when-making-a-deb-package-with-fpm
 # https://brejoc.com/tag/fpm/
-deb: deb-stretch
-
-deb-stretch:
-	@echo ""
-	@echo "DEB packaging (stretch) ------------------------------------------------"
-	-rm -Rf $(DEB_FILE_STRETCH)
-	virtualenv --relocatable $(VIRTUALENV)  # Make venv relocatable
-	fpm   \
-	--verbose   \
-	--input-type dir   \
-	--output-type deb   \
-	--name $(DEB_NAME_STRETCH)   \
-	--version $(DEB_VERSION_STRETCH)   \
-	--package $(DEB_FILE_STRETCH)   \
-	--url "$(GIT_SOURCE_URL)"   \
-	--vendor "$(DEB_VENDOR)"   \
-	--maintainer "$(DEB_MAINTAINER)"   \
-	--description "$(DEB_DESCRIPTION)"   \
-	--deb-recommends "mariadb-client"   \
-	--deb-suggests "mariadb-server"   \
-	--depends "libmariadbclient-dev"  \
-	--depends "nginx"   \
-	--depends "redis-server"   \
-	--depends "supervisor"   \
-	--chdir $(INSTALLDIR)   \
-	conf=$(DEB_BASE)   \
-	COPYRIGHT=$(DEB_BASE)   \
-	debian=$(DEB_BASE)   \
-	.git=$(DEB_BASE)   \
-	.gitignore=$(DEB_BASE)   \
-	INSTALL.rst=$(DEB_BASE)   \
-	LICENSE=$(DEB_BASE)   \
-	Makefile=$(DEB_BASE)   \
-	NOTES=$(DEB_BASE)   \
-	psms=$(DEB_BASE)  \
-	README.rst=$(DEB_BASE)   \
-	requirements.txt=$(DEB_BASE)  \
-	venv=$(DEB_BASE)   \
-	VERSION=$(DEB_BASE)  \
-	conf/psms.cfg=etc/encyc/psms.cfg
+deb: deb-buster
 
 deb-buster:
 	@echo ""
 	@echo "DEB packaging (buster) -------------------------------------------------"
 	-rm -Rf $(DEB_FILE_BUSTER)
-	virtualenv --relocatable $(VIRTUALENV)  # Make venv relocatable
 	fpm   \
 	--verbose   \
 	--input-type dir   \
