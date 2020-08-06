@@ -5,7 +5,7 @@
 # sudo apt-get install libjpeg8 libjpeg8-dev libmysqlclient-dev
 
 beautifulsoup4==4.9.1
-django>=3.0.0,<3.1                 # MIT
+django>=3.1.0,<3.2                 # MIT
 django-extensions==3.0.4
 django-redis==4.12.1               # BSD      y
 django-redis-sessions==0.6.1       # BSD      y
