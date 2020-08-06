@@ -46,14 +46,6 @@ DATABASES = {
         'NAME': config.get('database', 'name'),
         'USER': config.get('database', 'user'),
         'PASSWORD': config.get('database', 'password'),
-        'TEST': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'HOST': None,
-            'PORT': None,
-            'NAME': '/tmp/encycpsms-test.db',
-            'USER': None,
-            'PASSWORD': None,
-        }
     }
 }
 #update django_site set domain='10.0.4.15:8000', name='densho front' where id=1;

@@ -261,7 +261,6 @@ test-encyc-psms-sources:
 	@echo "test-encyc-psms-sources -------------------------------------------------"
 	source $(VIRTUALENV)/bin/activate; \
 	cd $(INSTALLDIR)/; pytest --disable-warnings --reuse-db psms/sources/
-#	cd $(INSTALLDIR); python psms/manage.py test sources
 
 syncdb:
 	cd $(INSTALLDIR)/psms

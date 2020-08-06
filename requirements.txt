@@ -28,5 +28,6 @@ bpython
 pytest
 #pytest-cov
 pytest-django
+factory_boy
 #pytest-testmon
 #pytest-xdist
