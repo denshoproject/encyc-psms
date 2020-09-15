@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponseRedirect
-from django.urls import include, path
+from django.urls import include, path, re_path
 admin.autodiscover()
 
 from drf_yasg.views import get_schema_view
@@ -52,7 +52,7 @@ urlpatterns = [
     path('api/2.0/sources/source/<slug:densho_id>/',
         api.source, name='api-source'
     ),
-    path('api/2.0/sources/<slug:encyclopedia_ids>/',
+    re_path(r'^api/2.0/sources/(?P<encyclopedia_ids>[\w,-]+)',
         api.sources, name='api-sources'
     ),
     path('api/2.0/sources/',    api.sources,    name='api-sources'),
