@@ -26,49 +26,12 @@
 
 {% block content %}
 
+<h1>
+<a href="{% url "api-index" %}">REST API</a>
+</h1>
 
-
-<p style="text-align:right; margin:0px; padding:0px;">
-<a href="{% url "sources-export" %}">Export all records to CSV (UTF-8, comma-separated)</a>
+<p>
+MediaWiki: {{ mediawiki_username }} @ {{ mediawiki_scheme }}://{{ mediawiki_host }}
 </p>
 
-
-
-<div id="content-main">
-
-
-
-<table border="1">
-{% for hws in headword_sources %}
-  <tr>
-    <td valign="top" width="30%">
-
-<a href="{{ wiki_url }}/{{ hws.headword }}">wiki</a>
-| <strong>{{ hws.headword }}</strong><br/>
-
-    </td>
-    <td valign="top">
-
-{% for source in hws.sources %}
-<a href="/admin/sources/source/{{ source.id }}/">{{ source.densho_id }}</a>
-| {{ source.caption|truncatewords:15 }}<br/>
-{% endfor %}
-
-    </td>
-    <td valign="top">
-
-<a href="/admin/sources/source/add/?headword={{ hws.headword }}">new&nbsp;source</a><br/>
-
-    </td>
-  </tr>
-{% endfor %}
-</table>
-
-{% for source in bad_headword_sources %}
-{{ source }}<br/>
-{% endfor %}
-
-
-
-</div><!-- #content-main -->
 {% endblock %}
