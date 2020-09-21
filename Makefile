@@ -47,7 +47,7 @@ NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/encycpsms.conf
 
 DEB_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
 DEB_ARCH=amd64
-DEB_NAME_BUSTER=$(APP)-$(DEB_BRANCH)
+DEB_NAME_BUSTER=$(PROJECT)-$(DEB_BRANCH)
 # Application version, separator (~), Debian release tag e.g. deb8
 # Release tag used because sortable and follows Debian project usage.
 DEB_VERSION_BUSTER=$(APP_VERSION)~deb10
