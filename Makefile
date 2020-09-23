@@ -414,6 +414,7 @@ deb-buster:
 	psms=$(DEB_BASE)  \
 	README.rst=$(DEB_BASE)   \
 	requirements.txt=$(DEB_BASE)  \
+	static=var/www/encycpsms/static  \
 	venv=$(DEB_BASE)   \
 	VERSION=$(DEB_BASE)  \
 	conf/psms.cfg=etc/encyc/psms.cfg
