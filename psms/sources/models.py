@@ -103,9 +103,9 @@ class Source(BaseModel):
     #created
     #modified
     published = models.BooleanField(default=False)
-    densho_id = models.CharField(max_length=255)
-    headword = models.CharField(max_length=255)
-    encyclopedia_id = models.CharField(max_length=255, unique=True)
+    densho_id = models.CharField(max_length=255, help_text="Valid DDR object ID")
+    headword = models.CharField(max_length=255, help_text="Article title in editors' wiki")
+    encyclopedia_id = models.CharField(max_length=255, unique=True, help_text="Valid DDR or Densho ID (must be unique)")
     caption = models.TextField(blank=True, null=True,
         help_text='Contents of this field will be visible on the article page, ' \
                   'in lightboxes, and on the Primary Source detail page.')
