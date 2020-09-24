@@ -9,6 +9,8 @@ from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
 
+from events import timeline
+from locations import facilities
 from sources.models import Source
 
 
@@ -20,6 +22,8 @@ def index(request, format=None):
         'sources': reverse('api-sources', request=request),
         'sources-sitemap': reverse('sources-sitemap', request=request),
         'sources-csv': reverse('sources-export', request=request),
+        'events': reverse('api-events', request=request),
+        'locations': reverse('api-locations', request=request),
     }
     return Response(data)
 
@@ -50,3 +54,23 @@ def source(request, densho_id, format=None):
     return Response(
         Source.source(densho_id)
     )
+
+@api_view(['GET'])
+def events(request, format=None):
+    """Timeline of the Japanese American story during World War II.
+    
+    JSON-formatted list of events.
+    """
+    return Response({
+        'objects': timeline.all_events()
+    })
+
+@api_view(['GET'])
+def locations(request, format=None):
+    """Locations of facilities used to confine Japanese Americans in World War II.
+    
+    JSON-formatted list of the entire set of facilities.
+    """
+    return Response({
+        'objects': facilities.all_facilities()
+    })
