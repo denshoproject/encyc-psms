@@ -56,6 +56,8 @@ urlpatterns = [
         api.sources, name='api-sources'
     ),
     path('api/2.0/sources/',    api.sources,    name='api-sources'),
+    path('api/2.0/events/',     api.events,     name='api-events'),
+    path('api/2.0/locations/',  api.locations,  name='api-locations'),
     path('api/2.0/',            api.index,      name='api-index'),
     path('api/1.0/',            api.index,      name='api-index'),
     path('api/',                api.index,      name='api-index'),

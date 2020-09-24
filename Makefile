@@ -254,7 +254,13 @@ install-encyc-psms: install-virtualenv
 	chown -R encyc.root $(MEDIA_ROOT)
 	chmod -R 755 $(MEDIA_ROOT)
 
-test-encyc-psms: test-encyc-psms-sources
+test-encyc-psms: test-encyc-psms-api test-encyc-psms-sources
+
+test-encyc-psms-api:
+	@echo ""
+	@echo "test-encyc-psms-api -----------------------------------------------------"
+	source $(VIRTUALENV)/bin/activate; \
+	cd $(INSTALLDIR)/; pytest --disable-warnings psms/psms/
 
 test-encyc-psms-sources:
 	@echo ""

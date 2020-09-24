@@ -56,6 +56,10 @@ STATIC_URL = config.get('media', 'static_url')
 MEDIA_ROOT = config.get('media', 'media_root')
 MEDIA_URL = config.get('media', 'media_url')
 
+# Location of densho-vocab
+# timeline.xml and facility.xml used by events and locations apps
+VOCABS_ROOT = config.get('api', 'vocabs_root')
+
 # jQuery
 # ex: http://ajax.googleapis.com/ajax/libs/jquery/{{ JQUERY_VERSION }}/jquery.min.js
 JQUERY_VERSION = '1.7'
