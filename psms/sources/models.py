@@ -167,7 +167,24 @@ class Source(BaseModel):
     
     def __unicode__(self):
         return '(%s %s) %s' % (self.id, self.densho_id, self.caption[:50])
-    
+
+    def dict(self):
+        fieldnames = [
+            field.name
+            for field in Source._meta.fields
+        ]
+        o = {}
+        for f in fieldnames:
+            if f == 'original':
+                o[f] = str(getattr(self, f))
+                try:
+                    o['original_size'] = self.original.file.size
+                except FileNotFoundError:
+                    pass
+            else:
+                o[f] = str(getattr(self, f))
+        return o
+
     #@models.permalink
     def get_absolute_url(self, http_host=settings.EDITORS_MEDIAWIKI_URL):
         """Returns link to editors' MediaWiki page or streaming URL for this Densho UID
@@ -470,25 +487,14 @@ class Source(BaseModel):
         """
         @param encyclopedia_ids: list Example: ['en-denshopd-i35-00428-1','en-denshopd-i67-00105-1']
         """
-        fieldnames = [
-            field.name
-            for field in Source._meta.fields
-        ]
-
-        def pack(source, fieldnames):
-            o = OrderedDict()
-            for f in fieldnames:
-                o[f] = str(getattr(source, f))
-            return o
-        
         if encyclopedia_ids:
             return [
-                pack(source, fieldnames)
+                source.dict()
                 for source in Source.objects.filter(
-                        encyclopedia_id__in=encyclopedia_ids
+                    encyclopedia_id__in=encyclopedia_ids
                 )
             ]
-        return [pack(source, fieldnames) for source in Source.objects.all()]
+        return [source.dict() for source in Source.objects.all()]
     
     @staticmethod
     def source(densho_id):
