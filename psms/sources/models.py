@@ -179,7 +179,10 @@ class Source(BaseModel):
                 o[f] = str(getattr(self, f))
                 try:
                     o['original_size'] = self.original.file.size
+                    self.original.file.size.close()
                 except FileNotFoundError:
+                    pass
+                except ValueError:
                     pass
             else:
                 o[f] = str(getattr(self, f))
