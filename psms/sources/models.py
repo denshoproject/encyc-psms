@@ -118,6 +118,7 @@ class Source(BaseModel):
     creative_commons = models.BooleanField(default=False)
     original = models.FileField('Original', upload_to=get_object_upload_path, blank=True, null=True,
         help_text='Full-size file from which thumbnails, keyframes, etc are derived')
+    original_size = models.IntegerField(blank=True, null=True,)
     streaming_url = models.CharField('Streaming URL', max_length=100, blank=True, null=True,
         help_text='URL for streaming media (video, audio). Must be a full URL, including domain name.')
     transcript = models.FileField(upload_to=get_object_upload_path, blank=True, null=True)
@@ -147,6 +148,10 @@ class Source(BaseModel):
         # pre
         update_display = self.update_display
         self.update_display = False
+        try:
+            self.original_size = self.original.size
+        except FileNotFoundError:
+            pass
         # save
         super(Source, self).save()
         # post
@@ -167,7 +172,13 @@ class Source(BaseModel):
     
     def __unicode__(self):
         return '(%s %s) %s' % (self.id, self.densho_id, self.caption[:50])
-    
+
+    def dict(self):
+        return {
+            f: str(getattr(self, f))
+            for f in [field.name for field in Source._meta.fields]
+        }
+
     #@models.permalink
     def get_absolute_url(self, http_host=settings.EDITORS_MEDIAWIKI_URL):
         """Returns link to editors' MediaWiki page or streaming URL for this Densho UID
@@ -470,25 +481,14 @@ class Source(BaseModel):
         """
         @param encyclopedia_ids: list Example: ['en-denshopd-i35-00428-1','en-denshopd-i67-00105-1']
         """
-        fieldnames = [
-            field.name
-            for field in Source._meta.fields
-        ]
-
-        def pack(source, fieldnames):
-            o = OrderedDict()
-            for f in fieldnames:
-                o[f] = str(getattr(source, f))
-            return o
-        
         if encyclopedia_ids:
             return [
-                pack(source, fieldnames)
+                source.dict()
                 for source in Source.objects.filter(
-                        encyclopedia_id__in=encyclopedia_ids
+                    encyclopedia_id__in=encyclopedia_ids
                 )
             ]
-        return [pack(source, fieldnames) for source in Source.objects.all()]
+        return [source.dict() for source in Source.objects.all()]
     
     @staticmethod
     def source(densho_id):
