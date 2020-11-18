@@ -174,24 +174,10 @@ class Source(BaseModel):
         return '(%s %s) %s' % (self.id, self.densho_id, self.caption[:50])
 
     def dict(self):
-        fieldnames = [
-            field.name
-            for field in Source._meta.fields
-        ]
-        o = {}
-        for f in fieldnames:
-            if f == 'original':
-                o[f] = str(getattr(self, f))
-                try:
-                    o['original_size'] = self.original.file.size
-                    self.original.file.close()
-                except FileNotFoundError:
-                    pass
-                except ValueError:
-                    pass
-            else:
-                o[f] = str(getattr(self, f))
-        return o
+        return {
+            f: str(getattr(self, f))
+            for f in [field.name for field in Source._meta.fields]
+        }
 
     #@models.permalink
     def get_absolute_url(self, http_host=settings.EDITORS_MEDIAWIKI_URL):
