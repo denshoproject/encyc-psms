@@ -118,6 +118,7 @@ class Source(BaseModel):
     creative_commons = models.BooleanField(default=False)
     original = models.FileField('Original', upload_to=get_object_upload_path, blank=True, null=True,
         help_text='Full-size file from which thumbnails, keyframes, etc are derived')
+    original_size = models.IntegerField(blank=True, null=True,)
     streaming_url = models.CharField('Streaming URL', max_length=100, blank=True, null=True,
         help_text='URL for streaming media (video, audio). Must be a full URL, including domain name.')
     transcript = models.FileField(upload_to=get_object_upload_path, blank=True, null=True)
@@ -147,6 +148,10 @@ class Source(BaseModel):
         # pre
         update_display = self.update_display
         self.update_display = False
+        try:
+            self.original_size = self.original.size
+        except FileNotFoundError:
+            pass
         # save
         super(Source, self).save()
         # post
