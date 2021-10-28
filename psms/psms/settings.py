@@ -232,10 +232,8 @@ LOGGING = {
         },
         'file': {
             'level': LOG_LEVEL,
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': '/var/log/encyc/psms.log',
-            'when': 'D',
-            'backupCount': 14,
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': '/var/log/encyc/encycpsms.log',
             'filters': [],
             'formatter': 'verbose',
         },
