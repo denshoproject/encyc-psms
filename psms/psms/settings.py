@@ -232,10 +232,8 @@ LOGGING = {
         },
         'file': {
             'level': LOG_LEVEL,
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': '/var/log/encyc/psms.log',
-            'when': 'D',
-            'backupCount': 14,
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': '/var/log/encyc/encycpsms.log',
             'filters': [],
             'formatter': 'verbose',
         },
@@ -250,7 +248,9 @@ LOGGING = {
         'django.request': {
             'level': 'ERROR',
             'propagate': True,
-            'handlers': ['mail_admins'],
+            'handlers': [
+                #'mail_admins'
+            ],
         },
     },
     # This is the only way I found to write log entries from the whole DDR stack.
