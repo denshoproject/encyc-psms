@@ -13,6 +13,11 @@ DEBIAN_RELEASE := $(shell lsb_release -sr)
 # Sortable major version tag e.g. deb8
 DEBIAN_RELEASE_TAG = deb$(shell lsb_release -sr | cut -c1)
 
+PYTHON_VERSION=python3.9
+ifeq ($(DEBIAN_CODENAME), buster)
+	PYTHON_VERSION=python3.7
+endif
+
 # current branch name minus dashes or underscores
 PACKAGE_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
 # current commit hash
@@ -41,6 +46,11 @@ MEDIA_BASE=/var/www/encycpsms
 MEDIA_ROOT=$(MEDIA_BASE)/media
 STATIC_ROOT=$(MEDIA_BASE)/static
 
+LIBMARIADB_PKG=libmariadb-dev
+ifeq ($(DEBIAN_CODENAME), buster)
+	LIBMARIADB_PKG=libmariadbclient-dev
+endif
+
 SUPERVISOR_GUNICORN_CONF=/etc/supervisor/conf.d/encycpsms.conf
 NGINX_APP_CONF=/etc/nginx/sites-available/encycpsms.conf
 NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/encycpsms.conf
@@ -48,10 +58,13 @@ NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/encycpsms.conf
 DEB_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
 DEB_ARCH=amd64
 DEB_NAME_BUSTER=$(PROJECT)-$(DEB_BRANCH)
+DEB_NAME_BULLSEYE=$(PROJECT)-$(DEB_BRANCH)
 # Application version, separator (~), Debian release tag e.g. deb8
 # Release tag used because sortable and follows Debian project usage.
 DEB_VERSION_BUSTER=$(APP_VERSION)~deb10
+DEB_VERSION_BULLSEYE=$(APP_VERSION)~deb11
 DEB_FILE_BUSTER=$(DEB_NAME_BUSTER)_$(DEB_VERSION_BUSTER)_$(DEB_ARCH).deb
+DEB_FILE_BULLSEYE=$(DEB_NAME_BULLSEYE)_$(DEB_VERSION_BULLSEYE)_$(DEB_ARCH).deb
 DEB_VENDOR=Densho.org
 DEB_MAINTAINER=<geoffrey.jost@densho.org>
 DEB_DESCRIPTION=Encyclopedia Primary Source Management System
@@ -197,10 +210,10 @@ remove-nginx:
 install-mariadb:
 	@echo ""
 	@echo "MariaDB ----------------------------------------------------------------"
-	apt-get --assume-yes install mariadb-server mariadb-client libmariadbclient-dev
+	apt-get --assume-yes install mariadb-server mariadb-client $(LIBMARIADB_PKG)
 
 remove-mariadb:
-	apt-get --assume-yes remove mariadb-server mariadb-client libmariadbclient-dev
+	apt-get --assume-yes remove mariadb-server mariadb-client $(LIBMARIADB_PKG)
 
 install-redis:
 	@echo ""
@@ -238,7 +251,7 @@ clean-app: clean-encyc-psms
 install-encyc-psms: install-virtualenv
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
-	apt-get --assume-yes install imagemagick libjpeg-dev libmariadbclient-dev libxml2 libxslt1.1 libxslt1-dev python3-dev
+	apt-get --assume-yes install imagemagick libjpeg-dev $(LIBMARIADB_PKG) libxml2 libxslt1.1 libxslt1-dev python3-dev
 	source $(VIRTUALENV)/bin/activate; \
 	pip3 install -U --cache-dir=$(PIP_CACHE_DIR) -r $(PIP_REQUIREMENTS)
 # logs dir
@@ -309,7 +322,7 @@ install-configs:
 	@echo ""
 	@echo "installing configs ----------------------------------------------------"
 	-mkdir $(CONF_BASE)
-	python -c 'import random; print "".join([random.choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for i in range(50)])' > $(CONF_SECRET)
+	python3 -c 'import random; print("".join([random.choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for i in range(50)]))' > $(CONF_SECRET)
 	chown encyc.encyc $(CONF_SECRET)
 	chmod 640 $(CONF_SECRET)
 # web app settings
@@ -384,7 +397,7 @@ install-fpm:
 # http://fpm.readthedocs.io/en/latest/
 # https://stackoverflow.com/questions/32094205/set-a-custom-install-directory-when-making-a-deb-package-with-fpm
 # https://brejoc.com/tag/fpm/
-deb: deb-buster
+deb: deb-bullseye
 
 deb-buster:
 	@echo ""
@@ -404,6 +417,45 @@ deb-buster:
 	--deb-recommends "mariadb-client"   \
 	--deb-suggests "mariadb-server"   \
 	--depends "libmariadbclient-dev"  \
+	--depends "nginx"   \
+	--depends "redis-server"   \
+	--depends "supervisor"   \
+	--chdir $(INSTALLDIR)   \
+	conf=$(DEB_BASE)   \
+	COPYRIGHT=$(DEB_BASE)   \
+	debian=$(DEB_BASE)   \
+	.git=$(DEB_BASE)   \
+	.gitignore=$(DEB_BASE)   \
+	INSTALL.rst=$(DEB_BASE)   \
+	LICENSE=$(DEB_BASE)   \
+	Makefile=$(DEB_BASE)   \
+	NOTES=$(DEB_BASE)   \
+	psms=$(DEB_BASE)  \
+	README.rst=$(DEB_BASE)   \
+	requirements.txt=$(DEB_BASE)  \
+	static=var/www/encycpsms  \
+	venv=$(DEB_BASE)   \
+	VERSION=$(DEB_BASE)  \
+	conf/psms.cfg=etc/encyc/psms.cfg
+
+deb-bullseye:
+	@echo ""
+	@echo "DEB packaging (bullseye) -----------------------------------------------"
+	-rm -Rf $(DEB_FILE_BULLSEYE)
+	fpm   \
+	--verbose   \
+	--input-type dir   \
+	--output-type deb   \
+	--name $(DEB_NAME_BULLSEYE)   \
+	--version $(DEB_VERSION_BULLSEYE)   \
+	--package $(DEB_FILE_BULLSEYE)   \
+	--url "$(GIT_SOURCE_URL)"   \
+	--vendor "$(DEB_VENDOR)"   \
+	--maintainer "$(DEB_MAINTAINER)"   \
+	--description "$(DEB_DESCRIPTION)"   \
+	--deb-recommends "mariadb-client"   \
+	--deb-suggests "mariadb-server"   \
+	--depends "libmariadb-dev"  \
 	--depends "nginx"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
