@@ -27,8 +27,11 @@ PACKAGE_TIMESTAMP := $(shell git log -1 --pretty="%ad" --date=short | tr -d -)
 
 PACKAGE_SERVER=ddr.densho.org/static/encycpsms
 
+SRC_REPO_VOCAB=https://github.com/denshoproject/densho-vocab
+
 INSTALL_BASE=/opt
 INSTALLDIR=$(INSTALL_BASE)/encyc-psms
+INSTALL_VOCAB=/opt/densho-vocab
 DOWNLOADS_DIR=/tmp/$(APP)-install
 PIP_REQUIREMENTS=$(INSTALLDIR)/requirements.txt
 PIP_CACHE_DIR=$(INSTALL_BASE)/pip-cache
@@ -54,6 +57,12 @@ endif
 SUPERVISOR_GUNICORN_CONF=/etc/supervisor/conf.d/encycpsms.conf
 NGINX_APP_CONF=/etc/nginx/sites-available/encycpsms.conf
 NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/encycpsms.conf
+
+TGZ_BRANCH := $(shell python3 bin/package-branch.py)
+TGZ_FILE=$(PROJECT)_$(APP_VERSION)
+TGZ_DIR=$(INSTALLDIR)/$(TGZ_FILE)
+TGZ_PSMS=$(TGZ_DIR)/encyc-psms
+TGZ_VOCAB=$(TGZ_DIR)/densho-vocab
 
 DEB_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
 DEB_ARCH=amd64
@@ -385,6 +394,25 @@ clean-restframework:
 
 clean-swagger:
 	-rm -Rf $(STATIC_ROOT)/drf_yasg/
+
+
+tgz-local:
+	rm -Rf $(TGZ_DIR)
+	git clone $(INSTALLDIR) $(TGZ_PSMS)
+	git clone $(INSTALL_VOCAB) $(TGZ_VOCAB)
+	cd $(TGZ_PSMS); git checkout develop; git checkout master
+#	cd $(TGZ_VOCAB); git checkout develop; git checkout master
+	tar czf $(TGZ_FILE).tgz $(TGZ_FILE)
+	rm -Rf $(TGZ_DIR)
+
+tgz:
+	rm -Rf $(TGZ_DIR)
+	git clone $(GIT_SOURCE_URL) $(TGZ_PSMS)
+	git clone $(SRC_REPO_VOCAB) $(TGZ_VOCAB)
+	cd $(TGZ_PSMS); git checkout develop; git checkout master
+#	cd $(TGZ_VOCAB); git checkout develop; git checkout master
+	tar czf $(TGZ_FILE).tgz $(TGZ_FILE)
+	rm -Rf $(TGZ_DIR)
 
 
 # http://fpm.readthedocs.io/en/latest/
