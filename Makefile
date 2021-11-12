@@ -55,6 +55,11 @@ SUPERVISOR_GUNICORN_CONF=/etc/supervisor/conf.d/encycpsms.conf
 NGINX_APP_CONF=/etc/nginx/sites-available/encycpsms.conf
 NGINX_APP_CONF_LINK=/etc/nginx/sites-enabled/encycpsms.conf
 
+TGZ_BRANCH := $(shell python3 bin/package-branch.py)
+TGZ_FILE=$(PROJECT)_$(APP_VERSION)
+TGZ_DIR=$(INSTALLDIR)/$(TGZ_FILE)
+TGZ_PSMS=$(TGZ_DIR)/encyc-psms
+
 DEB_BRANCH := $(shell git rev-parse --abbrev-ref HEAD | tr -d _ | tr -d -)
 DEB_ARCH=amd64
 DEB_NAME_BUSTER=$(PROJECT)-$(DEB_BRANCH)
@@ -385,6 +390,21 @@ clean-restframework:
 
 clean-swagger:
 	-rm -Rf $(STATIC_ROOT)/drf_yasg/
+
+
+tgz-local:
+	rm -Rf $(TGZ_DIR)
+	git clone $(INSTALLDIR) $(TGZ_PSMS)
+	cd $(TGZ_PSMS); git checkout develop; git checkout master
+	tar czf $(TGZ_FILE).tgz $(TGZ_FILE)
+	rm -Rf $(TGZ_DIR)
+
+tgz:
+	rm -Rf $(TGZ_DIR)
+	git clone $(GIT_SOURCE_URL) $(TGZ_PSMS)
+	cd $(TGZ_PSMS); git checkout develop; git checkout master
+	tar czf $(TGZ_FILE).tgz $(TGZ_FILE)
+	rm -Rf $(TGZ_DIR)
 
 
 # http://fpm.readthedocs.io/en/latest/
