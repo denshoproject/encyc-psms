@@ -1,8 +1,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from django.conf.urls import url
-
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
