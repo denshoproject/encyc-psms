@@ -4,24 +4,21 @@
 
 # sudo apt-get install libjpeg8 libjpeg8-dev libmysqlclient-dev
 
-beautifulsoup4==4.9.1
-django>=3.1.0,<3.2                 # MIT
-django-extensions==3.0.4
-django-redis==4.12.1               # BSD      y
-django-redis-sessions==0.6.1       # BSD      y
-django-rest-auth==0.9.5            # MIT
-djangorestframework>=3.11.0,<3.12  # BSD
-django-tastypie==0.14.3
-drf-yasg==1.17.1
-gunicorn==20.0.4
-lxml==4.6.5
+beautifulsoup4>=4.11.0,<4.12       # MIT      y
+django>=4.1.0,<4.2                 # MIT
+django_extensions
+dj-rest-auth>-2.2.0,<2.3           # MIT
+djangorestframework>=3.13.0,<3.14  # BSD
+drf-yasg>=1.21.0,<1.22             # BSD
+gunicorn
+lxml>=4.9.0,<4.10
 mwclient==0.10.1
-mysqlclient==2.0.1
-Pillow>=8.3.2,<8.5
-redis==3.5.3                       # MIT      y
-requests==2.24.0
-sorl-thumbnail==12.6.3
-unicodecsv==0.14.1
+mysqlclient
+Pillow
+redis
+requests
+sorl-thumbnail
+unicodecsv
 
 bpython
 

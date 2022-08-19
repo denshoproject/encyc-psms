@@ -2,7 +2,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.conf import settings
-from django.conf.urls import url
 from django.views.decorators.cache import cache_page
 
 from rest_framework.decorators import api_view
