@@ -4,14 +4,14 @@
 
 # sudo apt-get install libjpeg8 libjpeg8-dev libmysqlclient-dev
 
-beautifulsoup4
+beautifulsoup4>=4.11.0,<4.12       # MIT      y
 django>=4.1.0,<4.2                 # MIT
 django_extensions
 dj-rest-auth>-2.2.0,<2.3           # MIT
 djangorestframework>=3.13.0,<3.14  # BSD
 drf-yasg>=1.21.0,<1.22             # BSD
 gunicorn
-lxml==4.6.5
+lxml>=4.9.0,<4.10
 mwclient==0.10.1
 mysqlclient
 Pillow
