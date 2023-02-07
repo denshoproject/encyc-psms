@@ -263,6 +263,7 @@ install-encyc-psms: install-virtualenv
 	apt-get --assume-yes install imagemagick libjpeg-dev $(LIBMARIADB_PKG) libxml2 libxslt1.1 libxslt1-dev python3-dev
 	source $(VIRTUALENV)/bin/activate; \
 	pip3 install -U --cache-dir=$(PIP_CACHE_DIR) -r $(PIP_REQUIREMENTS)
+	sudo -u encyc git config --global --add safe.directory $(INSTALLDIR)
 # logs dir
 	-mkdir $(LOG_BASE)
 	chown -R encyc.root $(LOG_BASE)
