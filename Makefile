@@ -284,6 +284,12 @@ install-encyc-psms: install-configs install-setuptools git-safe-dir
 	chown -R encyc.root $(MEDIA_ROOT)
 	chmod -R 755 $(MEDIA_ROOT)
 
+install-encyc-psms-testing: install-setuptools
+	@echo ""
+	@echo "install-encyc-psms-testing -------------------------------------------------------"
+	source $(VIRTUALENV)/bin/activate; \
+	uv pip install --cache-dir=$(PIP_CACHE_DIR) .[testing]
+
 test-encyc-psms: test-encyc-psms-api test-encyc-psms-sources
 
 test-encyc-psms-api:
