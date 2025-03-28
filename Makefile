@@ -261,12 +261,16 @@ uninstall-app: uninstall-encyc-psms
 clean-app: clean-encyc-psms
 
 
-install-encyc-psms: install-configs install-setuptools
+git-safe-dir:
+	@echo ""
+	@echo "git-safe-dir -----------------------------------------------------------"
+	sudo -u encyc git config --global --add safe.directory $(INSTALLDIR)
+
+install-encyc-psms: install-configs install-setuptools git-safe-dir
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
 	apt-get --assume-yes install imagemagick libjpeg-dev $(LIBMARIADB_PKG) libxml2 libxslt1.1 libxslt1-dev python3-dev
 	source $(VIRTUALENV)/bin/activate; uv pip install --cache-dir=$(PIP_CACHE_DIR) .
-	sudo -u encyc git config --global --add safe.directory $(INSTALLDIR)
 # logs dir
 	-mkdir $(LOG_BASE)
 	chown -R encyc.root $(LOG_BASE)
