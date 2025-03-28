@@ -1,0 +1,65 @@
+[project]
+name = "encyc-psms"
+description = "Densho Encyclopedia Primary Source Management System"
+authors = [
+    {name = "Geoffrey Jost", email = "geoffrey.jost@densho.us"}
+]
+maintainers = [
+    {name = "Geoffrey Jost", email="geoffrey.jost@densho.us"},
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["Django", "archives"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Framework :: Django",
+    "Framework :: Django :: 4.11",
+]
+
+dynamic = ["version"]  # see tool.setuptools.dynamic
+requires-python = ">=3.11"
+dependencies = [
+    'beautifulsoup4>=4.11.0,<4.12',       # MIT      y
+    'django>=4.1.0,<4.2',                 # MIT
+    'django_extensions',
+    'dj-rest-auth',           # MIT
+    'djangorestframework>=3.13.0,<3.14',  # BSD
+    'drf-yasg>=1.21.0,<1.22',             # BSD
+    'gunicorn',
+    'lxml>=4.9.0,<4.10',
+    'mwclient==0.10.1',
+    'mysqlclient',
+    'Pillow',
+    'redis',
+    'requests',
+    'sorl-thumbnail',
+    'unicodecsv',
+]
+
+[project.optional-dependencies]
+testing = [
+    'coverage',
+    'factory_boy',
+    'pytest',
+    'pytest-cov',
+    'pytest-django',
+]
+
+[project.urls]
+Repository = "https://github.com/denshoproject/encyc-psms"
+
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ['psms']
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}

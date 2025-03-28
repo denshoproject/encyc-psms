@@ -241,6 +241,15 @@ install-virtualenv:
 	@echo "install-virtualenv -----------------------------------------------------"
 	apt-get --assume-yes install python3-pip python3-venv
 	python3 -m venv $(VIRTUALENV)
+	source $(VIRTUALENV)/bin/activate; \
+	pip3 install -U --cache-dir=$(PIP_CACHE_DIR) uv
+
+install-setuptools: install-virtualenv
+	@echo ""
+	@echo "install-setuptools -----------------------------------------------------"
+	apt-get --assume-yes install python3-dev
+	source $(VIRTUALENV)/bin/activate; \
+	uv pip install -U --cache-dir=$(PIP_CACHE_DIR) setuptools
 
 
 install-app: install-encyc-psms
@@ -252,12 +261,11 @@ uninstall-app: uninstall-encyc-psms
 clean-app: clean-encyc-psms
 
 
-install-encyc-psms: install-virtualenv
+install-encyc-psms: install-configs install-setuptools
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
 	apt-get --assume-yes install imagemagick libjpeg-dev $(LIBMARIADB_PKG) libxml2 libxslt1.1 libxslt1-dev python3-dev
-	source $(VIRTUALENV)/bin/activate; \
-	pip3 install -U --cache-dir=$(PIP_CACHE_DIR) -r $(PIP_REQUIREMENTS)
+	source $(VIRTUALENV)/bin/activate; uv pip install --cache-dir=$(PIP_CACHE_DIR) .
 	sudo -u encyc git config --global --add safe.directory $(INSTALLDIR)
 # logs dir
 	-mkdir $(LOG_BASE)
