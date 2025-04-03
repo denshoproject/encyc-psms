@@ -269,7 +269,7 @@ git-safe-dir:
 install-encyc-psms: install-configs install-setuptools git-safe-dir
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
-	apt-get --assume-yes install imagemagick libjpeg-dev $(LIBMARIADB_PKG) libxml2 libxslt1.1 libxslt1-dev python3-dev
+	apt-get --assume-yes install imagemagick libjpeg-dev $(LIBMARIADB_PKG) libxml2 libxslt1.1 libxslt1-dev python3-dev default-libmysqlclient-dev build-essential pkg-config
 	source $(VIRTUALENV)/bin/activate; uv pip install --cache-dir=$(PIP_CACHE_DIR) .
 # logs dir
 	-mkdir $(LOG_BASE)
@@ -458,6 +458,10 @@ deb-bullseye:
 	--deb-recommends "mariadb-client"   \
 	--deb-suggests "mariadb-server"   \
 	--depends "libmariadbclient-dev"  \
+	--depends "build-essential" \
+	--depends "default-libmysqlclient-dev" \
+	--depends "python3-dev" \
+	--depends "pkg-config" \
 	--depends "nginx"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
@@ -498,6 +502,10 @@ deb-bookworm:
 	--deb-recommends "mariadb-client"   \
 	--deb-suggests "mariadb-server"   \
 	--depends "libmariadb-dev"  \
+	--depends "build-essential" \
+	--depends "default-libmysqlclient-dev" \
+	--depends "python3-dev" \
+	--depends "pkg-config" \
 	--depends "nginx"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
@@ -538,6 +546,10 @@ deb-trixie:
 	--deb-recommends "mariadb-client"   \
 	--deb-suggests "mariadb-server"   \
 	--depends "libmariadb-dev"  \
+	--depends "build-essential" \
+	--depends "default-libmysqlclient-dev" \
+	--depends "python3-dev" \
+	--depends "pkg-config" \
 	--depends "nginx"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
