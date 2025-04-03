@@ -1,5 +1,5 @@
-PROJECT=encycpsms
-APP=psms
+PROJECT=encyc
+APP=encycpsms
 USER=encyc
 SHELL = /bin/bash
 
@@ -49,7 +49,7 @@ DEBIAN_RELEASE := $(shell lsb_release -sr)
 DEBIAN_RELEASE_TAG = deb$(shell lsb_release -sr | cut -c1)
 
 TGZ_BRANCH := $(shell python3 bin/package-branch.py)
-TGZ_FILE=$(PROJECT)_$(APP_VERSION)
+TGZ_FILE=$(APP)_$(APP_VERSION)
 TGZ_DIR=$(INSTALLDIR)/$(TGZ_FILE)
 TGZ_PSMS=$(TGZ_DIR)/encyc-psms
 TGZ_VOCAB=$(TGZ_DIR)/densho-vocab
@@ -241,6 +241,15 @@ install-virtualenv:
 	@echo "install-virtualenv -----------------------------------------------------"
 	apt-get --assume-yes install python3-pip python3-venv
 	python3 -m venv $(VIRTUALENV)
+	source $(VIRTUALENV)/bin/activate; \
+	pip3 install -U --cache-dir=$(PIP_CACHE_DIR) uv
+
+install-setuptools: install-virtualenv
+	@echo ""
+	@echo "install-setuptools -----------------------------------------------------"
+	apt-get --assume-yes install python3-dev
+	source $(VIRTUALENV)/bin/activate; \
+	uv pip install -U --cache-dir=$(PIP_CACHE_DIR) setuptools
 
 
 install-app: install-encyc-psms
@@ -252,13 +261,16 @@ uninstall-app: uninstall-encyc-psms
 clean-app: clean-encyc-psms
 
 
-install-encyc-psms: install-virtualenv
+git-safe-dir:
+	@echo ""
+	@echo "git-safe-dir -----------------------------------------------------------"
+	sudo -u encyc git config --global --add safe.directory $(INSTALLDIR)
+
+install-encyc-psms: install-configs install-setuptools git-safe-dir
 	@echo ""
 	@echo "encyc-psms --------------------------------------------------------------"
-	apt-get --assume-yes install imagemagick libjpeg-dev $(LIBMARIADB_PKG) libxml2 libxslt1.1 libxslt1-dev python3-dev
-	source $(VIRTUALENV)/bin/activate; \
-	pip3 install -U --cache-dir=$(PIP_CACHE_DIR) -r $(PIP_REQUIREMENTS)
-	sudo -u encyc git config --global --add safe.directory $(INSTALLDIR)
+	apt-get --assume-yes install imagemagick libjpeg-dev $(LIBMARIADB_PKG) libxml2 libxslt1.1 libxslt1-dev python3-dev default-libmysqlclient-dev build-essential pkg-config
+	source $(VIRTUALENV)/bin/activate; uv pip install --cache-dir=$(PIP_CACHE_DIR) .
 # logs dir
 	-mkdir $(LOG_BASE)
 	chown -R encyc.root $(LOG_BASE)
@@ -271,6 +283,12 @@ install-encyc-psms: install-virtualenv
 	-mkdir -p $(MEDIA_ROOT)
 	chown -R encyc.root $(MEDIA_ROOT)
 	chmod -R 755 $(MEDIA_ROOT)
+
+install-encyc-psms-testing: install-setuptools
+	@echo ""
+	@echo "install-encyc-psms-testing -------------------------------------------------------"
+	source $(VIRTUALENV)/bin/activate; \
+	uv pip install --cache-dir=$(PIP_CACHE_DIR) .[testing]
 
 test-encyc-psms: test-encyc-psms-api test-encyc-psms-sources
 
@@ -440,6 +458,10 @@ deb-bullseye:
 	--deb-recommends "mariadb-client"   \
 	--deb-suggests "mariadb-server"   \
 	--depends "libmariadbclient-dev"  \
+	--depends "build-essential" \
+	--depends "default-libmysqlclient-dev" \
+	--depends "python3-dev" \
+	--depends "pkg-config" \
 	--depends "nginx"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
@@ -454,8 +476,8 @@ deb-bullseye:
 	Makefile=$(DEB_BASE)   \
 	NOTES=$(DEB_BASE)   \
 	psms=$(DEB_BASE)  \
+	pyproject.toml=$(DEB_BASE)  \
 	README.rst=$(DEB_BASE)   \
-	requirements.txt=$(DEB_BASE)  \
 	static=var/www/encycpsms  \
 	venv=$(DEB_BASE)   \
 	VERSION=$(DEB_BASE)  \
@@ -480,6 +502,10 @@ deb-bookworm:
 	--deb-recommends "mariadb-client"   \
 	--deb-suggests "mariadb-server"   \
 	--depends "libmariadb-dev"  \
+	--depends "build-essential" \
+	--depends "default-libmysqlclient-dev" \
+	--depends "python3-dev" \
+	--depends "pkg-config" \
 	--depends "nginx"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
@@ -494,8 +520,8 @@ deb-bookworm:
 	Makefile=$(DEB_BASE)   \
 	NOTES=$(DEB_BASE)   \
 	psms=$(DEB_BASE)  \
+	pyproject.toml=$(DEB_BASE)  \
 	README.rst=$(DEB_BASE)   \
-	requirements.txt=$(DEB_BASE)  \
 	static=var/www/encycpsms  \
 	venv=$(DEB_BASE)   \
 	VERSION=$(DEB_BASE)  \
@@ -520,6 +546,10 @@ deb-trixie:
 	--deb-recommends "mariadb-client"   \
 	--deb-suggests "mariadb-server"   \
 	--depends "libmariadb-dev"  \
+	--depends "build-essential" \
+	--depends "default-libmysqlclient-dev" \
+	--depends "python3-dev" \
+	--depends "pkg-config" \
 	--depends "nginx"   \
 	--depends "redis-server"   \
 	--depends "supervisor"   \
@@ -534,8 +564,8 @@ deb-trixie:
 	Makefile=$(DEB_BASE)   \
 	NOTES=$(DEB_BASE)   \
 	psms=$(DEB_BASE)  \
+	pyproject.toml=$(DEB_BASE)  \
 	README.rst=$(DEB_BASE)   \
-	requirements.txt=$(DEB_BASE)  \
 	static=var/www/encycpsms  \
 	venv=$(DEB_BASE)   \
 	VERSION=$(DEB_BASE)  \
