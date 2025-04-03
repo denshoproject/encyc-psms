@@ -1,5 +1,5 @@
-PROJECT=encycpsms
-APP=psms
+PROJECT=encyc
+APP=encycpsms
 USER=encyc
 SHELL = /bin/bash
 
@@ -49,7 +49,7 @@ DEBIAN_RELEASE := $(shell lsb_release -sr)
 DEBIAN_RELEASE_TAG = deb$(shell lsb_release -sr | cut -c1)
 
 TGZ_BRANCH := $(shell python3 bin/package-branch.py)
-TGZ_FILE=$(PROJECT)_$(APP_VERSION)
+TGZ_FILE=$(APP)_$(APP_VERSION)
 TGZ_DIR=$(INSTALLDIR)/$(TGZ_FILE)
 TGZ_PSMS=$(TGZ_DIR)/encyc-psms
 TGZ_VOCAB=$(TGZ_DIR)/densho-vocab
