@@ -472,8 +472,8 @@ deb-bullseye:
 	Makefile=$(DEB_BASE)   \
 	NOTES=$(DEB_BASE)   \
 	psms=$(DEB_BASE)  \
+	pyproject.toml=$(DEB_BASE)  \
 	README.rst=$(DEB_BASE)   \
-	requirements.txt=$(DEB_BASE)  \
 	static=var/www/encycpsms  \
 	venv=$(DEB_BASE)   \
 	VERSION=$(DEB_BASE)  \
@@ -512,8 +512,8 @@ deb-bookworm:
 	Makefile=$(DEB_BASE)   \
 	NOTES=$(DEB_BASE)   \
 	psms=$(DEB_BASE)  \
+	pyproject.toml=$(DEB_BASE)  \
 	README.rst=$(DEB_BASE)   \
-	requirements.txt=$(DEB_BASE)  \
 	static=var/www/encycpsms  \
 	venv=$(DEB_BASE)   \
 	VERSION=$(DEB_BASE)  \
@@ -552,8 +552,8 @@ deb-trixie:
 	Makefile=$(DEB_BASE)   \
 	NOTES=$(DEB_BASE)   \
 	psms=$(DEB_BASE)  \
+	pyproject.toml=$(DEB_BASE)  \
 	README.rst=$(DEB_BASE)   \
-	requirements.txt=$(DEB_BASE)  \
 	static=var/www/encycpsms  \
 	venv=$(DEB_BASE)   \
 	VERSION=$(DEB_BASE)  \
