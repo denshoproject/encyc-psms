@@ -48,6 +48,16 @@ DEBIAN_RELEASE := $(shell lsb_release -sr)
 # Sortable major version tag e.g. deb8
 DEBIAN_RELEASE_TAG = deb$(shell lsb_release -sr | cut -c1)
 
+ifeq ($(DEBIAN_CODENAME), bullseye)
+	PYTHON_VERSION=python3.9
+endif
+ifeq ($(DEBIAN_CODENAME), bookworm)
+	PYTHON_VERSION=python3.11
+endif
+ifeq ($(DEBIAN_CODENAME), trixie)
+	PYTHON_VERSION=python3.13
+endif
+
 TGZ_BRANCH := $(shell python3 bin/package-branch.py)
 TGZ_FILE=$(APP)_$(APP_VERSION)
 TGZ_DIR=$(INSTALLDIR)/$(TGZ_FILE)
