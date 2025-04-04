@@ -478,7 +478,6 @@ deb-bullseye:
 	--chdir $(INSTALLDIR)   \
 	conf=$(DEB_BASE)   \
 	COPYRIGHT=$(DEB_BASE)   \
-	debian=$(DEB_BASE)   \
 	.git=$(DEB_BASE)   \
 	.gitignore=$(DEB_BASE)   \
 	INSTALL.rst=$(DEB_BASE)   \
@@ -522,7 +521,6 @@ deb-bookworm:
 	--chdir $(INSTALLDIR)   \
 	conf=$(DEB_BASE)   \
 	COPYRIGHT=$(DEB_BASE)   \
-	debian=$(DEB_BASE)   \
 	.git=$(DEB_BASE)   \
 	.gitignore=$(DEB_BASE)   \
 	INSTALL.rst=$(DEB_BASE)   \
@@ -566,7 +564,6 @@ deb-trixie:
 	--chdir $(INSTALLDIR)   \
 	conf=$(DEB_BASE)   \
 	COPYRIGHT=$(DEB_BASE)   \
-	debian=$(DEB_BASE)   \
 	.git=$(DEB_BASE)   \
 	.gitignore=$(DEB_BASE)   \
 	INSTALL.rst=$(DEB_BASE)   \
