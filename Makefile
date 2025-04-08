@@ -481,6 +481,7 @@ deb-bullseye:
 	--depends "redis-server"   \
 	--depends "supervisor"   \
 	--chdir $(INSTALLDIR)   \
+	bin=$(DEB_BASE)   \
 	conf=$(DEB_BASE)   \
 	COPYRIGHT=$(DEB_BASE)   \
 	.git=$(DEB_BASE)   \
@@ -524,6 +525,7 @@ deb-bookworm:
 	--depends "redis-server"   \
 	--depends "supervisor"   \
 	--chdir $(INSTALLDIR)   \
+	bin=$(DEB_BASE)   \
 	conf=$(DEB_BASE)   \
 	COPYRIGHT=$(DEB_BASE)   \
 	.git=$(DEB_BASE)   \
@@ -567,6 +569,7 @@ deb-trixie:
 	--depends "redis-server"   \
 	--depends "supervisor"   \
 	--chdir $(INSTALLDIR)   \
+	bin=$(DEB_BASE)   \
 	conf=$(DEB_BASE)   \
 	COPYRIGHT=$(DEB_BASE)   \
 	.git=$(DEB_BASE)   \
