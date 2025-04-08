@@ -203,6 +203,12 @@ git-config:
 	git config --global alias.br branch
 	git config --global alias.ci commit
 
+git-safe-dir:
+	@echo ""
+	@echo "git-safe-dir -----------------------------------------------------------"
+	sudo          git config --global --add safe.directory $(INSTALLDIR)
+	sudo -u encyc git config --global --add safe.directory $(INSTALLDIR)
+
 install-misc-tools:
 	@echo ""
 	@echo "Installing miscellaneous tools -----------------------------------------"
@@ -270,11 +276,6 @@ uninstall-app: uninstall-encyc-psms
 
 clean-app: clean-encyc-psms
 
-
-git-safe-dir:
-	@echo ""
-	@echo "git-safe-dir -----------------------------------------------------------"
-	sudo -u encyc git config --global --add safe.directory $(INSTALLDIR)
 
 install-encyc-psms: install-configs install-setuptools git-safe-dir
 	@echo ""
