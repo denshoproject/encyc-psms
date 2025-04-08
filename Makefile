@@ -395,6 +395,8 @@ uninstall-daemons-configs:
 
 
 install-static: collectstatic install-restframework install-swagger
+	mkdir -p $(INSTALLDIR)/static
+	cp -R $(STATIC_ROOT)/* $(INSTALLDIR)/static
 
 clean-static: clean-restframework clean-swagger
 
