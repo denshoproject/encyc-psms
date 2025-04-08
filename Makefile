@@ -295,6 +295,8 @@ install-encyc-psms: install-configs install-setuptools git-safe-dir
 	chown -R encyc.root $(MEDIA_ROOT)
 	chmod -R 755 $(MEDIA_ROOT)
 
+install-testing: install-encyc-psms-testing
+
 install-encyc-psms-testing: install-setuptools
 	@echo ""
 	@echo "install-encyc-psms-testing -------------------------------------------------------"
